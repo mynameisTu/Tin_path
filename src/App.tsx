@@ -263,7 +263,7 @@ export default function App() {
   };
 
   // Start Topic Custom Quiz
-  const handleStartTopicQuiz = (topicId: SubjectTopicId, count: number, level: string) => {
+  const handleStartTopicQuiz = (topicId: SubjectTopicId, count: number = 10, level: string = 'all') => {
     const allQuestions = OFFICIAL_EXAMS.flatMap((e) => e.part1Questions);
     const pool = allQuestions.filter((q) => q.topicId === topicId);
     const questionsToUse = pool.length > 0 ? pool.slice(0, count) : allQuestions.slice(0, count);

@@ -1,28 +1,8 @@
+
 import { createClient } from '@supabase/supabase-js';
 
-// Các biến môi trường được đọc từ .env hoặc Vercel Environment Variables
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || '';
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || '';
-
-if (!supabaseUrl || !supabaseAnonKey) {
-  console.warn(
-    '⚠️ Chưa cấu hình VITE_SUPABASE_URL hoặc VITE_SUPABASE_ANON_KEY trong file .env!\n' +
-    'Hệ thống đang hoạt động ở chế độ Local Mockup dự phòng.'
-  );
-}
-
-// Khởi tạo Supabase client dùng chung trong toàn bộ dự án
-export const supabase = createClient(
-  supabaseUrl || 'https://placeholder-project.supabase.co',
-  supabaseAnonKey || 'placeholder-anon-key',
-  {
-    auth: {
-      persistSession: true,
-      autoRefreshToken: true,
-      detectSessionInUrl: true,
-    },
-  }
-);
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL?.trim() || '';
+const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY?.trim() || '';
 
 export const isSupabaseConfigured = (): boolean => {
   return Boolean(
@@ -31,3 +11,32 @@ export const isSupabaseConfigured = (): boolean => {
     !supabaseUrl.includes('placeholder-project')
   );
 };
+
+if (!isSupabaseConfigured()) {
+  console.warn(
+    'Supabase chưa được cấu hình. Kiểm tra file .env.local.'
+  );
+}
+
+// Không tạo client với URL giả.
+// Nếu thiếu cấu hình, các hàm sử dụng Supabase cần kiểm tra
+// isSupabaseConfigured() trước khi truy vấn.
+export const supabase = isSupabaseConfigured()
+  ? createClient(supabaseUrl, supabaseAnonKey, {
+    auth: {
+      persistSession: true,
+      autoRefreshToken: true,
+      detectSessionInUrl: true,
+    },
+  })
+  : createClient(
+    'https://placeholder-project.supabase.co',
+    'placeholder-anon-key',
+    {
+      auth: {
+        persistSession: true,
+        autoRefreshToken: true,
+        detectSessionInUrl: true,
+      },
+    }
+  );

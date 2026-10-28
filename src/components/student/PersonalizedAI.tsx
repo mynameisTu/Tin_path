@@ -388,7 +388,7 @@ export const PersonalizedAI: React.FC<PersonalizedAIProps> = ({
 
       if (!topicStats[q.topicId]) {
         topicStats[q.topicId] = {
-          topicName: q.topicName,
+          topicName: q.topicName || '',
           correct: 0,
           total: 0,
           knowCorrect: 0,
@@ -416,13 +416,13 @@ export const PersonalizedAI: React.FC<PersonalizedAIProps> = ({
         else topicStats[q.topicId].appCorrect += 1;
       } else {
         const userChoiceText = userChoice ? `${userChoice}. ${q.options[userChoice]}` : 'Chưa chọn';
-        const correctChoiceText = `${q.correctAnswer}. ${q.options[q.correctAnswer]}`;
+        const correctChoiceText = q.correctAnswer ? `${q.correctAnswer}. ${q.options[q.correctAnswer]}` : 'Đáp án ẩn';
         const trap = CURRICULUM_TOPIC_GAPS[q.topicId]?.defaultTraps || 'Cần chú ý phân tích từ khóa kỹ thuật trong đề.';
 
         wrongQuestions.push({
           id: q.id,
           topicId: q.topicId,
-          topicName: q.topicName,
+          topicName: q.topicName || '',
           level,
           content: `[Phần I] ${q.content}`,
           userAnswer: userChoiceText,
@@ -444,7 +444,7 @@ export const PersonalizedAI: React.FC<PersonalizedAIProps> = ({
 
       if (!topicStats[q.topicId]) {
         topicStats[q.topicId] = {
-          topicName: q.topicName,
+          topicName: q.topicName || '',
           correct: 0,
           total: 0,
           knowCorrect: 0,
@@ -477,12 +477,13 @@ export const PersonalizedAI: React.FC<PersonalizedAIProps> = ({
           else if (level === 'hieu') topicStats[q.topicId].undCorrect += 1;
           else topicStats[q.topicId].appCorrect += 1;
         } else {
+          const stmtText = stmt.statement || stmt.text || '';
           wrongQuestions.push({
             id: `${q.id}_${stmt.id}`,
             topicId: q.topicId,
-            topicName: q.topicName,
+            topicName: q.topicName || '',
             level,
-            content: `[Phần II - ${q.context}] Ý ${stmt.id.toUpperCase()}: "${stmt.statement}"`,
+            content: `[Phần II - ${q.context}] Ý ${stmt.id.toUpperCase()}: "${stmtText}"`,
             userAnswer: userStatementVal === undefined ? 'Chưa trả lời' : userStatementVal ? 'Chọn Đúng' : 'Chọn Sai',
             correctAnswer: stmt.isCorrect ? 'Đáp án Đúng' : 'Đáp án Sai',
             explanation: stmt.explanation || 'Xem lại bài học chuyên đề trong SGK.',
@@ -726,7 +727,7 @@ export const PersonalizedAI: React.FC<PersonalizedAIProps> = ({
         const wrongOpts = (['A', 'B', 'C', 'D'] as const).filter((o) => o !== q.correctAnswer);
         p1[q.id] = wrongOpts[0];
       } else {
-        p1[q.id] = q.correctAnswer;
+        p1[q.id] = q.correctAnswer || 'A';
       }
     });
 

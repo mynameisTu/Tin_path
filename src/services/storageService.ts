@@ -1,5 +1,6 @@
 import {
   UserProfile,
+  UserRole,
   ExamAttempt,
   XPTransaction,
   Classroom,

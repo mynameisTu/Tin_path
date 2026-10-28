@@ -51,8 +51,8 @@ export interface SingleChoiceQuestion {
   id: string;
   type: 'single_choice';
   topicId: SubjectTopicId;
-  topicName: string;
-  level: CognitiveLevel;
+  topicName?: string;
+  level?: CognitiveLevel;
   content: string;
   options: {
     A: string;
@@ -60,29 +60,32 @@ export interface SingleChoiceQuestion {
     C: string;
     D: string;
   };
-  correctAnswer: 'A' | 'B' | 'C' | 'D';
-  explanation: string;
+  correctAnswer?: 'A' | 'B' | 'C' | 'D';
+  explanation?: string | null;
   codeSnippet?: string;
   image?: string;
+  q_num?: number;
 }
 
 export interface TrueFalseStatement {
   id: 'a' | 'b' | 'c' | 'd';
   text: string;
-  isCorrect: boolean;
-  explanation: string;
+  statement?: string;
+  isCorrect?: boolean;
+  explanation?: string | null;
 }
 
 export interface TrueFalseGroupQuestion {
   id: string;
   type: 'true_false_group';
   topicId: SubjectTopicId;
-  topicName: string;
+  topicName?: string;
   level?: CognitiveLevel;
   trackRequirement?: 'ALL' | 'CS' | 'ICT';
   context: string;
   statements: TrueFalseStatement[];
   codeSnippet?: string;
+  c_num?: number;
   tableData?: {
     headers: string[];
     rows: (string | number)[][];
@@ -101,7 +104,7 @@ export interface Exam {
   description: string;
   part1Questions: SingleChoiceQuestion[]; // 24 câu
   part2Questions: TrueFalseGroupQuestion[]; // 4 câu (2 câu chung + 2 câu CS hoặc ICT)
-  totalScore: 10;
+  totalScore?: number;
   baseXP: number;
 }
 

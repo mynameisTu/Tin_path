@@ -144,7 +144,7 @@ function mutatePart1Variation(
     }
   }
 
-  const { shuffledOptions, newCorrectAnswer } = shuffleOptionsAndRemap(options, q.correctAnswer);
+  const { shuffledOptions, newCorrectAnswer } = shuffleOptionsAndRemap(options, q.correctAnswer || 'A');
 
   return {
     id: `thpt_remedial_p1_${index + 1}_${Date.now()}`,
@@ -164,7 +164,7 @@ function mutatePart1Retest(
   q: WrongQuestionInput | SingleChoiceQuestion,
   index: number
 ): SingleChoiceQuestion {
-  const { shuffledOptions, newCorrectAnswer } = shuffleOptionsAndRemap(q.options, q.correctAnswer);
+  const { shuffledOptions, newCorrectAnswer } = shuffleOptionsAndRemap(q.options, q.correctAnswer || 'A');
 
   return {
     id: `thpt_remedial_p1_${index + 1}_${Date.now()}`,

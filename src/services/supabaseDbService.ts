@@ -68,29 +68,37 @@ export async function updateProfile(
     return true;
   }
 
+  // Loại trừ các trường đặc quyền (role, email, xp) khỏi payload client update
+  const safePayload: Record<string, any> = {
+    updated_at: new Date().toISOString(),
+  };
+
+  if (updates.displayName !== undefined) safePayload.display_name = updates.displayName;
+  if (updates.avatarUrl !== undefined) safePayload.avatar_url = updates.avatarUrl;
+  if (updates.schoolId !== undefined) safePayload.school_id = updates.schoolId;
+  if (updates.schoolName !== undefined) safePayload.school_name = updates.schoolName;
+  if (updates.district !== undefined) safePayload.district = updates.district;
+  if (updates.grade !== undefined) safePayload.grade = updates.grade;
+  if (updates.track !== undefined) safePayload.track = updates.track;
+  if (updates.targetScore !== undefined) safePayload.target_score = updates.targetScore;
+  if (updates.dailyStudyMinutes !== undefined) safePayload.daily_study_minutes = updates.dailyStudyMinutes;
+  if (updates.streakDays !== undefined) safePayload.streak_days = updates.streakDays;
+  if (updates.lastActiveDate !== undefined) safePayload.last_active_date = updates.lastActiveDate;
+  if (updates.completedDailyToday !== undefined) safePayload.completed_daily_today = updates.completedDailyToday;
+  if (updates.onboardingCompleted !== undefined) safePayload.onboarding_completed = updates.onboardingCompleted;
+  if (updates.diagnosticScore !== undefined) safePayload.diagnostic_score = updates.diagnosticScore;
+
   const { error } = await supabase
     .from('profiles')
-    .update({
-      display_name: updates.displayName,
-      avatar_url: updates.avatarUrl,
-      school_id: updates.schoolId,
-      school_name: updates.schoolName,
-      district: updates.district,
-      grade: updates.grade,
-      track: updates.track,
-      target_score: updates.targetScore,
-      daily_study_minutes: updates.dailyStudyMinutes,
-      xp: updates.xp,
-      streak_days: updates.streakDays,
-      last_active_date: updates.lastActiveDate,
-      completed_daily_today: updates.completedDailyToday,
-      onboarding_completed: updates.onboardingCompleted,
-      diagnostic_score: updates.diagnosticScore,
-      updated_at: new Date().toISOString(),
-    })
+    .update(safePayload)
     .eq('id', userId);
 
-  return !error;
+  if (error) {
+    console.warn('Lỗi cập nhật hồ sơ Supabase:', error.message);
+    return false;
+  }
+
+  return true;
 }
 
 // ---------------------------------------------------------------------------
@@ -153,6 +161,37 @@ export async function saveExamAttempt(attempt: ExamAttempt): Promise<boolean> {
   }
 }
 
+/**
+ * Nộp bài thi trực tiếp cho Server RPC để chấm điểm và cấp XP an toàn
+ * Không làm lộ đáp án và chống can thiệp điểm từ phía browser
+ */
+export async function submitExamAttemptSecure(params: {
+  examId: string;
+  track: 'CS' | 'ICT';
+  startedAt: string;
+  answers: Record<string, any>;
+}): Promise<{ success: boolean; data?: any; error?: string }> {
+  if (!isSupabaseConfigured()) {
+    return { success: false, error: 'Chưa cấu hình Supabase' };
+  }
+  try {
+    const { data, error } = await supabase.rpc('submit_exam_attempt_secure', {
+      p_exam_id: params.examId,
+      p_track: params.track,
+      p_started_at: params.startedAt,
+      p_answers: params.answers,
+    });
+    if (error) {
+      console.warn('submit_exam_attempt_secure RPC error:', error.message);
+      return { success: false, error: error.message };
+    }
+    return { success: true, data };
+  } catch (err: any) {
+    console.warn('submitExamAttemptSecure exception:', err);
+    return { success: false, error: err?.message || 'Lỗi kết nối RPC' };
+  }
+}
+
 export async function getExamAttempts(userId: string): Promise<ExamAttempt[]> {
   if (!isSupabaseConfigured()) {
     return (LS.get<ExamAttempt[]>(STORAGE_KEYS.EXAM_ATTEMPTS) || [])
@@ -204,9 +243,8 @@ export async function getLeaderboard(filter?: {
   }
 
   let query = supabase
-    .from('profiles')
+    .from('leaderboard_public')
     .select('id, display_name, school_name, district, xp, streak_days')
-    .eq('role', 'student')
     .order('xp', { ascending: false })
     .limit(50);
 
@@ -217,7 +255,10 @@ export async function getLeaderboard(filter?: {
   }
 
   const { data, error } = await query;
-  if (error || !data) return [];
+  if (error || !data) {
+    if (error) console.warn('Lỗi truy vấn leaderboard_public:', error.message);
+    return [];
+  }
 
   const { data: { user } } = await supabase.auth.getUser();
 
@@ -381,6 +422,18 @@ export async function recordDailyChallengeAttempt(params: {
 }): Promise<boolean> {
   if (!isSupabaseConfigured()) return true;
   try {
+    // 1. Ưu tiên gọi RPC submit_daily_challenge_secure để tính điểm & cấp XP chuẩn phía server
+    const { data: rpcData, error: rpcError } = await supabase.rpc('submit_daily_challenge_secure', {
+      p_correct_count: params.correctCount,
+      p_score: params.score,
+      p_total_questions: params.totalQuestions || 10,
+    });
+
+    if (!rpcError && rpcData?.success) {
+      return true;
+    }
+
+    // 2. Dự phòng: Ghi nhận trực tiếp bảng daily_challenge_attempts nếu RPC không khả dụng
     let effectiveUserId = params.userId;
     if (!isUuid(effectiveUserId)) {
       const { data: { user } } = await supabase.auth.getUser();
@@ -410,6 +463,7 @@ export async function recordDailyChallengeAttempt(params: {
 
 // ---------------------------------------------------------------------------
 // EXAMS — Lấy danh sách đề thi chính thức từ Supabase (fallback: OFFICIAL_EXAMS)
+// Sử dụng view bảo mật exam_questions_public không làm lộ đáp án / lời giải
 // ---------------------------------------------------------------------------
 export async function getExams(): Promise<Exam[]> {
   if (!isSupabaseConfigured()) {
@@ -422,14 +476,17 @@ export async function getExams(): Promise<Exam[]> {
       .order('year', { ascending: false });
 
     if (error || !dbExams || dbExams.length === 0) {
+      if (error) console.warn('Lỗi truy vấn exams:', error.message);
       return OFFICIAL_EXAMS;
     }
 
+    // Truy vấn view an toàn exam_questions_public (ẩn correct_answer và isCorrect)
     const { data: dbQuestions, error: qErr } = await supabase
-      .from('questions')
+      .from('exam_questions_public')
       .select('*');
 
     if (qErr || !dbQuestions || dbQuestions.length === 0) {
+      if (qErr) console.warn('Lỗi truy vấn exam_questions_public:', qErr.message);
       return OFFICIAL_EXAMS;
     }
 
@@ -441,12 +498,12 @@ export async function getExams(): Promise<Exam[]> {
           id: q.id,
           type: 'single_choice' as const,
           topicId: q.topic_id,
-          topicName: q.topic_name,
+          topicName: q.topic_name || '',
           level: q.level,
           content: q.content,
           options: q.options || {},
           correctAnswer: q.correct_answer,
-          explanation: q.explanation || '',
+          explanation: q.explanation || null,
           codeSnippet: q.code_snippet,
         }));
 
@@ -456,12 +513,13 @@ export async function getExams(): Promise<Exam[]> {
           id: q.id,
           type: 'true_false_group' as const,
           topicId: q.topic_id,
-          topicName: q.topic_name,
+          topicName: q.topic_name || '',
           level: q.level,
           trackRequirement: q.track_requirement,
           context: q.content,
           statements: q.statements || [],
           codeSnippet: q.code_snippet,
+          tableData: q.table_data,
         }));
 
       const fallback = OFFICIAL_EXAMS.find(e => e.id === ex.id);
@@ -474,6 +532,7 @@ export async function getExams(): Promise<Exam[]> {
         difficulty: ex.difficulty,
         description: ex.description || '',
         baseXP: ex.base_xp || 100,
+        totalScore: 10 as const,
         part1Questions: part1.length > 0 ? part1 : (fallback?.part1Questions || []),
         part2Questions: part2.length > 0 ? part2 : (fallback?.part2Questions || []),
       };
