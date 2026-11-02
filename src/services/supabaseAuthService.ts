@@ -114,6 +114,27 @@ export async function signOut(): Promise<void> {
 // ---------------------------------------------------------------------------
 // LẤY SESSION HIỆN TẠI (dùng khi app load lại trang)
 // ---------------------------------------------------------------------------
+export async function getInitialSession(): Promise<AuthUser | null> {
+  if (!isSupabaseConfigured()) return null;
+  try {
+    const { data, error } = await supabase.auth.getSession();
+    if (error || !data.session?.user) return null;
+    const user = data.session.user;
+    return {
+      id: user.id,
+      email: user.email || '',
+      displayName:
+        user.user_metadata?.full_name ||
+        user.user_metadata?.name ||
+        user.email || '',
+      avatarUrl: user.user_metadata?.avatar_url,
+    };
+  } catch (err) {
+    console.error('Lỗi lấy session Supabase ban đầu:', err);
+    return null;
+  }
+}
+
 export async function getCurrentUser(): Promise<AuthUser | null> {
   if (!isSupabaseConfigured()) return null;
 

@@ -34,6 +34,8 @@ interface NavbarProps {
   onOpenAuth: () => void;
   isGoogleAuthenticated: boolean;
   onSignOut: () => void;
+  isDemoMode?: boolean;
+  onExitDemo?: () => void;
 }
 
 export const Navbar: React.FC<NavbarProps> = ({
@@ -48,6 +50,8 @@ export const Navbar: React.FC<NavbarProps> = ({
   onOpenAuth,
   isGoogleAuthenticated,
   onSignOut,
+  isDemoMode,
+  onExitDemo,
 }) => {
   const [userDropdownOpen, setUserDropdownOpen] = useState(false);
   const [isReportModalOpen, setIsReportModalOpen] = useState(false);
@@ -160,6 +164,22 @@ export const Navbar: React.FC<NavbarProps> = ({
 
           {/* RIGHT ZONE: VNOI Right Actions (Report issue, Theme, Flag, Bell, User) */}
           <div className="flex items-center gap-2 sm:gap-3 h-full shrink-0">
+            {/* Demo Mode Badge */}
+            {isDemoMode && (
+              <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-amber-500/20 border border-amber-400/40 text-amber-300 text-[11px] font-semibold">
+                <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-ping" />
+                <span>Trải nghiệm Demo</span>
+                {onExitDemo && (
+                  <button
+                    onClick={onExitDemo}
+                    className="ml-1 text-[10px] text-white hover:text-amber-200 underline cursor-pointer"
+                  >
+                    Thoát
+                  </button>
+                )}
+              </div>
+            )}
+
             {/* 1. Báo cáo vấn đề (Yellow warning icon + text) */}
             <button
               onClick={() => setIsReportModalOpen(true)}

@@ -9,30 +9,27 @@ interface LoginPageProps {
   onBackToHome: () => void;
   onLoginSuccess: (user: UserProfile) => void;
   onSwitchToRegister: () => void;
+  onStartDemo?: (role: UserRole) => void;
 }
 
 export const LoginPage: React.FC<LoginPageProps> = ({
   onBackToHome,
   onLoginSuccess,
   onSwitchToRegister,
+  onStartDemo,
 }) => {
   const [role, setRole] = useState<UserRole>('student');
-  const [email, setEmail] = useState<string>('hocsinh@tinpath.edu.vn');
-  const [password, setPassword] = useState<string>('password123');
+  const [email, setEmail] = useState<string>('');
+  const [password, setPassword] = useState<string>('');
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const [rememberMe, setRememberMe] = useState<boolean>(true);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
 
-  // Switch role tab and prefill demo credentials
+  // Switch role tab
   const handleRoleChange = (newRole: UserRole) => {
     setRole(newRole);
     setError(null);
-    if (newRole === 'student') {
-      setEmail('hocsinh@tinpath.edu.vn');
-    } else {
-      setEmail('giaovien@tinpath.edu.vn');
-    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -235,7 +232,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({
               type="text"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              placeholder="hocsinh@tinpath.edu.vn"
+              placeholder="nhap-email@example.com"
               className="w-full px-3.5 py-2.5 rounded-xl border border-gray-200 bg-white text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all"
             />
           </div>
@@ -300,8 +297,22 @@ export const LoginPage: React.FC<LoginPageProps> = ({
           </button>
         </form>
 
+        {/* Nút Dùng thử (Chỉ vào demo khi người dùng chủ động chọn) */}
+        {onStartDemo && (
+          <div className="mt-5 pt-4 border-t border-gray-100 text-center">
+            <p className="text-[11px] text-gray-500 mb-2">Chưa muốn đăng nhập? Bạn có thể khám phá hệ thống:</p>
+            <button
+              type="button"
+              onClick={() => onStartDemo(role)}
+              className="w-full py-2.5 px-4 rounded-xl border border-cyan-200 bg-cyan-50/70 hover:bg-cyan-100/80 text-cyan-800 font-semibold text-xs transition-all flex items-center justify-center gap-2 cursor-pointer shadow-xs"
+            >
+              <span>🚀 Dùng thử (Trải nghiệm nhanh {role === 'teacher' ? 'Giáo viên' : 'Học sinh'})</span>
+            </button>
+          </div>
+        )}
+
         {/* Chưa có tài khoản? Đăng ký ngay */}
-        <div className="text-center mt-6 text-xs text-gray-500">
+        <div className="text-center mt-5 text-xs text-gray-500">
           Chưa có tài khoản?{' '}
           <button
             type="button"

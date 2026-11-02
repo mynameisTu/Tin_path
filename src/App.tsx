@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Loader2 } from 'lucide-react';
 import { Navbar } from './components/layout/Navbar';
 import { Footer } from './components/layout/Footer';
 import { StudentDashboard } from './components/student/StudentDashboard';
@@ -23,18 +24,20 @@ import {
   Exam,
   ExamAttempt,
 } from './types';
-import { storageService } from './services/storageService';
+import { storageService, INITIAL_EMPTY_PROFILE } from './services/storageService';
+import { DEMO_STUDENT_PROFILE, DEMO_TEACHER_PROFILE, isDemoUser } from './data/demoData';
 import { OFFICIAL_EXAMS, DAILY_CHALLENGE_POOL } from './data/officialExamsData';
 import { initAuth, googleSignIn, logout } from './services/firebaseAuth';
 import { verifyServerXP } from './services/geminiClient';
 import {
+  getProfile,
   saveExamAttempt,
   updateProfile,
   saveClassroom,
   saveAssignment,
   recordDailyChallengeAttempt,
 } from './services/supabaseDbService';
-import { onAuthStateChange } from './services/supabaseAuthService';
+import { onAuthStateChange, getInitialSession, signOut } from './services/supabaseAuthService';
 import { isSupabaseConfigured } from './services/supabaseClient';
 
 export default function App() {
@@ -44,14 +47,22 @@ export default function App() {
   // User & role state
   const [user, setUser] = useState<UserProfile>(() => storageService.getUserProfile());
 
-  // Auth state: true if user has completed login/registration flow
-  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(() => {
-    const saved = storageService.getUserProfile();
-    return saved.onboardingCompleted === true;
-  });
+  // Trạng thái kiểm tra session lúc khởi động ứng dụng
+  const [isAuthChecking, setIsAuthChecking] = useState<boolean>(true);
+
+  // Demo mode: Chỉ bật khi người dùng chủ động bấm "Dùng thử"
+  const [isDemoMode, setIsDemoMode] = useState<boolean>(() => storageService.isDemoMode());
+
+  // Auth state: Chỉ true khi có session Supabase hợp lệ HOẶC đang trong chế độ demo chủ động
+  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
 
   // Auth view: 'landing' | 'login'
-  const [authView, setAuthView] = useState<'landing' | 'login'>('landing');
+  const [authView, setAuthView] = useState<'landing' | 'login'>(() => {
+    if (typeof window !== 'undefined' && window.location.pathname === '/login') {
+      return 'login';
+    }
+    return 'landing';
+  });
 
   // Register/Auth modal state
   const [isRegisterModalOpen, setIsRegisterModalOpen] = useState(false);
@@ -61,9 +72,19 @@ export default function App() {
     if (mode === 'login') {
       setAuthView('login');
       setIsRegisterModalOpen(false);
+      if (typeof window !== 'undefined' && window.location.pathname !== '/login') {
+        window.history.pushState(null, '', '/login');
+      }
     } else {
       setAuthModalMode(mode);
       setIsRegisterModalOpen(true);
+    }
+  };
+
+  const handleBackToLanding = () => {
+    setAuthView('landing');
+    if (typeof window !== 'undefined' && window.location.pathname !== '/') {
+      window.history.pushState(null, '', '/');
     }
   };
 
@@ -91,7 +112,7 @@ export default function App() {
   const [isPrivacyOpen, setIsPrivacyOpen] = useState(false);
   const [isLeaderboardOpen, setIsLeaderboardOpen] = useState(false);
 
-  // Google Firebase Auth state
+  // Google Firebase Auth state (cho Google Workspace Hub)
   const [isGoogleLoggedIn, setIsGoogleLoggedIn] = useState(false);
   const [isSigningIn, setIsSigningIn] = useState(false);
 
@@ -100,7 +121,134 @@ export default function App() {
     storageService.setThemeMode(themeMode);
   }, [themeMode]);
 
-  // Initialize Firebase Auth listener (giữ nguyên cho Google Sign-in hiện tại)
+  // Synchronize browser history / URL path
+  useEffect(() => {
+    const handlePopState = () => {
+      const path = window.location.pathname;
+      if (path === '/login') {
+        setAuthView('login');
+      } else {
+        setAuthView('landing');
+      }
+    };
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, []);
+
+  // Khôi phục session Supabase và kiểm tra trạng thái xác thực
+  useEffect(() => {
+    let isMounted = true;
+
+    async function initializeAuthSession() {
+      try {
+        if (isSupabaseConfigured()) {
+          const authUser = await getInitialSession();
+          if (!isMounted) return;
+
+          if (authUser) {
+            // Đã có phiên đăng nhập Supabase hợp lệ từ trước
+            let profile = await getProfile(authUser.id);
+            if (!profile) {
+              const saved = storageService.getUserProfile();
+              profile = {
+                ...saved,
+                id: authUser.id,
+                email: authUser.email,
+                displayName: authUser.displayName || authUser.email.split('@')[0],
+                avatarUrl: authUser.avatarUrl || saved.avatarUrl,
+                role: saved.role || 'student',
+                onboardingCompleted: true,
+              };
+              await updateProfile(authUser.id, profile).catch(console.warn);
+            }
+            storageService.setDemoMode(false);
+            storageService.saveUserProfile(profile);
+            setUser(profile);
+            setIsLoggedIn(true);
+            setIsDemoMode(false);
+            setIsAuthChecking(false);
+            return;
+          }
+        }
+
+        // Nếu chưa đăng nhập qua Supabase: Kiểm tra xem người dùng có đang chủ động dùng Demo Mode không
+        if (storageService.isDemoMode()) {
+          const saved = storageService.getUserProfile();
+          if (isDemoUser(saved)) {
+            setUser(saved);
+            setIsLoggedIn(true);
+            setIsDemoMode(true);
+            setIsAuthChecking(false);
+            return;
+          } else {
+            storageService.clearUserProfile();
+          }
+        }
+
+        // Mặc định: Người dùng chưa đăng nhập -> Hiển thị Landing Page, KHÔNG tự động vào demo
+        storageService.setDemoMode(false);
+        setUser(INITIAL_EMPTY_PROFILE);
+        setIsLoggedIn(false);
+        setIsDemoMode(false);
+      } catch (err) {
+        console.error('Lỗi khi khôi phục session:', err);
+        storageService.setDemoMode(false);
+        setUser(INITIAL_EMPTY_PROFILE);
+        setIsLoggedIn(false);
+        setIsDemoMode(false);
+      } finally {
+        if (isMounted) {
+          setIsAuthChecking(false);
+        }
+      }
+    }
+
+    initializeAuthSession();
+
+    // Lắng nghe thay đổi trạng thái xác thực Supabase
+    if (isSupabaseConfigured()) {
+      const cleanup = onAuthStateChange(async (authUser) => {
+        if (!isMounted) return;
+        if (authUser) {
+          let profile = await getProfile(authUser.id);
+          if (!profile) {
+            const saved = storageService.getUserProfile();
+            profile = {
+              ...saved,
+              id: authUser.id,
+              email: authUser.email,
+              displayName: authUser.displayName || authUser.email.split('@')[0],
+              avatarUrl: authUser.avatarUrl || saved.avatarUrl,
+              role: saved.role || 'student',
+              onboardingCompleted: true,
+            };
+          }
+          storageService.setDemoMode(false);
+          storageService.saveUserProfile(profile);
+          setUser(profile);
+          setIsLoggedIn(true);
+          setIsDemoMode(false);
+        } else {
+          // Người dùng đăng xuất Supabase
+          if (!storageService.isDemoMode()) {
+            setUser(INITIAL_EMPTY_PROFILE);
+            setIsLoggedIn(false);
+            setIsDemoMode(false);
+          }
+        }
+      });
+      return () => {
+        isMounted = false;
+        cleanup();
+      };
+    } else {
+      return () => {
+        isMounted = false;
+      };
+    }
+  }, []);
+
+  // Initialize Firebase Auth listener (cho Google Workspace Hub)
   useEffect(() => {
     const unsubscribe = initAuth(
       (firebaseUser, token) => {
@@ -112,7 +260,9 @@ export default function App() {
               email: firebaseUser.email || prev.email,
               displayName: firebaseUser.displayName || prev.displayName,
             };
-            storageService.saveUserProfile(updated);
+            if (!isDemoMode && !isDemoUser(prev)) {
+              storageService.saveUserProfile(updated);
+            }
             return updated;
           });
         }
@@ -124,30 +274,7 @@ export default function App() {
     return () => {
       if (typeof unsubscribe === 'function') unsubscribe();
     };
-  }, []);
-
-  // Lấy session Supabase nếu đã đăng nhập từ trước
-  useEffect(() => {
-    if (!isSupabaseConfigured()) return;
-    const cleanup = onAuthStateChange((authUser) => {
-      if (authUser && !isLoggedIn) {
-        const profile = storageService.getUserProfile();
-        if (profile.onboardingCompleted) {
-          // Khôi phục session tự động nếu đã hoàn thành onboarding
-          const updated: UserProfile = {
-            ...profile,
-            id: authUser.id,
-            email: authUser.email,
-            displayName: authUser.displayName || profile.displayName,
-            avatarUrl: authUser.avatarUrl || profile.avatarUrl,
-          };
-          setUser(updated);
-          setIsLoggedIn(true);
-        }
-      }
-    });
-    return cleanup;
-  }, []);
+  }, [isDemoMode]);
 
   // Theme toggle
   const handleToggleTheme = () => {
@@ -168,7 +295,9 @@ export default function App() {
             email: res.user.email || prev.email,
             displayName: res.user.displayName || prev.displayName,
           };
-          storageService.saveUserProfile(updated);
+          if (!isDemoMode && !isDemoUser(prev)) {
+            storageService.saveUserProfile(updated);
+          }
           return updated;
         });
       }
@@ -179,31 +308,55 @@ export default function App() {
     }
   };
 
-  const handleSignOut = async () => {
-    await logout();
-    setIsGoogleLoggedIn(false);
+  // Kích hoạt chế độ Dùng thử (Chỉ khi người dùng chủ động chọn)
+  const handleStartDemo = (role: UserRole = 'student') => {
+    const demoProfile = role === 'teacher' ? DEMO_TEACHER_PROFILE : DEMO_STUDENT_PROFILE;
+    storageService.setDemoMode(true);
+    storageService.saveUserProfile(demoProfile);
+    setUser(demoProfile);
+    setIsDemoMode(true);
+    setIsLoggedIn(true);
+    setAuthView('landing');
+    if (typeof window !== 'undefined' && window.location.pathname !== '/') {
+      window.history.pushState(null, '', '/');
+    }
+    if (role === 'student') setCurrentTab('home');
+    else setCurrentTab('teacher_overview');
   };
 
   // Handle successful login/registration from RegisterModal or LoginPage
   const handleLoginSuccess = (loggedInUser: UserProfile) => {
+    setIsDemoMode(false);
+    storageService.setDemoMode(false);
     setUser(loggedInUser);
     setIsLoggedIn(true);
     setAuthView('landing');
+    if (typeof window !== 'undefined' && window.location.pathname !== '/') {
+      window.history.pushState(null, '', '/');
+    }
     if (loggedInUser.role === 'student') setCurrentTab('home');
     else if (loggedInUser.role === 'teacher') setCurrentTab('teacher_overview');
   };
 
   // Handle logout - return to landing
   const handleLogout = async () => {
-    await logout();
+    try {
+      if (isSupabaseConfigured()) {
+        await signOut();
+      }
+      await logout();
+    } catch (err) {
+      console.warn('Lỗi khi đăng xuất:', err);
+    }
     setIsGoogleLoggedIn(false);
     setIsLoggedIn(false);
+    setIsDemoMode(false);
+    storageService.clearUserProfile();
+    setUser(INITIAL_EMPTY_PROFILE);
     setAuthView('landing');
-    // Reset profile so next visit starts fresh
-    const resetUser = storageService.getUserProfile();
-    resetUser.onboardingCompleted = false;
-    storageService.saveUserProfile({ ...resetUser, onboardingCompleted: false });
-    setUser({ ...resetUser, onboardingCompleted: false });
+    if (typeof window !== 'undefined' && window.location.pathname !== '/') {
+      window.history.pushState(null, '', '/');
+    }
   };
 
   // Role switch handler
@@ -214,11 +367,11 @@ export default function App() {
     else if (newRole === 'teacher') setCurrentTab('teacher_overview');
   };
 
-  // Save profile — ghi vào Supabase + localStorage
+  // Save profile — ghi vào Supabase nếu là tài khoản thật
   const handleSaveProfile = async (updated: UserProfile) => {
     setUser(updated);
     storageService.saveUserProfile(updated);
-    if (isSupabaseConfigured()) {
+    if (isSupabaseConfigured() && !isDemoMode && !isDemoUser(updated)) {
       await updateProfile(updated.id, updated);
     }
   };
@@ -285,7 +438,7 @@ export default function App() {
     setActiveExam(topicQuiz);
   };
 
-  // Submit Exam Attempt — ghi vào Supabase + localStorage
+  // Submit Exam Attempt — ghi vào Supabase nếu là tài khoản thật
   const handleSubmitAttempt = async (attempt: ExamAttempt) => {
     if (attempt.examId.startsWith('daily_')) {
       try {
@@ -296,7 +449,7 @@ export default function App() {
         });
         const awardedXP = verifyRes.awardedXP || 80;
         storageService.recordDailyChallengeCompleted(attempt.correctPart1Count, awardedXP);
-        if (isSupabaseConfigured()) {
+        if (isSupabaseConfigured() && !isDemoMode && !isDemoUser(user)) {
           recordDailyChallengeAttempt({
             userId: user.id,
             score: attempt.totalScore,
@@ -309,9 +462,9 @@ export default function App() {
         storageService.recordDailyChallengeCompleted(attempt.correctPart1Count, 80);
       }
     } else {
-      // Ghi vào Supabase nếu đã cấu hình
+      // Ghi vào Supabase nếu là tài khoản thật
       storageService.saveExamAttempt(attempt);
-      if (isSupabaseConfigured()) {
+      if (isSupabaseConfigured() && !isDemoMode && !isDemoUser(user)) {
         saveExamAttempt(attempt).catch(console.error);
         // Cập nhật XP trong profile Supabase
         const currentUser = storageService.getUserProfile();
@@ -329,6 +482,27 @@ export default function App() {
     setCurrentTab('learning');
   };
 
+  // Màn hình chờ trong lúc kiểm tra session Supabase ban đầu
+  if (isAuthChecking) {
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center bg-[#071626] text-white select-none">
+        <div className="flex flex-col items-center gap-4">
+          <div className="w-16 h-16 rounded-2xl bg-gradient-to-tr from-cyan-500 to-blue-600 animate-pulse flex items-center justify-center shadow-[0_0_30px_rgba(6,182,212,0.5)]">
+            <img
+              src="/images/logo/tinpath_logo.png"
+              alt="TinPath Logo"
+              className="w-10 h-10 object-contain drop-shadow"
+            />
+          </div>
+          <div className="flex items-center gap-2 text-cyan-200 text-sm font-medium">
+            <Loader2 className="w-4 h-4 animate-spin text-cyan-400" />
+            <span>Đang tải TinPath GDPT 2018...</span>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen flex flex-col bg-[#f6f8fa] dark:bg-[#121212] text-[#202020] dark:text-[#E0E0E0] transition-colors">
       {/* ── UNAUTHENTICATED: Show Landing Page or Login Page ── */}
@@ -341,6 +515,7 @@ export default function App() {
             onOpenAuth={handleOpenAuth}
             onStartDailyChallenge={() => handleOpenAuth('register')}
             onTakeExam={() => handleOpenAuth('register')}
+            onStartDemo={handleStartDemo}
           />
 
           {/* Login Modal Overlay */}
@@ -349,19 +524,20 @@ export default function App() {
               {/* Blurred backdrop of landing page */}
               <div
                 className="absolute inset-0 backdrop-blur-sm bg-black/40"
-                onClick={() => setAuthView('landing')}
+                onClick={handleBackToLanding}
               />
               {/* Login Card */}
               <div className="relative z-10 w-full max-w-[480px] mx-4">
                 <LoginPage
-                  onBackToHome={() => setAuthView('landing')}
+                  onBackToHome={handleBackToLanding}
                   onLoginSuccess={(loggedInUser) => {
                     handleLoginSuccess(loggedInUser);
                   }}
                   onSwitchToRegister={() => {
-                    setAuthView('landing');
+                    handleBackToLanding();
                     handleOpenAuth('register');
                   }}
+                  onStartDemo={handleStartDemo}
                 />
               </div>
             </div>
@@ -376,6 +552,9 @@ export default function App() {
             onSwitchToLogin={() => {
               setIsRegisterModalOpen(false);
               setAuthView('login');
+              if (typeof window !== 'undefined' && window.location.pathname !== '/login') {
+                window.history.pushState(null, '', '/login');
+              }
             }}
           />
         </>
@@ -397,6 +576,8 @@ export default function App() {
             onOpenAuth={() => setIsAuthModalOpen(true)}
             isGoogleAuthenticated={isGoogleLoggedIn}
             onSignOut={handleLogout}
+            isDemoMode={isDemoMode}
+            onExitDemo={handleLogout}
           />
 
       {/* Main View Area: Tràn rộng sang 2 bên trái phải, dịch xuống cho cân xứng với top navbar */}
@@ -477,14 +658,14 @@ export default function App() {
             onAddClassroom={(cls) => {
               storageService.addClassroom(cls);
               setClassrooms(storageService.getClassrooms());
-              if (isSupabaseConfigured()) {
+              if (isSupabaseConfigured() && !isDemoMode && !isDemoUser(user)) {
                 saveClassroom(cls).catch(console.error);
               }
             }}
             onAddAssignment={(assign) => {
               storageService.addAssignment(assign);
               setAssignments(storageService.getAssignments());
-              if (isSupabaseConfigured()) {
+              if (isSupabaseConfigured() && !isDemoMode && !isDemoUser(user)) {
                 saveAssignment(assign).catch(console.error);
               }
             }}

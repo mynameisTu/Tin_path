@@ -18,6 +18,7 @@ import { QUANG_NGAI_SCHOOLS } from '../data/schoolsData';
 
 const STORAGE_KEYS = {
   USER_PROFILE: 'tinpath_user_profile',
+  DEMO_MODE: 'tinpath_demo_mode',
   EXAM_ATTEMPTS: 'tinpath_exam_attempts',
   XP_TRANSACTIONS: 'tinpath_xp_transactions',
   DAILY_CHALLENGES: 'tinpath_daily_challenges',
@@ -31,100 +32,103 @@ const STORAGE_KEYS = {
   COMMENTS: 'tinpath_exam_comments',
 };
 
-export const DEFAULT_STUDENT: UserProfile = {
-  id: 'student_qn_01',
-  email: 'fightingalone0408@gmail.com',
-  displayName: 'Nguyễn Văn An',
+export const INITIAL_EMPTY_PROFILE: UserProfile = {
+  id: '',
+  email: '',
+  displayName: 'Học sinh TinPath',
   role: 'student',
   province: 'Quảng Ngãi',
-  district: 'TP. Quảng Ngãi',
-  schoolId: 'qn_le_khiet',
-  schoolName: 'THPT chuyên Lê Khiết',
+  district: '',
+  schoolId: '',
+  schoolName: 'Chưa cập nhật trường',
   grade: '12',
   track: 'CS',
-  targetScore: 9.0,
+  targetScore: 8.5,
   dailyStudyMinutes: 45,
-  xp: 320,
-  streakDays: 5,
+  xp: 0,
+  streakDays: 0,
   lastActiveDate: new Date().toISOString().split('T')[0],
   completedDailyToday: false,
-  onboardingCompleted: true,
-  diagnosticScore: 7.5,
+  onboardingCompleted: false,
   createdAt: new Date().toISOString(),
 };
+
+// Bí danh giữ tương thích ngược
+export const DEFAULT_STUDENT: UserProfile = INITIAL_EMPTY_PROFILE;
 
 export const INITIAL_LEADERBOARD = [
   { rank: 1, name: 'Trần Bảo Long', schoolName: 'THPT chuyên Lê Khiết', district: 'TP. Quảng Ngãi', xp: 850, streak: 18, isCurrentUser: false },
   { rank: 2, name: 'Nguyễn Thị Mỹ Duyên', schoolName: 'THPT Trần Quốc Tuấn', district: 'TP. Quảng Ngãi', xp: 740, streak: 14, isCurrentUser: false },
   { rank: 3, name: 'Lê Hoàng Nam', schoolName: 'THPT Bình Sơn', district: 'Huyện Bình Sơn', xp: 680, streak: 12, isCurrentUser: false },
   { rank: 4, name: 'Phạm Minh Quân', schoolName: 'THPT Ba Gia', district: 'Huyện Sơn Tịnh', xp: 590, streak: 9, isCurrentUser: false },
-  { rank: 5, name: 'Nguyễn Văn An (Bạn)', schoolName: 'THPT chuyên Lê Khiết', district: 'TP. Quảng Ngãi', xp: 320, streak: 5, isCurrentUser: true },
-  { rank: 6, name: 'Võ Thị Thanh Thảo', schoolName: 'THPT Số 1 Tư Nghĩa', district: 'Huyện Tư Nghĩa', xp: 310, streak: 4, isCurrentUser: false },
-  { rank: 7, name: 'Đặng Quốc Huy', schoolName: 'THPT Số 1 Đức Phổ', district: 'Thị xã Đức Phổ', xp: 290, streak: 6, isCurrentUser: false },
-  { rank: 8, name: 'Bùi Gia Khang', schoolName: 'THPT Mộ Đức 1', district: 'Huyện Mộ Đức', xp: 260, streak: 3, isCurrentUser: false },
-  { rank: 9, name: 'Hồ Văn Lộc', schoolName: 'THPT Sơn Hà', district: 'Huyện Sơn Hà', xp: 240, streak: 4, isCurrentUser: false },
-  { rank: 10, name: 'Đinh Thị Mai', schoolName: 'THPT Trà Bồng', district: 'Huyện Trà Bồng', xp: 220, streak: 2, isCurrentUser: false },
+  { rank: 5, name: 'Võ Thị Thanh Thảo', schoolName: 'THPT Số 1 Tư Nghĩa', district: 'Huyện Tư Nghĩa', xp: 310, streak: 4, isCurrentUser: false },
+  { rank: 6, name: 'Đặng Quốc Huy', schoolName: 'THPT Số 1 Đức Phổ', district: 'Thị xã Đức Phổ', xp: 290, streak: 6, isCurrentUser: false },
+  { rank: 7, name: 'Bùi Gia Khang', schoolName: 'THPT Mộ Đức 1', district: 'Huyện Mộ Đức', xp: 260, streak: 3, isCurrentUser: false },
+  { rank: 8, name: 'Hồ Văn Lộc', schoolName: 'THPT Sơn Hà', district: 'Huyện Sơn Hà', xp: 240, streak: 4, isCurrentUser: false },
+  { rank: 9, name: 'Đinh Thị Mai', schoolName: 'THPT Trà Bồng', district: 'Huyện Trà Bồng', xp: 220, streak: 2, isCurrentUser: false },
 ];
 
-export const INITIAL_CLASSROOMS: Classroom[] = [
-  {
-    id: 'class_12tin1',
-    name: '12 Tin Học - Luyện Thi Tốt Nghiệp THPT 2025',
-    code: 'TIN12-QN',
-    grade: '12',
-    schoolName: 'THPT chuyên Lê Khiết',
-    teacherId: 'teacher_01',
-    teacherName: 'Thầy Nguyễn Trọng Bình',
-    studentCount: 38,
-    createdAt: '2025-09-05',
-  },
-  {
-    id: 'class_12a2',
-    name: '12A2 - Chuyên đề Định hướng Khoa học máy tính',
-    code: 'CS12-LK',
-    grade: '12',
-    schoolName: 'THPT chuyên Lê Khiết',
-    teacherId: 'teacher_01',
-    teacherName: 'Thầy Nguyễn Trọng Bình',
-    studentCount: 35,
-    createdAt: '2025-09-05',
-  },
-];
+export const INITIAL_CLASSROOMS: Classroom[] = [];
 
-export const INITIAL_ASSIGNMENTS: Assignment[] = [
-  {
-    id: 'assign_01',
-    classroomId: 'class_12tin1',
-    title: 'Bài tập tuần 1: 50 câu trắc nghiệm Kiến trúc Mạng & Giao thức TCP/IP',
-    topicId: '12B',
-    dueDate: new Date(Date.now() + 3 * 86400000).toISOString().split('T')[0],
-    questionCount: 15,
-    allowRetake: true,
-    status: 'active',
-    submissionsCount: 29,
-  },
-  {
-    id: 'assign_02',
-    classroomId: 'class_12tin1',
-    title: 'Kiểm tra 15 phút: Cú pháp SQL và Mô hình CSDL quan hệ',
-    topicId: '11F',
-    dueDate: new Date(Date.now() + 5 * 86400000).toISOString().split('T')[0],
-    questionCount: 10,
-    allowRetake: false,
-    status: 'active',
-    submissionsCount: 18,
-  },
-];
+export const INITIAL_ASSIGNMENTS: Assignment[] = [];
 
 export const storageService = {
   getUserProfile(): UserProfile {
     try {
       const data = localStorage.getItem(STORAGE_KEYS.USER_PROFILE);
-      if (data) return JSON.parse(data);
+      if (data) {
+        const parsed = JSON.parse(data);
+        // Tự động dọn dẹp profile giả lập cũ tồn đọng trong localStorage của trình duyệt
+        if (
+          parsed &&
+          (parsed.id === 'student_qn_01' ||
+            parsed.id === 'student_01' ||
+            parsed.email === 'fightingalone0408@gmail.com')
+        ) {
+          localStorage.removeItem(STORAGE_KEYS.USER_PROFILE);
+          return INITIAL_EMPTY_PROFILE;
+        }
+        return parsed;
+      }
     } catch (e) {
       console.error(e);
     }
-    return DEFAULT_STUDENT;
+    return INITIAL_EMPTY_PROFILE;
+  },
+
+  isDemoMode(): boolean {
+    try {
+      return (
+        sessionStorage.getItem(STORAGE_KEYS.DEMO_MODE) === 'true' ||
+        localStorage.getItem(STORAGE_KEYS.DEMO_MODE) === 'true'
+      );
+    } catch {
+      return false;
+    }
+  },
+
+  setDemoMode(enabled: boolean): void {
+    try {
+      if (enabled) {
+        sessionStorage.setItem(STORAGE_KEYS.DEMO_MODE, 'true');
+        localStorage.setItem(STORAGE_KEYS.DEMO_MODE, 'true');
+      } else {
+        sessionStorage.removeItem(STORAGE_KEYS.DEMO_MODE);
+        localStorage.removeItem(STORAGE_KEYS.DEMO_MODE);
+      }
+    } catch (e) {
+      console.error(e);
+    }
+  },
+
+  clearUserProfile(): void {
+    try {
+      localStorage.removeItem(STORAGE_KEYS.USER_PROFILE);
+      sessionStorage.removeItem(STORAGE_KEYS.DEMO_MODE);
+      localStorage.removeItem(STORAGE_KEYS.DEMO_MODE);
+    } catch (e) {
+      console.error(e);
+    }
   },
 
   saveUserProfile(profile: UserProfile): void {
@@ -175,24 +179,7 @@ export const storageService = {
     } catch (e) {
       console.error(e);
     }
-    return [
-      {
-        id: 'xp_init_1',
-        userId: 'student_qn_01',
-        amount: 50,
-        source: 'diagnostic',
-        description: 'Hoàn thành bài đánh giá đầu vào',
-        timestamp: new Date(Date.now() - 4 * 86400000).toISOString(),
-      },
-      {
-        id: 'xp_init_2',
-        userId: 'student_qn_01',
-        amount: 80,
-        source: 'daily_challenge',
-        description: 'Hoàn thành thử thách 10 câu hằng ngày',
-        timestamp: new Date(Date.now() - 1 * 86400000).toISOString(),
-      },
-    ];
+    return [];
   },
 
   addXPTransaction(tx: XPTransaction): void {
@@ -244,7 +231,7 @@ export const storageService = {
       if (data) return JSON.parse(data);
     } catch (e) {}
     return {
-      '12A': true,
+      '12A': false,
       '12B': false,
       '12D': false,
       '12G': false,

@@ -8,6 +8,7 @@ interface LandingPageProps {
   onOpenAuth: (mode?: 'login' | 'register') => void;
   onStartDailyChallenge: () => void;
   onTakeExam: (examId: string) => void;
+  onStartDemo?: (role?: 'student' | 'teacher') => void;
 }
 
 export const LandingPage: React.FC<LandingPageProps> = ({
@@ -16,6 +17,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({
   onOpenAuth,
   onStartDailyChallenge,
   onTakeExam,
+  onStartDemo,
 }) => {
   // Search school state for Section 8
   const [schoolSearch, setSchoolSearch] = useState('');
@@ -95,6 +97,16 @@ export const LandingPage: React.FC<LandingPageProps> = ({
 
             {/* Right Actions */}
             <div className="flex items-center gap-2">
+              {/* Dùng thử */}
+              {onStartDemo && (
+                <button
+                  onClick={() => onStartDemo('student')}
+                  className="hidden sm:flex items-center h-8 px-3.5 rounded-full border border-cyan-400/50 text-[13px] font-medium text-cyan-200 hover:text-white hover:bg-cyan-500/20 transition-all cursor-pointer shadow-xs"
+                >
+                  🚀 Dùng thử
+                </button>
+              )}
+
               {/* Login */}
               <button
                 onClick={() => onOpenAuth('login')}
@@ -145,6 +157,14 @@ export const LandingPage: React.FC<LandingPageProps> = ({
                 {item.label}
               </a>
             ))}
+            {onStartDemo && (
+              <button
+                onClick={() => { setMobileMenuOpen(false); onStartDemo('student'); }}
+                className="w-full text-left px-3 py-2 rounded-lg text-sm font-semibold text-cyan-300 hover:text-white hover:bg-white/10 transition-all flex items-center gap-2"
+              >
+                <span>🚀 Dùng thử (Trải nghiệm nhanh)</span>
+              </button>
+            )}
             <div className="pt-2 border-t border-white/10 mt-1 flex gap-2">
               <button
                 onClick={() => { setMobileMenuOpen(false); onOpenAuth('login'); }}
@@ -195,7 +215,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({
                 Nền tảng đồng hành cùng học sinh Quảng Ngãi trong hành trình ôn thi tốt nghiệp THPT môn Tin học với hệ thống học theo chuyên đề, ngân hàng đề thi chuẩn hóa và lộ trình cá nhân hóa bằng Trí tuệ Nhân tạo.
               </p>
 
-              {/* Dual CTAs */}
+              {/* CTAs */}
               <div className="flex flex-wrap items-center gap-3.5 mb-5 sm:mb-6">
                 <button
                   onClick={() => onOpenAuth('register')}
@@ -204,12 +224,21 @@ export const LandingPage: React.FC<LandingPageProps> = ({
                   <span>Bắt đầu học ngay</span>
                   <span className="text-lg">🎓</span>
                 </button>
+                {onStartDemo && (
+                  <button
+                    onClick={() => onStartDemo('student')}
+                    className="h-11 sm:h-12 px-5 rounded-xl bg-cyan-600/30 hover:bg-cyan-600/50 border border-cyan-400/50 text-cyan-200 hover:text-white font-semibold text-sm sm:text-base flex items-center gap-2 active:scale-98 transition-all cursor-pointer shadow-xs"
+                  >
+                    <span>🚀</span>
+                    <span>Dùng thử</span>
+                  </button>
+                )}
                 <a
                   href="#about-tinpath"
                   className="h-11 sm:h-12 px-5 rounded-xl bg-[#165084]/90 hover:bg-[#1a5e9a] border border-cyan-300/40 hover:border-cyan-200 text-white font-semibold text-sm sm:text-base flex items-center gap-2 active:scale-98 transition-all"
                 >
                   <span>🧭</span>
-                  <span>Khám phá môn học &amp; Đề thi</span>
+                  <span>Khám phá môn học</span>
                 </a>
               </div>
 
