@@ -295,78 +295,366 @@ export const TOPIC_LESSONS: Record<SubjectTopicId, TopicLesson> = {
     ],
     "practiceQuestions": [
       {
-        "id": "12a-q1",
-        "question": "Câu 1. Mô tả nào sau đây nêu đúng quá trình nhận thức của máy tính?",
-        "options": {
-          "A": "Quá trình trích rút được tri thức từ những dữ liệu do con người cung cấp.",
-          "B": "Quá trình tự động hiểu biết được môi trường xung quanh thông qua cảm biến.",
-          "C": "Quá trình thu thập thông tin từ nguồn tài nguyên mạng do con người cung cấp.",
-          "D": "Quá trình đọc, hiểu tri thức mới thông qua các quy tắc và tri thức sẵn có."
-        },
-        "correctAnswer": "A",
-        "explanation": "Trích nguyên văn sách Hướng dẫn ôn thi tốt nghiệp môn Tin học (trang 172): 'Quá trình nhận thức có thể hiểu là trích rút các tri thức từ dữ liệu được thu thập thông qua hiểu biết về môi trường xung quanh và các nguồn tài nguyên sẵn có. Trong đó, đọc và hiểu tri thức là một hoạt động thành phần của quá trình này.'"
+            "id": "12a-q1",
+            "question": "Câu 1. Mô tả nào sau đây nêu đúng quá trình nhận thức của máy tính?",
+            "options": {
+                  "A": "Quá trình trích rút được tri thức từ những dữ liệu do con người cung cấp.",
+                  "B": "Quá trình tự động hiểu biết được môi trường xung quanh thông qua cảm biến.",
+                  "C": "Quá trình thu thập thông tin từ nguồn tài nguyên mạng do con người cung cấp.",
+                  "D": "Quá trình đọc, hiểu tri thức mới thông qua các quy tắc và tri thức sẵn có."
+            },
+            "correctAnswer": "A",
+            "explanation": "Trích nguyên văn sách Hướng dẫn ôn thi tốt nghiệp môn Tin học (Bộ GD&ĐT, trang 172): 'Quá trình nhận thức có thể hiểu là trích rút các tri thức từ dữ liệu được thu thập thông qua hiểu biết về môi trường xung quanh và các nguồn tài nguyên sẵn có.'"
       },
       {
-        "id": "12a-q2",
-        "question": "Câu 2. Cụm từ thích hợp để mô tả sự thông minh của máy tính là:",
-        "options": {
-          "A": "Trí tuệ của máy tính.",
-          "B": "Trí nhớ của máy tính.",
-          "C": "Trí óc của máy tính.",
-          "D": "Suy nghĩ của máy tính."
-        },
-        "correctAnswer": "A",
-        "explanation": "Trích nguyên văn đáp án sách (trang 172): 'A. Sự thông minh của máy tính đề cập đến khả năng thực hiện công việc trí tuệ như con người, thay vì chỉ thực hiện ghi nhớ (trí nhớ) hoặc khả năng thực hiện các công việc (suy nghĩ) thông qua phần cứng và chương trình của máy tính (trí óc).'"
+            "id": "12a-q2",
+            "question": "Câu 2. Cụm từ thích hợp để mô tả sự thông minh của máy tính là:",
+            "options": {
+                  "A": "Trí tuệ của máy tính.",
+                  "B": "Trí nhớ của máy tính.",
+                  "C": "Trí óc của máy tính.",
+                  "D": "Suy nghĩ của máy tính."
+            },
+            "correctAnswer": "A",
+            "explanation": "Sự thông minh của máy tính đề cập đến 'Trí tuệ của máy tính' - tức khả năng thực hiện công việc mang tính trí tuệ như con người thông qua phần mềm và thuật toán mô phỏng."
       },
       {
-        "id": "12a-q3",
-        "question": "Câu 3. Phát biểu nào sau đây nêu đúng khái niệm trí tuệ nhân tạo?",
-        "options": {
-          "A": "Khả năng của máy tính có thể làm những công việc mang tính trí tuệ con người.",
-          "B": "Trí tuệ của máy tính có thể làm những công việc tương đương trí tuệ con người.",
-          "C": "Tích hợp công nghệ hiện đại vào máy tính, giúp máy tính hiểu được con người.",
-          "D": "Hoạt động máy tính giao tiếp được với con người bằng ngôn ngữ tự nhiên."
-        },
-        "correctAnswer": "A",
-        "explanation": "Trích nguyên văn đáp án sách (trang 172): 'A. Tích hợp các công nghệ hiện đại giúp máy tính có khả năng thực hiện được các công việc mang tính trí tuệ người (hiểu, giao tiếp, phân tích, đề xuất,...) nhưng không thể tương đương với trí tuệ con người.'"
+            "id": "12a-q3",
+            "question": "Câu 3. Phát biểu nào sau đây nêu đúng khái niệm trí tuệ nhân tạo?",
+            "options": {
+                  "A": "Khả năng của máy tính có thể làm những công việc mang tính trí tuệ con người.",
+                  "B": "Trí tuệ của máy tính có thể làm những công việc tương đương trí tuệ con người.",
+                  "C": "Tích hợp công nghệ hiện đại vào máy tính, giúp máy tính hiểu được con người.",
+                  "D": "Hoạt động máy tính giao tiếp được với con người bằng ngôn ngữ tự nhiên."
+            },
+            "correctAnswer": "A",
+            "explanation": "Trí tuệ nhân tạo (AI) là khả năng của máy tính có thể thực hiện những công việc mang tính trí tuệ của con người (như học hỏi, suy luận, hiểu ngôn ngữ và giải quyết vấn đề)."
       },
       {
-        "id": "12a-q4",
-        "question": "Câu 4. Thiết bị nào sau đây được tích hợp trợ lí ảo?",
-        "options": {
-          "A": "Máy tính cầm tay.",
-          "B": "Điện thoại cảm ứng.",
-          "C": "Chuông báo cháy.",
-          "D": "Máy quét mã vạch."
-        },
-        "correctAnswer": "B",
-        "explanation": "Trích nguyên văn đáp án sách (trang 172): 'B. Các thiết bị điện tử hoặc thiết bị vào/ra đơn giản không được tích hợp trí tuệ nhân tạo (trợ lí ảo) vì đặc thù của thiết bị. Điện thoại thông minh/cảm ứng là thiết bị điển hình tích hợp trợ lí ảo như Siri, Google Assistant.'"
+            "id": "12a-q4",
+            "question": "Câu 4. Thiết bị nào sau đây được tích hợp trợ lí ảo?",
+            "options": {
+                  "A": "Máy tính cầm tay bỏ túi.",
+                  "B": "Điện thoại thông minh (smartphone).",
+                  "C": "Chuông báo cháy gia đình.",
+                  "D": "Máy quét mã vạch siêu thị."
+            },
+            "correctAnswer": "B",
+            "explanation": "Điện thoại thông minh là thiết bị điển hình tích hợp các trợ lí ảo như Siri (Apple), Google Assistant (Google), Bixby (Samsung)."
       },
       {
-        "id": "12a-q5",
-        "question": "Câu 5. Yếu tố nào sau đây là điều kiện tiên quyết đảm bảo AI hạn chế vi phạm đạo đức?",
-        "options": {
-          "A": "Môi trường triển khai.",
-          "B": "Phạm vi của thông tin.",
-          "C": "Dữ liệu huấn luyện.",
-          "D": "Mô hình xây dựng."
-        },
-        "correctAnswer": "C",
-        "explanation": "Trích nguyên văn đáp án sách (trang 172): 'C. Một hệ thống AI đúng đắn khi dữ liệu học phải phù hợp với tiêu chuẩn đạo đức vì đây là cơ sở tri thức của hệ thống.'"
+            "id": "12a-q5",
+            "question": "Câu 5. Yếu tố nào sau đây là điều kiện tiên quyết đảm bảo AI hạn chế vi phạm đạo đức?",
+            "options": {
+                  "A": "Môi trường triển khai hệ thống.",
+                  "B": "Phạm vi kết nối mạng nội bộ.",
+                  "C": "Dữ liệu huấn luyện đúng đắn và chuẩn mực.",
+                  "D": "Tốc độ xử lý của vi xử lý GPU."
+            },
+            "correctAnswer": "C",
+            "explanation": "Một hệ thống AI hoạt động đúng đắn khi dữ liệu học phù hợp với các tiêu chuẩn đạo đức và không bị định kiến (bias), vì đây chính là cơ sở tri thức để AI suy luận và ra quyết định."
       },
       {
-        "id": "12a-q6",
-        "question": "Câu 6. Thuật ngữ 'deepfake' dùng để nói về hành vi nào sau đây?",
-        "options": {
-          "A": "Tạo ra các hình ảnh, âm thanh,... giả mạo.",
-          "B": "Phát hiện ra các hình ảnh, âm thanh,... giả mạo.",
-          "C": "Tạo ra các thông tin không có thật trên mạng.",
-          "D": "Phát hiện ra các thông tin giả mạo trên mạng."
-        },
-        "correctAnswer": "A",
-        "explanation": "Trích nguyên văn đáp án sách (trang 172): 'A. Deepfake sử dụng các thuật toán học sâu để miêu tả các hành vi giả mạo âm thanh, hình ảnh và video của con người.'"
+            "id": "12a-q6",
+            "question": "Câu 6. Thuật ngữ 'Deepfake' dùng để nói về hành vi nào sau đây?",
+            "options": {
+                  "A": "Tạo ra các hình ảnh, âm thanh, video giả mạo bằng AI.",
+                  "B": "Phát hiện ra các lỗ hổng bảo mật trên hệ thống máy chủ.",
+                  "C": "Tạo ra các trang web bán hàng tự động.",
+                  "D": "Tối ưu hoá đường truyền cáp quang Internet."
+            },
+            "correctAnswer": "A",
+            "explanation": "Deepfake sử dụng các mô hình học sâu (Deep Learning) để giả mạo khuôn mặt, hình ảnh và giọng nói của người khác, thường bị kẻ xấu lợi dụng để lừa đảo trực tuyến."
+      },
+      {
+            "id": "12a-q7",
+            "question": "Câu 7. Khả năng nào sau đây KHÔNG phải là một trong 5 đặc trưng cốt lõi của AI theo chương trình GDPT 2018?",
+            "options": {
+                  "A": "Khả năng học (Machine Learning).",
+                  "B": "Khả năng nhận thức môi trường qua cảm biến.",
+                  "C": "Khả năng bay lượn cơ học.",
+                  "D": "Khả năng hiểu và xử lý ngôn ngữ tự nhiên."
+            },
+            "correctAnswer": "C",
+            "explanation": "5 đặc trưng nhận biết AI theo sách giáo khoa gồm: Khả năng học, Khả năng suy luận, Khả năng nhận thức, Khả năng hiểu ngôn ngữ và Khả năng giải quyết vấn đề."
+      },
+      {
+            "id": "12a-q8",
+            "question": "Câu 8. Sự kiện lịch sử nào đánh dấu sự ra đời của thuật ngữ AI và chính thức khai sinh ngành Trí tuệ Nhân tạo?",
+            "options": {
+                  "A": "Hội thảo tại MIT vào năm 1960.",
+                  "B": "Hội thảo tại Stanford vào năm 1955.",
+                  "C": "Hội thảo khoa học Dartmouth năm 1956.",
+                  "D": "Sự ra đời của hệ thống MYCIN vào năm 1970."
+            },
+            "correctAnswer": "C",
+            "explanation": "Hội thảo khoa học tại Đại học Dartmouth năm 1956 do John McCarthy, Marvin Minsky, Claude Shannon... khởi xướng được xem là mốc lịch sử chính thức khai sinh ngành AI."
+      },
+      {
+            "id": "12a-q9",
+            "question": "Câu 9. Phát biểu nào sau đây ĐÚNG khi nói về sự khác nhau giữa Trí tuệ nhân tạo hẹp (AI hẹp - ANI) và Trí tuệ nhân tạo tổng quát (AI mạnh - AGI)?",
+            "options": {
+                  "A": "AI hẹp chỉ thực hiện một nhiệm vụ cụ thể trong phạm vi giới hạn.",
+                  "B": "AI mạnh chỉ thực hiện được một công việc giống hệt máy tính cơ học.",
+                  "C": "AI hẹp có khả năng tự học độc lập trên mọi khía cạnh tổng quát.",
+                  "D": "AI hẹp hoàn toàn không có khả năng đưa ra bất kì quyết định nào."
+            },
+            "correctAnswer": "A",
+            "explanation": "AI hẹp (ANI) được xây dựng để thực hiện xuất sắc một nhiệm vụ cụ thể (chơi cờ, nhận diện khuôn mặt, dịch văn bản). Mọi hệ thống AI hiện nay đều thuộc nhóm AI hẹp."
+      },
+      {
+            "id": "12a-q10",
+            "question": "Câu 10. Hệ chuyên gia y tế MYCIN là một thành tựu kinh điển minh hoạ cho đặc trưng nào của AI?",
+            "options": {
+                  "A": "Khả năng học tăng cường qua trò chơi.",
+                  "B": "Khả năng suy luận logic dựa trên các luật NẾU - THÌ.",
+                  "C": "Khả năng nhận thức môi trường bằng cảm biến LiDAR.",
+                  "D": "Khả năng tự động điều khiển phần cứng cơ học."
+            },
+            "correctAnswer": "B",
+            "explanation": "Hệ chuyên gia MYCIN sử dụng cơ sở tri thức gồm hàng trăm luật logic dạng IF... THEN... (NẾU có triệu chứng... THÌ mắc bệnh...) để hỗ trợ bác sĩ chẩn đoán bệnh nhiễm trùng máu."
+      },
+      {
+            "id": "12a-q11",
+            "question": "Câu 11. Tập hợp quy tắc suy diễn của hệ chuyên gia MYCIN được biểu diễn dưới dạng nào?",
+            "options": {
+                  "A": "IF … ELSE …",
+                  "B": "FOR … THEN …",
+                  "C": "WHILE … DO …",
+                  "D": "IF … THEN … (NẾU … THÌ …)"
+            },
+            "correctAnswer": "D",
+            "explanation": "Hệ chuyên gia MYCIN áp dụng mô hình tri thức luật suy diễn kinh điển dạng 'IF <điều kiện> THEN <kết luận>'."
+      },
+      {
+            "id": "12a-q12",
+            "question": "Câu 12. Thiết bị nào sau đây KHÔNG sử dụng trí tuệ nhân tạo để điều khiển tự động?",
+            "options": {
+                  "A": "Xe ô tô tự hành không người lái (Tesla, Waymo).",
+                  "B": "Ấm đun nước siêu tốc tự ngắt khi sôi nhờ rơ-le nhiệt.",
+                  "C": "Máy bay không người lái tự định vị đường bay.",
+                  "D": "Robot hút bụi thông minh tự quét laser lập bản đồ phòng."
+            },
+            "correctAnswer": "B",
+            "explanation": "Ấm điện siêu tốc hoạt động thuần tuý dựa trên nguyên lý cơ - nhiệt của rơ-le (tự động hoá cơ bản), không có khả năng học, suy luận hay xử lý thông tin thông minh của AI."
+      },
+      {
+            "id": "12a-q13",
+            "question": "Câu 13. Phần mềm IBM Watson for Oncology là ứng dụng AI hỗ trợ các bác sĩ trong việc điều trị bệnh gì?",
+            "options": {
+                  "A": "Bệnh ung thư.",
+                  "B": "Bệnh tim mạch.",
+                  "C": "Bệnh tiểu đường.",
+                  "D": "Bệnh xương khớp."
+            },
+            "correctAnswer": "A",
+            "explanation": "IBM Watson for Oncology là hệ thống AI phân tích hồ sơ bệnh án và hàng triệu tài liệu y khoa để đề xuất phác đồ điều trị hỗ trợ bác sĩ điều trị ung thư."
+      },
+      {
+            "id": "12a-q14",
+            "question": "Câu 14. Lĩnh vực nghiên cứu nào của AI tập trung vào việc giúp máy tính có khả năng nhận diện, phân tích và hiểu hình ảnh/video từ thế giới thực?",
+            "options": {
+                  "A": "Thị giác máy tính (Computer Vision).",
+                  "B": "AI tạo sinh (Generative AI).",
+                  "C": "Xử lí ngôn ngữ tự nhiên (NLP).",
+                  "D": "Hệ thống quản trị cơ sở dữ liệu."
+            },
+            "correctAnswer": "A",
+            "explanation": "Thị giác máy tính (Computer Vision) là phân ngành AI nghiên cứu các phương pháp giúp máy tính thu nhận, xử lí, phân tích và trích xuất thông tin hữu ích từ hình ảnh và video."
+      },
+      {
+            "id": "12a-q15",
+            "question": "Câu 15. ChatGPT được phát triển bởi công ty/tổ chức công nghệ nào?",
+            "options": {
+                  "A": "Apple.",
+                  "B": "OpenAI.",
+                  "C": "Microsoft.",
+                  "D": "Google."
+            },
+            "correctAnswer": "B",
+            "explanation": "ChatGPT là mô hình ngôn ngữ lớn (LLM) do OpenAI phát triển và ra mắt lần đầu vào tháng 11/2022."
+      },
+      {
+            "id": "12a-q16",
+            "question": "Câu 16. Robot hình người nổi tiếng được tích hợp hàng loạt ứng dụng AI và được cấp quyền công dân đầu tiên trên thế giới (2017) là:",
+            "options": {
+                  "A": "Sophia (Hanson Robotics).",
+                  "B": "Asimo (Honda).",
+                  "C": "Atlas (Boston Dynamics).",
+                  "D": "Valkyrie (NASA)."
+            },
+            "correctAnswer": "A",
+            "explanation": "Robot Sophia do hãng Hanson Robotics chế tạo, tích hợp thị giác máy tính, nhận diện giọng nói và biểu cảm khuôn mặt tự nhiên, được trao quyền công dân tại Ả Rập Xê Út năm 2017."
+      },
+      {
+            "id": "12a-q17",
+            "question": "Câu 17. Khả năng nào dưới đây của AI cho phép máy tính tự cải thiện hiệu suất và điều chỉnh hành vi dựa trên dữ liệu mới mà không cần lập trình lại từng dòng mã?",
+            "options": {
+                  "A": "Khả năng suy luận.",
+                  "B": "Khả năng học (Machine Learning).",
+                  "C": "Khả năng nhận thức phần cứng.",
+                  "D": "Khả năng giải phóng bộ nhớ RAM."
+            },
+            "correctAnswer": "B",
+            "explanation": "Khả năng học (Học máy - Machine Learning) cho phép hệ thống tự tìm ra quy luật từ dữ liệu lớn để nâng cao độ chính xác theo thời gian."
+      },
+      {
+            "id": "12a-q18",
+            "question": "Câu 18. Hệ thống khuyến nghị video trên YouTube hay đề xuất phim trên Netflix là minh chứng rõ nét cho đặc trưng nào của AI?",
+            "options": {
+                  "A": "Khả năng học (Machine Learning từ thói quen, lịch sử xem của người dùng).",
+                  "B": "Khả năng nhận thức môi trường bằng cảm biến LiDAR.",
+                  "C": "Khả năng tổng hợp giọng nói con người.",
+                  "D": "Khả năng tối ưu hoá cơ chế làm mát vi xử lý."
+            },
+            "correctAnswer": "A",
+            "explanation": "Hệ thống gợi ý phân tích hành vi của hàng triệu người dùng để 'học' sở thích cá nhân hoá và liên tục đưa ra các đề xuất nội dung tương thích nhất."
+      },
+      {
+            "id": "12a-q19",
+            "question": "Câu 19. Ứng dụng nào sau đây KHÔNG phải là ứng dụng của AI tạo sinh (Generative AI)?",
+            "options": {
+                  "A": "ChatGPT (tự động tạo văn bản mới).",
+                  "B": "Midjourney (tự động vẽ hình ảnh nghệ thuật mới).",
+                  "C": "Mubert (tự động sáng tác bản nhạc mới).",
+                  "D": "Google Search (tìm kiếm và hiển thị danh sách trang web khớp từ khoá)."
+            },
+            "correctAnswer": "D",
+            "explanation": "AI tạo sinh (Generative AI) là AI có khả năng sáng tạo nội dung mới (chữ, tranh, nhạc, video). Google Search truyền thống chỉ thực hiện thu thập và lập chỉ mục tìm kiếm thông tin sẵn có."
+      },
+      {
+            "id": "12a-q20",
+            "question": "Câu 20. Trợ lí ảo nào sau đây được tích hợp trên các dòng thiết bị di động của hãng Samsung?",
+            "options": {
+                  "A": "Siri.",
+                  "B": "Bixby.",
+                  "C": "Cortana.",
+                  "D": "Alexa."
+            },
+            "correctAnswer": "B",
+            "explanation": "Bixby là trợ lí ảo của Samsung. Siri của Apple, Cortana của Microsoft, Alexa của Amazon."
+      },
+      {
+            "id": "12a-q21",
+            "question": "Câu 21. Sự kết hợp giữa Trí tuệ nhân tạo (AI) và mạng Internet vạn vật (IoT) được viết tắt là gì?",
+            "options": {
+                  "A": "AIoT (Artificial Intelligence of Things).",
+                  "B": "IoAI.",
+                  "C": "SmartNet.",
+                  "D": "RoboNet."
+            },
+            "correctAnswer": "A",
+            "explanation": "AIoT (Artificial Intelligence of Things) là sự kết hợp giữa AI và IoT, cho phép các thiết bị kết nối mạng có khả năng tự thu thập và phân tích dữ liệu thông minh ngay tại biên."
+      },
+      {
+            "id": "12a-q22",
+            "question": "Câu 22. Trong các phương án sau, ứng dụng nào của AI mang lại lợi ích nổi bật trong lĩnh vực y học hiện đại?",
+            "options": {
+                  "A": "Phân tích hình ảnh y tế (chụp CT/MRI, X-quang) để phát hiện sớm các tế bào và khối u bất thường.",
+                  "B": "Tự động phát tờ rơi khám bệnh tại quầy tiếp đón bệnh viện.",
+                  "C": "Sản xuất giường bệnh cơ học thông thường.",
+                  "D": "Thực hiện thu tiền viện phí thủ công bằng giấy tờ."
+            },
+            "correctAnswer": "A",
+            "explanation": "Thị giác máy tính và AI y tế giúp bác sĩ phát hiện các tổn thương vi mô trên phim X-quang, MRI sọ não với tốc độ xử lý nhanh và độ chính xác rất cao."
+      },
+      {
+            "id": "12a-q23",
+            "question": "Câu 23. Trong xe ô tô tự lái, sự kết hợp giữa các thiết bị nào giúp hệ thống nhận thức môi trường, nhận diện biển báo và phát hiện người đi bộ?",
+            "options": {
+                  "A": "Camera thị giác máy tính kết hợp cảm biến LiDAR và Radar.",
+                  "B": "Màn hình cảm ứng giải trí và bộ phát sóng Wi-Fi.",
+                  "C": "Hệ thống sưởi ghế và quạt gió điều hoà cơ học.",
+                  "D": "Cảm biến đo áp suất lốp và phanh tay cơ khí."
+            },
+            "correctAnswer": "A",
+            "explanation": "Camera giúp xe đọc biển báo, đèn giao thông, vạch kẻ đường; LiDAR và Radar quét 3D môi trường để đo khoảng cách và vận tốc chướng ngại vật ngay cả trong đêm tối."
+      },
+      {
+            "id": "12a-q24",
+            "question": "Câu 24. Điểm khác biệt cơ bản nhất giữa Trí tuệ nhân tạo (AI) và các hệ thống Tự động hoá truyền thống là gì?",
+            "options": {
+                  "A": "AI có khả năng học hỏi từ dữ liệu và thích ứng với tình huống mới, trong khi tự động hoá truyền thống chỉ làm theo quy trình lập trình cố định.",
+                  "B": "Tự động hoá cần kết hợp 5 đặc trưng trí tuệ con người còn AI thì không cần.",
+                  "C": "AI không cần bất kì dữ liệu đầu vào nào để hoạt động.",
+                  "D": "Tự động hoá luôn thông minh hơn và giải quyết được vấn đề đa lĩnh vực hơn AI."
+            },
+            "correctAnswer": "A",
+            "explanation": "Tự động hoá truyền thống hoạt động theo tập lệnh cứng nhắc (không thể tự ứng biến); trong khi AI sở hữu các năng lực học, suy luận và nhận thức để giải quyết linh hoạt tình huống phát sinh."
+      },
+      {
+            "id": "12a-q25",
+            "question": "Câu 25. Phép thử nào do Alan Turing đề xuất năm 1950 nhằm kiểm tra khả năng máy tính có đạt đến trí tuệ con người hay không?",
+            "options": {
+                  "A": "Phép thử Turing (Turing Test).",
+                  "B": "Phép thử Dartmouth.",
+                  "C": "Phép thử McCarthy.",
+                  "D": "Phép thử AlphaGo."
+            },
+            "correctAnswer": "A",
+            "explanation": "Phép thử Turing (Turing Test) đặt giả định: nếu con người giao tiếp gián tiếp qua màn hình mà không phân biệt được đối thoại là người hay máy, thì cỗ máy đó đạt đến trí tuệ nhân tạo."
+      },
+      {
+            "id": "12a-q26",
+            "question": "Câu 26. Hiện nay, nhược điểm và rủi ro lớn nhất của các mô hình AI trong việc hỗ trợ ra quyết định tuyển dụng hay cấp tín dụng là gì?",
+            "options": {
+                  "A": "Kết quả có thể bị thiên vị hoặc sai lệch nếu dữ liệu huấn luyện ban đầu có định kiến xã hội.",
+                  "B": "AI hoạt động quá nhanh khiến con người không kịp theo dõi.",
+                  "C": "AI tiêu thụ ít điện năng hơn máy tính văn phòng.",
+                  "D": "AI hoàn toàn không thể bị tấn công mạng."
+            },
+            "correctAnswer": "A",
+            "explanation": "AI học theo các mẫu dữ liệu trong quá khứ; nếu dữ liệu đó chứa định kiến về giới tính, độ tuổi, vùng miền thì mô hình AI sẽ vô tình học và khuếch đại sự thiên vị đó."
+      },
+      {
+            "id": "12a-q27",
+            "question": "Câu 27. Công cụ AI nào sau đây chuyên tạo hình ảnh nghệ thuật dựa trên câu lệnh mô tả văn bản (text-to-image)?",
+            "options": {
+                  "A": "Midjourney.",
+                  "B": "Whisper.",
+                  "C": "Codex.",
+                  "D": "Grammarly."
+            },
+            "correctAnswer": "A",
+            "explanation": "Midjourney là nền tảng AI tạo sinh hình ảnh từ văn bản nổi tiếng nhất hiện nay. Whisper dùng nhận dạng giọng nói, Codex sinh code, Grammarly sửa ngữ pháp."
+      },
+      {
+            "id": "12a-q28",
+            "question": "Câu 28. Nền tảng nào do Google phát triển giúp lập trình viên xây dựng chatbot và giao diện đàm thoại ngôn ngữ tự nhiên?",
+            "options": {
+                  "A": "Dialogflow.",
+                  "B": "TensorFlow.",
+                  "C": "Rainbird.",
+                  "D": "Origami."
+            },
+            "correctAnswer": "A",
+            "explanation": "Dialogflow là dịch vụ của Google chuyên dùng để xây dựng các ứng dụng trò chuyện (chatbot), trợ lý giọng nói và đàm thoại ngôn ngữ tự nhiên."
+      },
+      {
+            "id": "12a-q29",
+            "question": "Câu 29. Lợi ích quan trọng nhất của AI đối với người học trong giáo dục thời đại số là gì?",
+            "options": {
+                  "A": "Cá nhân hoá tiến trình học tập, phát hiện lỗ hổng kiến thức và đề xuất bài tập rèn luyện phù hợp.",
+                  "B": "Làm bài tập về nhà và thi cử thay thế cho học sinh.",
+                  "C": "Thay thế hoàn toàn sự hiện diện của thầy cô giáo.",
+                  "D": "Bỏ qua các môn học khoa học tự nhiên."
+            },
+            "correctAnswer": "A",
+            "explanation": "AI trong giáo dục đóng vai trò trợ giảng thông minh 24/7, giúp theo dõi năng lực từng em, đề xuất lộ trình ôn tập cá nhân hoá để tối ưu hoá thời gian và hiệu quả tiếp thu."
+      },
+      {
+            "id": "12a-q30",
+            "question": "Câu 30. Hiện nay, Trí tuệ nhân tạo KHÔNG thể có năng lực nào sau đây?",
+            "options": {
+                  "A": "Khả năng cảm nhận và thấu hiểu cảm xúc con người một cách trọn vẹn và có ý thức tự thân.",
+                  "B": "Khả năng nhận dạng tiếng nói và chuyển đổi thành văn bản.",
+                  "C": "Khả năng dịch tự động giữa hơn 100 ngôn ngữ khác nhau trên thế giới.",
+                  "D": "Khả năng phân tích và nhận diện khuôn mặt người tham gia giao thông."
+            },
+            "correctAnswer": "A",
+            "explanation": "Các hệ thống AI hiện nay đều là AI hẹp (ANI), thuần tuý tính toán xác suất từ mô hình toán học; AI hoàn toàn không có cảm xúc, linh hồn hay ý thức như con người."
       }
-    ],
+],
     "application": {
       "realLife": "Khi nhận được cuộc gọi video từ người thân nhờ chuyển tiền gấp nhưng khẩu hình miệng hoặc giọng nói có dấu hiệu ngắt quãng bất thường, hãy bình tĩnh cúp máy và gọi trực tiếp bằng số điện thoại di động thông thường để xác minh, tránh bẫy công nghệ Deepfake.",
       "examTraps": [
