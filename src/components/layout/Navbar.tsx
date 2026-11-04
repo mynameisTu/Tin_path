@@ -150,14 +150,18 @@ export const Navbar: React.FC<NavbarProps> = ({
                 );
               })}
 
-              {/* Google Suite quick tab */}
+              {/* Code Online Studio quick tab (Thay thế Google Suite - Hình 1) */}
               <button
-                onClick={onOpenGoogleHub}
-                className="h-full px-3 xl:px-3.5 flex items-center gap-1.5 transition-colors whitespace-nowrap text-[12.5px] font-semibold uppercase text-gray-300 hover:text-white hover:bg-white/5"
-                title="Trung tâm tích hợp Google Suite (Gemini, Drive, Sheets, Docs...)"
+                onClick={() => onSelectTab('code_studio')}
+                className={`h-full px-3 xl:px-3.5 flex items-center gap-1.5 transition-colors whitespace-nowrap text-[12.5px] font-semibold uppercase ${
+                  currentTab === 'code_studio'
+                    ? 'text-white font-bold bg-white/10 border-b-2 border-emerald-400'
+                    : 'text-emerald-400 hover:text-white hover:bg-white/5'
+                }`}
+                title="TinPath Code Studio - Lập trình C++, Python, HTML/CSS Trực Tuyến"
               >
-                <Sparkles className="w-3.5 h-3.5 text-[#FFC928]" />
-                <span>GOOGLE SUITE</span>
+                <Code2 className="w-4 h-4 text-emerald-400" />
+                <span>CODE ONLINE</span>
               </button>
             </nav>
           </div>
@@ -341,12 +345,12 @@ export const Navbar: React.FC<NavbarProps> = ({
                     </button>
                     <button
                       onClick={() => {
-                        onOpenGoogleHub();
+                        onSelectTab('code_studio');
                         setUserDropdownOpen(false);
                       }}
-                      className="w-full text-left px-4 py-1.5 text-gray-300 hover:text-white hover:bg-white/5 flex items-center gap-2"
+                      className="w-full text-left px-4 py-1.5 text-emerald-400 hover:text-white hover:bg-white/5 flex items-center gap-2"
                     >
-                      <Sparkles className="w-3.5 h-3.5 text-[#FFC928]" /> Bộ công cụ Google
+                      <Code2 className="w-3.5 h-3.5 text-emerald-400" /> Lập trình Code Online (C++, Python, Web)
                     </button>
                   </div>
 
@@ -387,10 +391,14 @@ export const Navbar: React.FC<NavbarProps> = ({
             );
           })}
           <button
-            onClick={onOpenGoogleHub}
-            className="px-3 py-1 rounded whitespace-nowrap text-[12px] font-semibold uppercase text-amber-300 hover:text-white flex items-center gap-1"
+            onClick={() => onSelectTab('code_studio')}
+            className={`px-3 py-1 rounded whitespace-nowrap text-[12px] font-semibold uppercase flex items-center gap-1 ${
+              currentTab === 'code_studio'
+                ? 'bg-emerald-600 text-white font-bold'
+                : 'text-emerald-400 hover:text-white'
+            }`}
           >
-            <Sparkles className="w-3 h-3 text-amber-400" /> Google Suite
+            <Code2 className="w-3.5 h-3.5 text-emerald-400" /> Code Online
           </button>
         </div>
       </header>

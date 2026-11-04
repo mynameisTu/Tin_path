@@ -11,6 +11,7 @@ import { Leaderboard } from './components/student/Leaderboard';
 import { UserProfileView } from './components/student/UserProfileView';
 import { TeacherDashboard } from './components/teacher/TeacherDashboard';
 import { GoogleToolsHub } from './components/google/GoogleToolsHub';
+import { CodeStudioHub } from './components/code_studio/CodeStudioHub';
 import { AuthModal } from './components/auth/AuthModal';
 import { RegisterModal } from './components/auth/RegisterModal';
 import { LoginPage } from './components/auth/LoginPage';
@@ -645,6 +646,10 @@ export default function App() {
                 onUpdateUser={setUser}
                 onNavigateTab={setCurrentTab}
               />
+            )}
+
+            {currentTab === 'code_studio' && (
+              <CodeStudioHub onNavigateTab={setCurrentTab} />
             )}
           </>
         )}
