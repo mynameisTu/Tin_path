@@ -33,6 +33,7 @@ import {
   Database,
   Globe,
   Binary,
+  Terminal,
   Image as ImageIcon,
   ZoomIn,
   X
@@ -217,6 +218,42 @@ const TopicIllustration: React.FC<{ topicId: SubjectTopicId }> = ({ topicId }) =
           <div className="p-2.5 rounded-xl bg-rose-100 text-rose-900 border border-rose-300 dark:bg-rose-950 dark:text-rose-200">
             <span className="font-bold block text-sm">O(n²)</span>
             <span className="text-[11px]">Sắp xếp nổi bọt, chèn, chọn</span>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (topicId === '10_PYTHON') {
+    return (
+      <div className="p-4 sm:p-5 rounded-2xl bg-gradient-to-br from-emerald-50 via-teal-50 to-blue-50 dark:from-[#0D1F1A] dark:via-[#0F1B2A] dark:to-[#111A24] border border-emerald-200/80 dark:border-emerald-900/40 my-4 shadow-xs">
+        <div className="flex items-center gap-2 mb-3 text-xs font-bold text-emerald-700 dark:text-emerald-400 uppercase tracking-wider">
+          <Terminal className="w-4 h-4" /> Sơ đồ 6 Trụ cột Nền tảng của Lập trình Python (Lớp 10 & Note Ôn tập)
+        </div>
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2.5 text-center text-xs">
+          <div className="p-2.5 rounded-xl bg-emerald-100/90 text-emerald-900 border border-emerald-300 dark:bg-emerald-950 dark:text-emerald-200 shadow-xs flex flex-col justify-between">
+            <span className="font-bold block text-sm">1. Kiểu dữ liệu</span>
+            <span className="text-[11px] opacity-85 mt-1">int, float, str, bool & ép kiểu type casting</span>
+          </div>
+          <div className="p-2.5 rounded-xl bg-blue-100/90 text-blue-900 border border-blue-300 dark:bg-blue-950 dark:text-blue-200 shadow-xs flex flex-col justify-between">
+            <span className="font-bold block text-sm">2. Toán tử</span>
+            <span className="text-[11px] opacity-85 mt-1">// chia nguyên, % chia dư, ** mũ, gán +=</span>
+          </div>
+          <div className="p-2.5 rounded-xl bg-amber-100/90 text-amber-900 border border-amber-300 dark:bg-amber-950 dark:text-amber-200 shadow-xs flex flex-col justify-between">
+            <span className="font-bold block text-sm">3. Rẽ nhánh</span>
+            <span className="text-[11px] opacity-85 mt-1">if - elif - else, thụt lề 4 spaces, ATM</span>
+          </div>
+          <div className="p-2.5 rounded-xl bg-purple-100/90 text-purple-900 border border-purple-300 dark:bg-purple-950 dark:text-purple-200 shadow-xs flex flex-col justify-between">
+            <span className="font-bold block text-sm">4. Cấu trúc lặp</span>
+            <span className="text-[11px] opacity-85 mt-1">for range(), while, break, in hình sao</span>
+          </div>
+          <div className="p-2.5 rounded-xl bg-cyan-100/90 text-cyan-900 border border-cyan-300 dark:bg-cyan-950 dark:text-cyan-200 shadow-xs flex flex-col justify-between">
+            <span className="font-bold block text-sm">5. List & Dict</span>
+            <span className="text-[11px] opacity-85 mt-1">Index âm [-1], Slicing [:], Dict Key-Value</span>
+          </div>
+          <div className="p-2.5 rounded-xl bg-rose-100/90 text-rose-900 border border-rose-300 dark:bg-rose-950 dark:text-rose-200 shadow-xs flex flex-col justify-between">
+            <span className="font-bold block text-sm">6. Hàm & Big-O</span>
+            <span className="text-[11px] opacity-85 mt-1">def ... return, SNT, cấp số cộng O(1)</span>
           </div>
         </div>
       </div>

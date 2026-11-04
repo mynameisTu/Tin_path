@@ -2547,180 +2547,1060 @@ export const TOPIC_LESSONS: Record<SubjectTopicId, TopicLesson> = {
     ]
   },
   "10_PYTHON": {
-    "id": "10_PYTHON",
-    "code": "Chủ đề 10-PY",
-    "title": "Lập trình Python Cơ bản",
-    "grade": "10",
-    "track": "ALL",
-    "examWeight": "Nền tảng Lớp 10 (~10% lệnh hỏi)",
-    "iconName": "terminal",
-    "summary": "Nắm vững cú pháp ngôn ngữ lập trình Python: các kiểu dữ liệu chuẩn (int, float, str, bool), toán tử, cấu trúc rẽ nhánh if - elif - else, cấu trúc lặp for và while, xử lí chuỗi và định nghĩa hàm def.",
-    "outline": [
-      {
-        "id": "muc-tieu",
-        "title": "Mục tiêu bài học",
-        "level": 1
-      },
-      {
-        "id": "muc-do",
-        "title": "Mức độ kiến thức và kĩ năng cần đạt",
-        "level": 1
-      },
-      {
-        "id": "khoi-dong",
-        "title": "Hoạt động khởi động",
-        "level": 1
-      },
-      {
-        "id": "sec-1",
-        "title": "1. Kiểu dữ liệu và Các phép toán cơ bản",
-        "level": 1
-      },
-      {
-        "id": "sec-2",
-        "title": "2. Cấu trúc rẽ nhánh if - else",
-        "level": 1
-      },
-      {
-        "id": "sec-3",
-        "title": "3. Cấu trúc lặp for và while",
-        "level": 1
-      },
-      {
-        "id": "sec-4",
-        "title": "4. Định nghĩa và Sử dụng Hàm (Function)",
-        "level": 1
-      },
-      {
-        "id": "ghi-nho",
-        "title": "Ghi nhớ",
-        "level": 1
-      },
-      {
-        "id": "luyen-tap",
-        "title": "Luyện tập (Trắc nghiệm chuẩn sách)",
-        "level": 1
-      },
-      {
-        "id": "van-dung",
-        "title": "Vận dụng",
-        "level": 1
-      }
-    ],
-    "objectives": [
-      "Nhận biết và chuyển đổi giữa các kiểu dữ liệu cơ bản: int, float, str, bool.",
-      "Sử dụng đúng các phép toán số học: chia lấy nguyên //, chia lấy dư %, luỹ thừa **.",
-      "Viết thành thạo cấu trúc rẽ nhánh if - elif - else.",
-      "Viết thành thạo cấu trúc lặp với số lần biết trước for i in range(...) và lặp điều kiện while.",
-      "Khai báo hàm có tham số và giá trị trả về với từ khoá def và return."
-    ],
-    "standards": [
-      {
-        "level": "Nhận biết",
-        "desc": "Nhận biết quy tắc đặt tên biến trong Python; phân biệt toán tử chia thực / và chia nguyên //."
-      },
-      {
-        "level": "Thông hiểu",
-        "desc": "Theo dõi được giá trị biến qua các bước lặp; hiểu cách thức hoạt động của range(start, stop, step)."
-      },
-      {
-        "level": "Vận dụng",
-        "desc": "Viết chương trình kiểm tra số nguyên tố, tính tổng các chữ số của một số tự nhiên."
-      }
-    ],
-    "warmUp": {
-      "context": "Python là ngôn ngữ lập trình phổ biến hàng đầu thế giới được sử dụng trong Trí tuệ nhân tạo, phân tích dữ liệu và phát triển web nhờ cú pháp cực kì sáng sủa và dễ học.",
-      "question": "Tại sao một đoạn mã Python thường ngắn hơn 2 đến 3 lần so với mã C++ hay Java tương đương?"
-    },
-    "mainSections": [
-      {
-        "id": "sec-1",
-        "number": "1.",
-        "title": "Kiểu dữ liệu và Các phép toán cơ bản",
-        "content": "• Các kiểu dữ liệu: int (số nguyên), float (số thực), str (chuỗi kí tự), bool (đúng/sai True/False).\n• Phép toán số học: + (cộng), - (trừ), * (nhân), / (chia ra số thực), // (chia lấy phần nguyên), % (chia lấy phần dư), ** (luỹ thừa).\nVí dụ: 17 // 5 = 3; 17 % 5 = 2; 2 ** 3 = 8.\n• Hàm nhập xuất: print() in ra màn hình, input() nhận chuỗi văn bản từ bàn phím. Ép kiểu: int(input()), float(input())."
-      },
-      {
-        "id": "sec-2",
-        "number": "2.",
-        "title": "Cấu trúc rẽ nhánh if - else",
-        "content": "Python sử dụng thụt đầu dòng (indentation, thường là 4 dấu cách) để xác định khối lệnh thay cho cặp ngoặc nhọn { }.",
-        "codeSnippet": "dtb = float(input(\\\"Nhập điểm trung bình: \\\"))\nif dtb >= 8.0:\n    print(\\\"Học lực Giỏi\\\")\nelif dtb >= 6.5:\n    print(\\\"Học lực Khá\\\")\nelse:\n    print(\\\"Học lực Trung bình\\\")"
-      },
-      {
-        "id": "sec-3",
-        "number": "3.",
-        "title": "Cấu trúc lặp for và while",
-        "content": "• Lệnh lặp for: for i in range(start, stop, step): Lặp biến i từ start đến stop - 1.\n• Lệnh lặp while: while điều_kiện: Tiếp tục lặp khi điều kiện còn True.\n• Lệnh break thoát vòng lặp ngay lập tức; lệnh continue bỏ qua lần lặp hiện tại."
-      },
-      {
-        "id": "sec-4",
-        "number": "4.",
-        "title": "Định nghĩa và Sử dụng Hàm (Function)",
-        "content": "Hàm giúp chia nhỏ chương trình thành các khối chức năng tái sử dụng được, tránh lặp lại mã nguồn.",
-        "codeSnippet": "def tinh_tong(a, b):\n    return a + b\n\nket_qua = tinh_tong(15, 25)\nprint(ket_qua) # In ra 40"
-      }
-    ],
-    "memoryNotes": [
-      "Hàm range(n) sinh dãy số từ 0 đến n - 1 (gồm đúng n số).",
-      "Phép chia // lấy phần nguyên; % lấy phần dư; ** là luỹ thừa.",
-      "Quy tắc thụt đầu dòng (Indentation) trong Python là bắt buộc, không được tuỳ tiện."
-    ],
-    "practiceQuestions": [
-      {
-        "id": "10py-q1",
-        "question": "Câu 1. Trong Python, kết quả của biểu thức 19 // 4 và 19 % 4 lần lượt là:",
-        "options": {
-          "A": "4 và 3",
-          "B": "4.75 và 3",
-          "C": "4 và 4",
-          "D": "3 và 4"
+        "id": "10_PYTHON",
+        "code": "Chủ đề 10-PY",
+        "title": "Lập trình Python Cơ bản & Cấu trúc Dữ liệu (Lớp 10)",
+        "grade": "10",
+        "track": "ALL",
+        "examWeight": "Trọng tâm Lớp 10 & Nền tảng THPT (~15% câu hỏi)",
+        "iconName": "terminal",
+        "summary": "Biên soạn toàn diện chuẩn SGK Tin học 10 GDPT 2018 kết hợp Note Python Tháng 6 & Tháng 7: Khai báo biến, các kiểu dữ liệu chuẩn, hệ thống 4 nhóm toán tử, cấu trúc rẽ nhánh if-elif-else, cấu trúc lặp for/while & kỹ thuật in hình, cấu trúc dữ liệu danh sách (List), từ điển (Dictionary), xử lý chuỗi (String) và hàm (Function def) cùng độ phức tạp thời gian Big-O.",
+        "outline": [
+            {
+                "id": "muc-tieu",
+                "title": "Mục tiêu bài học",
+                "level": 1
+            },
+            {
+                "id": "muc-do",
+                "title": "Mức độ kiến thức và kĩ năng cần đạt",
+                "level": 1
+            },
+            {
+                "id": "khoi-dong",
+                "title": "Hoạt động khởi động",
+                "level": 1
+            },
+            {
+                "id": "sec-1",
+                "title": "1. Tổng quan về Python, Biến & Kiểu dữ liệu cơ bản",
+                "level": 1
+            },
+            {
+                "id": "sec-1-1",
+                "title": "a) Ngôn ngữ Python & Quy tắc đặt tên biến",
+                "level": 2
+            },
+            {
+                "id": "sec-1-2",
+                "title": "b) Các kiểu dữ liệu cơ bản & Cơ chế định kiểu động",
+                "level": 2
+            },
+            {
+                "id": "sec-1-3",
+                "title": "c) Nhập xuất dữ liệu (print, input), ép kiểu & định dạng",
+                "level": 2
+            },
+            {
+                "id": "sec-2",
+                "title": "2. Hệ thống Toán tử toàn diện trong Python",
+                "level": 1
+            },
+            {
+                "id": "sec-2-1",
+                "title": "a) Toán tử số học (chia thực /, chia nguyên //, chia dư %, mũ **)",
+                "level": 2
+            },
+            {
+                "id": "sec-2-2",
+                "title": "b) Toán tử gán & Toán tử gán kết hợp số học",
+                "level": 2
+            },
+            {
+                "id": "sec-2-3",
+                "title": "c) Toán tử so sánh & Toán tử logic (and, or, not)",
+                "level": 2
+            },
+            {
+                "id": "sec-3",
+                "title": "3. Cấu trúc rẽ nhánh điều kiện if - elif - else",
+                "level": 1
+            },
+            {
+                "id": "sec-3-1",
+                "title": "a) Sơ đồ khối rẽ nhánh & Cú pháp if, if-else, if-elif-else",
+                "level": 2
+            },
+            {
+                "id": "sec-3-2",
+                "title": "b) Quy tắc thụt lề (Indentation) & Cấu trúc rẽ nhánh lồng nhau",
+                "level": 2
+            },
+            {
+                "id": "sec-3-3",
+                "title": "c) Bài toán thực tế: Máy tính mini & Quản lý số dư ATM",
+                "level": 2
+            },
+            {
+                "id": "sec-4",
+                "title": "4. Cấu trúc lặp for, while & Kỹ thuật in hình, tính tổng",
+                "level": 1
+            },
+            {
+                "id": "sec-4-1",
+                "title": "a) Vòng lặp for & Hàm range(start, stop, step)",
+                "level": 2
+            },
+            {
+                "id": "sec-4-2",
+                "title": "b) Vòng lặp while, vòng lặp vô tận & lệnh break, continue",
+                "level": 2
+            },
+            {
+                "id": "sec-4-3",
+                "title": "c) Vòng lặp lồng nhau: Kỹ thuật in các mẫu hình sao kinh điển",
+                "level": 2
+            },
+            {
+                "id": "sec-4-4",
+                "title": "d) Công thức cấp số cộng & Giới thiệu Độ phức tạp thuật toán O(N)",
+                "level": 2
+            },
+            {
+                "id": "sec-5",
+                "title": "5. Cấu trúc dữ liệu Danh sách (List)",
+                "level": 1
+            },
+            {
+                "id": "sec-5-1",
+                "title": "a) Khái niệm List, chỉ số Index âm/dương & Cắt lát (Slicing)",
+                "level": 2
+            },
+            {
+                "id": "sec-5-2",
+                "title": "b) Bảng phương thức List cốt lõi: append, insert, remove, pop, sort",
+                "level": 2
+            },
+            {
+                "id": "sec-5-3",
+                "title": "c) Các hàm dựng sẵn: len, sum, max, min & Kỹ thuật nhập mảng 1 dòng",
+                "level": 2
+            },
+            {
+                "id": "sec-6",
+                "title": "6. Cấu trúc dữ liệu Từ điển (Dictionary)",
+                "level": 1
+            },
+            {
+                "id": "sec-6-1",
+                "title": "a) Khái niệm Dictionary, tính chất của Khóa (Key) và Giá trị (Value)",
+                "level": 2
+            },
+            {
+                "id": "sec-6-2",
+                "title": "b) Khởi tạo, truy xuất, cập nhật, thêm mới và xóa phần tử",
+                "level": 2
+            },
+            {
+                "id": "sec-6-3",
+                "title": "c) Duyệt Dictionary & Ứng dụng quản lý danh sách học sinh",
+                "level": 2
+            },
+            {
+                "id": "sec-7",
+                "title": "7. Định nghĩa & Sử dụng Hàm (Function def)",
+                "level": 1
+            },
+            {
+                "id": "sec-7-1",
+                "title": "a) Cú pháp def, tham số và giá trị trả về return",
+                "level": 2
+            },
+            {
+                "id": "sec-7-2",
+                "title": "b) Phân loại hàm: Không tham số, có tham số, tham số mặc định",
+                "level": 2
+            },
+            {
+                "id": "sec-7-3",
+                "title": "c) Các mẫu hàm thuật toán chuẩn: Kiểm tra nguyên tố, giai thừa, đối xứng",
+                "level": 2
+            },
+            {
+                "id": "sec-7-4",
+                "title": "d) Quy trình 4 bước chuẩn giải bài toán lập trình bằng hàm",
+                "level": 2
+            },
+            {
+                "id": "sec-8",
+                "title": "8. Xử lý Chuỗi ký tự (String) nâng cao",
+                "level": 1
+            },
+            {
+                "id": "sec-8-1",
+                "title": "a) Các hàm chuỗi: count, find, replace, strip, split, join",
+                "level": 2
+            },
+            {
+                "id": "sec-8-2",
+                "title": "b) Kỹ thuật đảo ngược xâu s[::-1] & Kiểm tra xâu đối xứng Palindrome",
+                "level": 2
+            },
+            {
+                "id": "ghi-nho",
+                "title": "Ghi nhớ trọng tâm kiến thức",
+                "level": 1
+            },
+            {
+                "id": "luyen-tap",
+                "title": "Luyện tập (Bộ 25 câu hỏi trắc nghiệm chuẩn)",
+                "level": 1
+            },
+            {
+                "id": "van-dung",
+                "title": "Vận dụng & Dự án mini",
+                "level": 1
+            }
+        ],
+        "objectives": [
+            "Nhận biết và sử dụng thành thạo 4 kiểu dữ liệu chuẩn: int (số nguyên), float (số thực), str (chuỗi ký tự), bool (logic True/False).",
+            "Phân biệt và thực hiện chính xác các toán tử: chia thực /, chia nguyên //, chia dư %, lũy thừa **, toán tử gán kết hợp và toán tử logic and, or, not.",
+            "Làm chủ cấu trúc rẽ nhánh if - elif - else, nắm vững quy tắc thụt lề (Indentation 4 spaces) và xử lý điều kiện lồng nhau.",
+            "Vận dụng vòng lặp for i in range(...) và vòng lặp điều kiện while, điều khiển vòng lặp với break, continue và kỹ thuật in hình sao.",
+            "Thao tác chuyên sâu trên Danh sách (List): Đánh chỉ số âm/dương, cắt lát slicing, sử dụng các phương thức append, pop, sort, reverse và kỹ thuật nhập dữ liệu trên một hàng ngang map(int, input().split()).",
+            "Xây dựng và thao tác trên Từ điển (Dictionary) dạng Key-Value để tổ chức dữ liệu thực tế (quản lý học sinh, danh bạ, tài khoản ngân hàng).",
+            "Định nghĩa hàm def có tham số và trả về kết quả qua return; giải các bài toán thuật toán nền tảng (số nguyên tố, giai thừa, ước chung).",
+            "Hiểu khái niệm độ phức tạp thời gian Big-O cơ bản để tối ưu thuật toán tránh lỗi quá thời gian (TLE)."
+        ],
+        "standards": [
+            {
+                "level": "Nhận biết",
+                "desc": "Nhận biết quy tắc đặt tên biến trong Python; phân biệt toán tử / và //; nhớ cấu trúc khai báo list [], dict {}, def; nhận biết các từ khóa chuẩn."
+            },
+            {
+                "level": "Thông hiểu",
+                "desc": "Theo dõi được sự thay đổi giá trị của biến qua từng bước lặp; giải thích được cơ chế hoạt động của hàm range(start, stop, step); hiểu cách truy xuất phần tử theo khóa trong Dictionary và theo chỉ số âm trong List."
+            },
+            {
+                "level": "Vận dụng",
+                "desc": "Viết chương trình hoàn chỉnh nhập mảng số trên một dòng, đếm số chẵn lẻ, tìm phần tử lớn nhất - nhỏ nhất, vẽ hình sao tam giác vuông và xây dựng hàm kiểm tra số nguyên tố."
+            },
+            {
+                "level": "Vận dụng cao",
+                "desc": "Thiết kế ứng dụng mini quản lý menu (ATM, máy tính cầm tay, danh sách sinh viên); áp dụng công thức cấp số cộng để tính tổng dãy số lớn trong thời gian O(1) tránh TLE."
+            }
+        ],
+        "warmUp": {
+            "context": "Python là ngôn ngữ lập trình được sáng lập bởi Guido van Rossum vào năm 1991. Hiện nay Python đứng đầu bảng xếp hạng TIOBE toàn cầu, là ngôn ngữ nền tảng của Trí tuệ Nhân tạo (AI), Khoa học Dữ liệu (Data Science) và Lập trình ứng dụng nhờ triết lý 'Đơn giản, trong sáng và dễ đọc như tiếng Anh'.",
+            "question": "Tại sao một đoạn mã Python thường ngắn gọn hơn gấp 2 đến 3 lần so với mã C++ hay Java tương đương? Làm thế nào Python nhận biết một khối lệnh mà không cần đến cặp ngoặc nhọn { }?"
         },
-        "correctAnswer": "A",
-        "explanation": "19 chia 4 được 4 dư 3. Phép // lấy phần nguyên trả về 4, phép % lấy phần dư trả về 3."
-      },
-      {
-        "id": "10py-q2",
-        "question": "Câu 2. Vòng lặp for i in range(2, 8, 2) sẽ thực hiện bao nhiêu lần lặp và duyệt qua các giá trị nào của i?",
-        "options": {
-          "A": "3 lần lặp, qua các giá trị 2, 4, 6.",
-          "B": "4 lần lặp, qua các giá trị 2, 4, 6, 8.",
-          "C": "3 lần lặp, qua các giá trị 2, 5, 8.",
-          "D": "6 lần lặp, qua các giá trị từ 2 đến 7."
+        "mainSections": [
+            {
+                "id": "sec-1",
+                "number": "1.",
+                "title": "Tổng quan về Python, Biến & Kiểu dữ liệu cơ bản",
+                "content": "Python là ngôn ngữ lập trình bậc cao thông dịch (interpreted language), có cú pháp mạch lạc, hỗ trợ nhiều mô hình lập trình (thủ tục, hướng đối tượng, hàm). Chương trình Python được lưu với phần mở rộng .py và thực thi tuần tự từ trên xuống dưới.",
+                "imageUrl": "/images/topics/10_PYTHON/python-intro.jpg",
+                "imageCaption": "Môi trường lập trình Python: Cú pháp ngắn gọn, kiểu dữ liệu động linh hoạt",
+                "subSections": [
+                    {
+                        "id": "sec-1-1",
+                        "letter": "a)",
+                        "title": "Ngôn ngữ Python & Quy tắc đặt tên biến",
+                        "content": "Biến (Variable) là tên đại diện cho một vùng nhớ lưu trữ giá trị trong bộ nhớ RAM máy tính. Trong Python, biến không cần khai báo kiểu dữ liệu trước mà tự động nhận kiểu khi gán giá trị.\n\n• Cú pháp khai báo biến: <tên_biến> = <giá_trị>\nVí dụ: x = 10 (biến x tự động có kiểu int), pi = 3.14 (kiểu float), ho_ten = \"Nguyễn Văn A\" (kiểu str).\n\n• 4 Quy tắc vàng khi đặt tên biến trong Python:\n1. Tên biến chỉ được chứa chữ cái (a-z, A-Z), chữ số (0-9) và dấu gạch dưới (_).\n2. Không được bắt đầu bằng chữ số (Ví dụ: 1so là SAI, so1 là ĐÚNG).\n3. Không được trùng với các từ khóa chuẩn của Python (như if, else, for, while, def, class, return, import, in, is, and, or, not...).\n4. Tên biến phân biệt chữ hoa và chữ thường (ví dụ: Diem, diem, DIEM là 3 biến hoàn toàn khác nhau). Nên đặt tên biến ngắn gọn, có ý nghĩa bằng tiếng Việt không dấu (snake_case như diem_toan, tong_tien).",
+                        "example": "tuoi = 16\ndiem_trung_binh = 8.75\ntruong = \"THPT Trần Quốc Tuấn\"\nda_tot_nghiep = False",
+                        "codeSnippet": "# Khai báo nhiều biến trên một dòng\na, b, c = 1, 2, 3\nprint(a, b, c)  # In ra: 1 2 3\n\n# Hoán đổi giá trị hai biến cực nhanh không cần biến trung gian (Pythonic)\na, b = b, a\nprint(\"Sau hoán đổi:\", a, b)  # In ra: 2 1"
+                    },
+                    {
+                        "id": "sec-1-2",
+                        "letter": "b)",
+                        "title": "Các kiểu dữ liệu cơ bản & Cơ chế định kiểu động",
+                        "content": "Python là ngôn ngữ định kiểu động (dynamic typing). Giá trị của biến quyết định kiểu dữ liệu của biến đó. Khi gán giá trị mới thuộc kiểu khác, biến sẽ tự động chuyển kiểu.\n\n• 4 kiểu dữ liệu cơ bản cốt lõi trong Python:\n1. int (Integer): Kiểu số nguyên không giới hạn độ dài trong Python 3 (Ví dụ: -5, 0, 100, 999999999999).\n2. float (Floating-point): Kiểu số thực dấu phẩy động (Ví dụ: 3.14, -0.05, 2.0, 1.5e3).\n3. str (String): Kiểu chuỗi ký tự, đặt trong cặp dấu nháy đơn '...' hoặc nháy kép \"...\" (Ví dụ: \"Tin học 10\", 'Python').\n4. bool (Boolean): Kiểu logic, chỉ nhận một trong 2 giá trị: True (Đúng) hoặc False (Sai). Lưu ý bắt buộc viết hoa chữ cái đầu (True, False), viết thường true/false sẽ báo lỗi NameError.\n\n• Hàm kiểm tra kiểu: type(tên_biến) trả về kiểu dữ liệu hiện tại của biến.",
+                        "codeSnippet": "x = 42\nprint(type(x))  # <class 'int'>\n\nx = 3.14\nprint(type(x))  # <class 'float'>\n\nx = \"Xin chào!\"\nprint(type(x))  # <class 'str'>\n\nx = (5 > 2)\nprint(x, type(x))  # True <class 'bool'>"
+                    },
+                    {
+                        "id": "sec-1-3",
+                        "letter": "c)",
+                        "title": "Nhập xuất dữ liệu (print, input), ép kiểu & định dạng số thực",
+                        "content": "• Xuất dữ liệu với hàm print():\n- Cú pháp: print(*objects, sep=' ', end='\\n')\n- Tham số sep: Ký tự phân cách giữa các phần tử khi in (mặc định là dấu cách ' ').\n- Tham số end: Ký tự kết thúc sau khi in xong (mặc định là '\\n' xuống dòng). Nếu muốn in trên cùng một dòng (ví dụ in dãy số hoặc hình sao), ta đặt end=' ' hoặc end=''.\n\n• Nhập dữ liệu với hàm input():\n- Cú pháp: bien = input(\"Dòng nhắc: \")\n- QUAN TRỌNG: Hàm input() LUÔN LUÔN trả về kiểu chuỗi (str), kể cả khi người dùng gõ vào số 10 thì giá trị nhận được là \"10\". Để thực hiện tính toán số học, BẮT BUỘC phải ép kiểu.\n\n• Các hàm ép kiểu dữ liệu (Type Casting):\n- int(s): Chuyển chuỗi hoặc số thực thành số nguyên (bỏ phần thập phân, int(3.9) = 3).\n- float(s): Chuyển chuỗi hoặc số nguyên thành số thực (float(5) = 5.0).\n- str(x): Chuyển số hoặc logic thành chuỗi (str(123) = \"123\").\n- bool(x): Chuyển giá trị sang logic (0, rỗng \"\", [] thành False; còn lại là True).\n\n• Kỹ thuật nhập nhiều biến trên cùng 1 dòng (chuẩn thi HSG & Olympic):\n- Dùng hàm split() để tách các từ cách nhau bởi dấu cách, sau đó dùng map():\n  a, b = map(int, input().split())\n\n• Định dạng số thực / Làm tròn:\n- Hàm round(so, n): Làm tròn số đến n chữ số thập phân (round(3.14159, 2) = 3.14).\n- Định dạng chuỗi f-string: f\"{x:.2f}\" hoặc toán tử \"% .2f\" % x (in ra đúng 2 chữ số sau dấu phẩy, ví dụ 2.5 in ra 2.50).",
+                        "codeSnippet": "# Nhập tuổi và tính năm sinh\ntuoi = int(input(\"Nhập tuổi: \"))\nnam_sinh = 2026 - tuoi\nprint(f\"Năm sinh của bạn là: {nam_sinh}\")\n\n# Nhập 2 số thực a, b trên cùng một dòng\na, b = map(float, input().split())\ntong = a + b\nprint(\"Tổng hai số là: %.2f\" % tong)\n\n# In dãy số từ 1 đến 5 trên cùng một dòng ngang\nfor i in range(1, 6):\n    print(i, end=' ')\n# Kết quả in: 1 2 3 4 5"
+                    }
+                ],
+                "table": {
+                    "headers": [
+                        "Kiểu dữ liệu",
+                        "Tên tiếng Anh",
+                        "Giá trị mẫu",
+                        "Ví dụ khai báo",
+                        "Đặc điểm nhận dạng"
+                    ],
+                    "rows": [
+                        [
+                            "Số nguyên",
+                            "int (Integer)",
+                            "-15, 0, 42, 2026",
+                            "n = 100",
+                            "Không có dấu chấm thập phân, độ dài vô hạn"
+                        ],
+                        [
+                            "Số thực",
+                            "float (Floating point)",
+                            "3.14, -0.5, 2.0",
+                            "pi = 3.14159",
+                            "Có dấu chấm thập phân . hoặc ký hiệu e"
+                        ],
+                        [
+                            "Chuỗi ký tự",
+                            "str (String)",
+                            "\"Hà Nội\", 'Tin học'",
+                            "ten = 'Python'",
+                            "Bao bởi cặp dấu nháy đơn '' hoặc nháy kép \"\""
+                        ],
+                        [
+                            "Logic",
+                            "bool (Boolean)",
+                            "True, False",
+                            "is_valid = True",
+                            "Chỉ nhận True hoặc False (viết hoa chữ đầu)"
+                        ]
+                    ]
+                }
+            },
+            {
+                "id": "sec-2",
+                "number": "2.",
+                "title": "Hệ thống Toán tử toàn diện trong Python",
+                "content": "Toán tử (Operator) là các ký hiệu đại diện cho các phép biến đổi, tính toán trên các toán hạng (biến, hằng số). Python cung cấp 4 nhóm toán tử cốt lõi: số học, gán, so sánh và logic.",
+                "subSections": [
+                    {
+                        "id": "sec-2-1",
+                        "letter": "a)",
+                        "title": "Toán tử số học (chia thực /, chia nguyên //, chia dư %, mũ **)",
+                        "content": "• Các phép toán số học trong Python:\n+ : Phép cộng số học (hoặc ghép chuỗi: \"Tin\" + \"Path\" -> \"TinPath\").\n- : Phép trừ số học.\n* : Phép nhân số học (hoặc lặp chuỗi: \"Ha\" * 3 -> \"HaHaHa\").\n/ : Phép chia thực. QUAN TRỌNG: Trong Python, kết quả của phép chia / LUÔN LUÔN là kiểu số thực (float), kể cả 4 / 2 kết quả là 2.0 chứ không phải 2.\n// : Phép chia lấy phần nguyên (Floor division). Trả về số nguyên lớn nhất không vượt quá thương số (lấy phần trước dấu phẩy thập phân).\n     Ví dụ: 10 // 3 = 3; 17 // 5 = 3; 7 // 2 = 3.\n% : Phép chia lấy phần dư (Modulus - mod). Trả về số dư của phép chia.\n     Ví dụ: 10 % 3 = 1; 17 % 5 = 2; 8 % 2 = 0 (dùng để kiểm tra số chẵn).\n** : Phép lũy thừa (Exponentiation). a ** b tương đương a^b.\n     Ví dụ: 2 ** 3 = 8; 3 ** 4 = 81; 16 ** 0.5 = 4.0 (căn bậc 2).\n\n• Thứ tự ưu tiên toán tử: Dấu ngoặc tròn () -> Lũy thừa ** -> Nhân/Chia *, /, //, % -> Cộng/Trừ +, -.",
+                        "imageUrl": "/images/topics/10_PYTHON/toan-tu-so-hoc.jpg",
+                        "imageCaption": "Bảng tra cứu các toán tử số học trong Python (đặc biệt //, %, **)",
+                        "codeSnippet": "# Phân tích sự khác biệt giữa /, // và %\na = 17\nb = 5\nprint(\"Chia thực 17 / 5 =\", a / b)    # 3.4 (float)\nprint(\"Chia nguyên 17 // 5 =\", a // b) # 3 (int)\nprint(\"Chia dư 17 % 5 =\", a % b)     # 2 (int)\nprint(\"Lũy thừa 2 ** 4 =\", 2 ** 4)   # 16\n\n# Ứng dụng: Tách chữ số hàng chục và hàng đơn vị của số có 2 chữ số\nn = 47\nchuc = n // 10  # 4\ndon_vi = n % 10 # 7\nprint(f\"Số {n} gồm {chuc} chục và {don_vi} đơn vị\")"
+                    },
+                    {
+                        "id": "sec-2-2",
+                        "letter": "b)",
+                        "title": "Toán tử gán & Toán tử gán kết hợp số học",
+                        "content": "Toán tử gán dùng để lưu một giá trị vào biến.\n• Phép gán cơ bản: biến = biểu_thức\n• Phép gán kết hợp (Augmented Assignment): Kết hợp phép toán số học với phép gán để viết code ngắn gọn và tối ưu tốc độ thực thi:\n- a += b  <=> a = a + b (tăng a lên b đơn vị)\n- a -= b  <=> a = a - b (giảm a đi b đơn vị)\n- a *= b  <=> a = a * b (nhân a với b)\n- a /= b  <=> a = a / b (chia a cho b)\n- a //= b <=> a = a // b (chia lấy nguyên)\n- a %= b  <=> a = a % b (chia lấy dư)\n- a **= b <=> a = a ** b (nâng a lên lũy thừa b)\n\nLưu ý: Python KHÔNG hỗ trợ cú pháp tăng giảm tự động như C++ (không có a++ hoặc ++a). Muốn tăng a lên 1, bắt buộc viết a += 1 hoặc a = a + 1.",
+                        "imageUrl": "/images/topics/10_PYTHON/toan-tu-gan.jpg",
+                        "imageCaption": "Bảng tra cứu toán tử gán và toán tử gán kết hợp số học trong Python",
+                        "codeSnippet": "x = 10\nx += 5   # x = 15\nx *= 2   # x = 30\nx //= 4  # x = 7\nx %= 3   # x = 1\nprint(\"Giá trị cuối cùng của x:\", x) # 1"
+                    },
+                    {
+                        "id": "sec-2-3",
+                        "letter": "c)",
+                        "title": "Toán tử so sánh & Toán tử logic (and, or, not)",
+                        "content": "• Toán tử so sánh: Dùng để so sánh 2 giá trị. Kết quả LUÔN trả về một giá trị Boolean: True hoặc False.\n- == : So sánh bằng nhau (Lưu ý: phân biệt dấu gán = và dấu so sánh bằng ==).\n- != : So sánh khác nhau (không bằng).\n- > : Lớn hơn.\n- < : Nhỏ hơn.\n- >= : Lớn hơn hoặc bằng.\n- <= : Nhỏ hơn hoặc bằng.\n\n• Toán tử logic: Dùng để kết hợp nhiều biểu thức điều kiện so sánh:\n1. and (VÀ): Trả về True KHI VÀ CHỈ KHI cả hai biểu thức con đều True. Chỉ cần một biểu thức con False thì kết quả là False.\n2. or (HOẶC): Trả về True KHI ÍT NHẤT một trong hai biểu thức con True. Chỉ trả về False khi cả hai đều False.\n3. not (PHỦ ĐỊNH): Đảo ngược giá trị logic: not True là False, not False là True.\n\n• Điểm đặc sắc của Python: Hỗ trợ so sánh kép liền mạch cực kỳ tự nhiên, ví dụ: 0 <= diem <= 10 tương đương (diem >= 0) and (diem <= 10).",
+                        "images": [
+                            {
+                                "url": "/images/topics/10_PYTHON/toan-tu-so-sanh.jpg",
+                                "caption": "Bảng tra cứu toán tử so sánh trong Python",
+                                "alt": "Toán tử so sánh"
+                            },
+                            {
+                                "url": "/images/topics/10_PYTHON/toan-tu-logic.jpg",
+                                "caption": "Bảng tra cứu toán tử logic and, or, not trong Python",
+                                "alt": "Toán tử logic"
+                            }
+                        ],
+                        "codeSnippet": "dtb = 8.5\nhanh_kiem = \"Tốt\"\n\n# Kiểm tra học sinh xuất sắc: Điểm >= 9.0 VÀ Hạnh kiểm Tốt\nis_xuat_sac = (dtb >= 9.0) and (hanh_kiem == \"Tốt\")\nprint(\"Xuất sắc?\", is_xuat_sac)  # False\n\n# Kiểm tra học sinh giỏi: Điểm >= 8.0 HOẶC Hạnh kiểm Tốt\nis_gioi = (dtb >= 8.0) or (hanh_kiem == \"Tốt\")\nprint(\"Đạt loại Giỏi?\", is_gioi)  # True\n\n# Phủ định\nprint(not (5 > 3))  # not True => False"
+                    }
+                ]
+            },
+            {
+                "id": "sec-3",
+                "number": "3.",
+                "title": "Cấu trúc rẽ nhánh điều kiện if - elif - else",
+                "content": "Cấu trúc rẽ nhánh cho phép máy tính lựa chọn thực hiện khối lệnh này hay khối lệnh khác tùy thuộc vào điều kiện kiểm tra là True (đúng) hay False (sai).",
+                "subSections": [
+                    {
+                        "id": "sec-3-1",
+                        "letter": "a)",
+                        "title": "Sơ đồ khối rẽ nhánh & Cú pháp if, if-else, if-elif-else",
+                        "content": "Python hỗ trợ 3 dạng câu lệnh rẽ nhánh:\n\n1. Dạng thiếu (if đơn):\nCú pháp:\nif <điều_kiện>:\n    <khối_lệnh>\nGiải thích: Nếu điều kiện đúng (True) thì thực thi khối lệnh; nếu sai (False) thì bỏ qua.\n\n2. Dạng đủ (if - else):\nCú pháp:\nif <điều_kiện>:\n    <khối_lệnh_1>\nelse:\n    <khối_lệnh_2>\nGiải thích: Nếu điều kiện đúng thì chạy khối lệnh 1; nếu sai thì bắt buộc chạy khối lệnh 2 trong nhánh else.\n\n3. Dạng đa nhánh (if - elif - else):\nCú pháp:\nif <điều_kiện_1>:\n    <khối_lệnh_1>\nelif <điều_kiện_2>:\n    <khối_lệnh_2>\nelse:\n    <khối_lệnh_mặc_định>\nGiải thích: Kiểm tra lần lượt từ trên xuống. Điều kiện nào đúng đầu tiên thì khối lệnh tương ứng sẽ được chạy và toàn bộ các nhánh còn lại phía sau sẽ bị bỏ qua. Nếu không có điều kiện nào đúng thì chạy nhánh else cuối cùng.",
+                        "imageUrl": "/images/topics/10_PYTHON/so-do-khoi-if-else.png",
+                        "imageCaption": "Sơ đồ khối luồng thực thi của cấu trúc rẽ nhánh điều kiện If - Else",
+                        "codeSnippet": "# Xếp loại học lực theo điểm trung bình\ndtb = float(input(\"Nhập điểm TB (0-10): \"))\nif dtb >= 8.0:\n    print(\"Học lực: Giỏi\")\nelif dtb >= 6.5:\n    print(\"Học lực: Khá\")\nelif dtb >= 5.0:\n    print(\"Học lực: Trung bình\")\nelse:\n    print(\"Học lực: Yếu/Chưa đạt\")"
+                    },
+                    {
+                        "id": "sec-3-2",
+                        "letter": "b)",
+                        "title": "Quy tắc thụt lề (Indentation) & Cấu trúc rẽ nhánh lồng nhau",
+                        "content": "• Quy tắc thụt đầu dòng (Indentation):\n- Trong các ngôn ngữ như C, C++, Pascal, khối lệnh được bao bởi cặp ngoặc { } hoặc begin - end. Trong Python, các khối lệnh được xác định duy nhất bằng cách THỤT ĐẦU DÒNG (thường là 4 dấu cách space).\n- Dấu hai chấm (:) ở cuối dòng if, elif, else là bắt buộc, báo hiệu khối lệnh con bắt đầu.\n- Mọi câu lệnh trong cùng một khối lệnh con PHẢI có mức thụt lề bằng nhau chính xác. Nếu thụt lề sai, chương trình sẽ báo lỗi IndentationError ngay lập tức.\n\n• Cấu trúc rẽ nhánh lồng nhau (Nested if):\nMột câu lệnh if có thể nằm bên trong một nhánh của câu lệnh if khác để kiểm tra các điều kiện phụ thuộc tuần tự.",
+                        "codeSnippet": "# Kiểm tra năm nhuận dương lịch\nnam = int(input(\"Nhập năm: \"))\nif nam % 400 == 0 or (nam % 4 == 0 and nam % 100 != 0):\n    print(f\"Năm {nam} là NĂM NHUẬN (tháng 2 có 29 ngày)\")\nelse:\n    print(f\"Năm {nam} là năm thường (tháng 2 có 28 ngày)\")"
+                    },
+                    {
+                        "id": "sec-3-3",
+                        "letter": "c)",
+                        "title": "Bài toán thực tế: Máy tính mini & Quản lý số dư ATM",
+                        "content": "Dưới đây là mã nguồn ứng dụng thực tế từ Note Python Tháng 6: Hệ thống mô phỏng cây ATM ngân hàng với menu rẽ nhánh quản lý số dư, nạp tiền, rút tiền và kiểm tra số dư hợp lệ.",
+                        "codeSnippet": "# Mô phỏng hệ thống quản lý tài khoản ngân hàng ATM (Note Python Tháng 6)\nso_du = 500000.0  # Số dư ban đầu 500.000 VNĐ\n\nprint(\"=== HỆ THỐNG GIAO DỊCH ATM TQT ===\")\nprint(\"0. Thoát chương trình\")\nprint(\"1. Xem số dư hiện tại\")\nprint(\"2. Nạp tiền vào tài khoản\")\nprint(\"3. Rút tiền từ tài khoản\")\n\nchon = int(input(\"Vui lòng chọn chức năng (0-3): \"))\nif chon == 0:\n    print(\"Cảm ơn quý khách đã sử dụng dịch vụ. Tạm biệt!\")\nelif chon == 1:\n    print(f\"Số dư hiện tại của bạn là: {so_du:,.0f} VNĐ\")\nelif chon == 2:\n    nap = float(input(\"Nhập số tiền cần nạp: \"))\n    if nap > 0:\n        so_du += nap\n        print(f\"Nạp thành công! Số dư mới: {so_du:,.0f} VNĐ\")\n    else:\n        print(\"Số tiền nạp không hợp lệ!\")\nelif chon == 3:\n    rut = float(input(\"Nhập số tiền cần rút: \"))\n    if rut <= 0:\n        print(\"Số tiền rút không hợp lệ!\")\n    elif rut > so_du:\n        print(\"Giao dịch thất bại: Số dư trong tài khoản không đủ!\")\n    else:\n        so_du -= rut\n        print(f\"Rút thành công! Số dư còn lại: {so_du:,.0f} VNĐ\")\nelse:\n    print(\"Chức năng lựa chọn không hợp lệ!\")"
+                    }
+                ]
+            },
+            {
+                "id": "sec-4",
+                "number": "4.",
+                "title": "Cấu trúc lặp for, while & Kỹ thuật in hình, tính tổng",
+                "content": "Cấu trúc lặp giúp lặp đi lặp lại một khối lệnh nhiều lần mà không cần viết lại mã nguồn, tự động hóa các tác vụ tính toán lớn và duyệt tập hợp dữ liệu.",
+                "subSections": [
+                    {
+                        "id": "sec-4-1",
+                        "letter": "a)",
+                        "title": "Vòng lặp for & Hàm range(start, stop, step)",
+                        "content": "Vòng lặp for trong Python dùng để lặp qua một chuỗi tuần tự (danh sách, chuỗi, hoặc một khoảng số sinh bởi hàm range).\n• Cú pháp: for i in range(start, stop, step):\n\n• Nguyên tắc bán mở của hàm range: [start, stop) — bắt đầu từ start nhưng LUÔN DỪNG LẠI trước stop (giá trị cuối cùng được duyệt là stop - 1).\n- Dạng 1 tham số: range(stop) -> Duyệt từ 0 đến stop - 1 (bước nhảy mặc định là 1). Ví dụ: range(5) sinh dãy: 0, 1, 2, 3, 4.\n- Dạng 2 tham số: range(start, stop) -> Duyệt từ start đến stop - 1. Ví dụ: range(1, 6) sinh dãy: 1, 2, 3, 4, 5.\n- Dạng 3 tham số: range(start, stop, step) -> Duyệt từ start đến stop - 1 với bước tăng là step.\n  Ví dụ: range(1, 10, 2) sinh các số lẻ: 1, 3, 5, 7, 9.\n  Bước nhảy âm để đếm ngược: range(5, 0, -1) sinh: 5, 4, 3, 2, 1.",
+                        "imageUrl": "/images/topics/10_PYTHON/python-range-loop.png",
+                        "imageCaption": "Cơ chế sinh giá trị theo khoảng bán mở của hàm range(start, stop, step)",
+                        "codeSnippet": "# Tính tổng các số chẵn từ 2 đến 100\ntong_chan = 0\nfor i in range(2, 101, 2):\n    tong_chan += i\nprint(\"Tổng các số chẵn từ 2 đến 100 là:\", tong_chan)  # 2550\n\n# Duyệt đếm ngược từ 5 về 1\nfor i in range(5, 0, -1):\n    print(i, end=' ')\nprint(\"Xuất phát!\")  # 5 4 3 2 1 Xuất phát!"
+                    },
+                    {
+                        "id": "sec-4-2",
+                        "letter": "b)",
+                        "title": "Vòng lặp while, vòng lặp vô tận & lệnh break, continue",
+                        "content": "• Vòng lặp while:\n- Cú pháp: while <điều_kiện>:\n- Khối lệnh được lặp khi điều kiện còn True. Mỗi lần lặp, điều kiện được kiểm tra lại. Khi điều kiện trở thành False thì vòng lặp kết thúc.\n- Lỗi vòng lặp vô tận (Infinite loop): Xảy ra khi điều kiện luôn True do quên thay đổi giá trị của biến điều kiện bên trong thân vòng lặp (ví dụ quên lệnh i += 1).\n\n• Hai lệnh điều khiển vòng lặp quan trọng:\n- break: Dừng và THOÁT NGAY LẬP TỨC khỏi vòng lặp chứa nó, nhảy đến lệnh kế tiếp sau vòng lặp.\n- continue: BỎ QUA toàn bộ các câu lệnh còn lại trong lần lặp hiện tại và chuyển ngay sang lần lặp kế tiếp.",
+                        "codeSnippet": "# Tìm số nguyên dương k nhỏ nhất sao cho 1 + 2 + ... + k > 1000\nk = 1\ntong = 0\nwhile True:\n    tong += k\n    if tong > 1000:\n        break  # Đã đạt mục tiêu, ngắt vòng lặp\n    k += 1\n\nprint(f\"Giá trị k nhỏ nhất là {k} với tổng = {tong}\") # k = 45, tong = 1035\n\n# In các số từ 1 đến 10 nhưng bỏ qua số 5\nfor i in range(1, 11):\n    if i == 5:\n        continue\n    print(i, end=' ') # In: 1 2 3 4 6 7 8 9 10"
+                    },
+                    {
+                        "id": "sec-4-3",
+                        "letter": "c)",
+                        "title": "Vòng lặp lồng nhau: Kỹ thuật in các mẫu hình sao kinh điển",
+                        "content": "Vòng lặp lồng nhau (Nested loops) là kỹ thuật đặt một vòng lặp bên trong thân của một vòng lặp khác. Vòng lặp ngoài duyệt theo từng hàng (row), vòng lặp trong duyệt theo từng cột (column).\n\nDưới đây là 5 bài toán in hình kinh điển từ Note Python Tháng 6:",
+                        "codeSnippet": "# Bài 1: Hình vuông sao n x n\nn = 4\nprint(\"=== HÌNH VUÔNG 4x4 ===\")\nfor i in range(n):\n    for j in range(n):\n        print(\"*\", end='')\n    print()\n\n# Bài 2: Tam giác vuông sao cạnh n\nprint(\"=== TAM GIÁC VUÔNG ===\")\nfor i in range(1, n + 1):\n    for j in range(i):\n        print(\"*\", end='')\n    print()\n\n# Bài 3: Tam giác số 1, 12, 123...\nprint(\"=== TAM GIÁC SỐ ===\")\nfor i in range(1, n + 1):\n    for j in range(1, i + 1):\n        print(j, end='')\n    print()\n\n# Bài 4: Tam giác vuông ngược\nprint(\"=== TAM GIÁC NGƯỢC ===\")\nfor i in range(n, 0, -1):\n    print(\"*\" * i)"
+                    },
+                    {
+                        "id": "sec-4-4",
+                        "letter": "d)",
+                        "title": "Công thức cấp số cộng & Giới thiệu Độ phức tạp thuật toán O(N)",
+                        "content": "• Công thức tính tổng dãy số có quy luật (Note Python Tháng 6):\n1. Tổng 1 + 2 + 3 + ... + n = n * (n + 1) // 2\n2. Tổng số lẻ 1 + 3 + 5 + ... + (2n - 1) = n ** 2\n3. Tổng số chẵn 2 + 4 + 6 + ... + 2n = n * (n + 1)\n4. Tổng bình phương 1^2 + 2^2 + ... + n^2 = n * (n + 1) * (2n + 1) // 6\n5. Cấp số cộng: Sn = n * (u1 + un) // 2 hoặc n * (2*u1 + (n - 1)*d) // 2\n\n• Giới thiệu Độ phức tạp thuật toán (Time Complexity / Big-O):\n- Khái niệm: Độ phức tạp không đo thời gian chạy cụ thể bằng giây (vì phụ thuộc máy tính mạnh hay yếu), mà đo TỐC ĐỘ TĂNG số lượng thao tác tính toán khi kích thước dữ liệu đầu vào N tăng lên.\n- 1 vòng lặp từ 1 đến N: Độ phức tạp O(N).\n- 2 vòng lặp lồng nhau (mỗi vòng đến N): Độ phức tạp O(N^2).\n- Thuật toán tìm kiếm nhị phân (chia đôi liên tục): Độ phức tạp O(log N).\n- Áp dụng công thức toán học cấp số cộng: Độ phức tạp O(1) - chạy tức thời.\n\n• Mẹo tối ưu cho đề thi Lập trình (Tránh lỗi TLE - Time Limit Exceeded):\nMỗi giây máy tính thực hiện được khoảng 10^7 đến 10^8 phép tính. Nếu N = 10^9 mà dùng vòng lặp for thì sẽ bị lỗi TLE chắc chắn. Bắt buộc phải áp dụng công thức cấp số cộng O(1) để có kết quả trong 0.001 giây!",
+                        "codeSnippet": "# So sánh cách tính tổng từ 1 đến N\nimport time\nn = 10_000_000\n\n# Cách 1: Dùng công thức O(1) - Chạy tức thời\ns_ct = n * (n + 1) // 2\nprint(\"Kết quả O(1):\", s_ct)\n\n# Cách 2: Dùng vòng lặp O(N) - Chạy lâu hơn rất nhiều\n# tong = sum(range(1, n + 1))"
+                    }
+                ]
+            },
+            {
+                "id": "sec-5",
+                "number": "5.",
+                "title": "Cấu trúc dữ liệu Danh sách (List)",
+                "content": "Danh sách (List) là một trong những cấu trúc dữ liệu quan trọng và mạnh mẽ nhất trong Python. List là một thùng chứa tuần tự lưu trữ được nhiều giá trị có thể thuộc các kiểu dữ liệu khác nhau, các phần tử cách nhau bởi dấu phẩy và đặt trong cặp ngoặc vuông [ ].",
+                "subSections": [
+                    {
+                        "id": "sec-5-1",
+                        "letter": "a)",
+                        "title": "Khái niệm List, chỉ số Index âm/dương & Cắt lát (Slicing)",
+                        "content": "• Đặc tính của List: Có thứ tự, các phần tử có thể trùng lặp, và có thể thay đổi giá trị (mutable).\n\n• Hệ thống đánh chỉ số kép độc đáo của Python:\n- Chỉ số dương (Index >= 0): Đánh số từ trái sang phải, bắt đầu từ 0 cho đến len - 1.\n- Chỉ số âm (Index < 0): Đánh số từ phải sang trái, bắt đầu từ -1 cho phần tử cuối cùng, -2 cho phần tử áp chót, và -len cho phần tử đầu tiên.\nVí dụ: L = [10, 20, 30, 40, 50] thì L[0] = 10, L[-1] = 50.\n\n• Kỹ thuật cắt lát (List Slicing):\n- Cú pháp: L[start : stop : step]\n- Lấy một danh sách con từ chỉ số start đến trước stop (không bao gồm stop).\n- Ví dụ: L[1:4] lấy các phần tử từ chỉ số 1 đến 3.\n- L[:3] lấy từ đầu đến chỉ số 2.\n- L[2:] lấy từ chỉ số 2 đến hết danh sách.\n- L[::-1] kỹ thuật đảo ngược danh sách cực ngắn gọn!",
+                        "imageUrl": "/images/topics/10_PYTHON/python-list-indexing.png",
+                        "imageCaption": "Sơ đồ đánh chỉ số dương (từ trái qua 0..n-1) và chỉ số âm (từ phải qua -1..-n) trong List",
+                        "codeSnippet": "a = [10, 20, 30, 40, 50]\nprint(\"Phần tử đầu:\", a[0])    # 10\nprint(\"Phần tử cuối:\", a[-1])  # 50\nprint(\"Cắt lát a[1:4]:\", a[1:4]) # [20, 30, 40]\nprint(\"Đảo ngược list:\", a[::-1]) # [50, 40, 30, 20, 10]"
+                    },
+                    {
+                        "id": "sec-5-2",
+                        "letter": "b)",
+                        "title": "Bảng phương thức List cốt lõi: append, insert, remove, pop, sort",
+                        "content": "Bảng tổng hợp toàn bộ các phương thức thao tác trên List từ Note Python Tháng 6 & Tháng 7:\n\n• Thêm phần tử:\n- append(x): Thêm phần tử x vào cuối danh sách.\n- insert(i, x): Chèn phần tử x vào vị trí chỉ số i.\n- extend(danh_sach_khac): Nối thêm một danh sách khác vào đuôi danh sách hiện tại.\n\n• Xóa phần tử:\n- remove(x): Xóa phần tử đầu tiên có giá trị bằng x. Báo lỗi ValueError nếu x không tồn tại trong danh sách.\n- pop(i): Xóa và trả về phần tử tại vị trí chỉ số i. Nếu gọi pop() không tham số, sẽ xóa phần tử cuối cùng.\n- clear(): Xóa toàn bộ phần tử, danh sách trở thành rỗng [].\n\n• Tìm kiếm & Sắp xếp:\n- index(x): Trả về vị trí chỉ số xuất hiện đầu tiên của x.\n- count(x): Đếm số lần phần tử x xuất hiện trong danh sách.\n- sort(): Sắp xếp danh sách tăng dần ngay tại chỗ (in-place).\n- sort(reverse=True): Sắp xếp danh sách giảm dần.\n- reverse(): Đảo ngược thứ tự các phần tử trong danh sách.",
+                        "codeSnippet": "L = [3, 1, 4, 1, 5, 9]\n\nL.append(2)          # [3, 1, 4, 1, 5, 9, 2]\nL.insert(0, 8)       # [8, 3, 1, 4, 1, 5, 9, 2]\nL.remove(1)          # Xóa số 1 đầu tiên: [8, 3, 4, 1, 5, 9, 2]\nda_xoa = L.pop()     # Xóa phần tử cuối (2)\n\nprint(\"Số lần xuất hiện của số 1:\", L.count(1)) # 1\nL.sort()             # Sắp xếp tăng dần\nprint(\"List sau khi sắp xếp:\", L)"
+                    },
+                    {
+                        "id": "sec-5-3",
+                        "letter": "c)",
+                        "title": "Các hàm dựng sẵn: len, sum, max, min & Kỹ thuật nhập mảng 1 dòng",
+                        "content": "• Các hàm tích hợp sẵn tiện lợi:\n- len(L): Trả về số lượng phần tử (độ dài của list).\n- sum(L): Tính tổng tất cả các phần tử trong danh sách số.\n- max(L): Tìm phần tử có giá trị lớn nhất trong danh sách.\n- min(L): Tìm phần tử có giá trị nhỏ nhất trong danh sách.\n- x in L: Kiểm tra phần tử x có nằm trong list hay không (trả về True/False).\n- list(set(L)): Kỹ thuật loại bỏ các phần tử trùng lặp trong List.\n\n• Kỹ thuật nhập mảng số nguyên từ một dòng (Chuẩn đề thi):\nA = list(map(int, input().split()))",
+                        "codeSnippet": "# Nhập mảng A từ bàn phím trên một dòng ngang\n# Ví dụ nhập: 12 45 7 89 23 45\nA = [12, 45, 7, 89, 23, 45]\nprint(\"Độ dài mảng:\", len(A))\nprint(\"Phần tử lớn nhất:\", max(A))\nprint(\"Phần tử nhỏ nhất:\", min(A))\nprint(\"Tổng các phần tử:\", sum(A))\nprint(\"Trung bình cộng:\", sum(A) / len(A))\n\n# Đếm và tách số chẵn - lẻ (Note Python Tháng 7)\nchan = [x for x in A if x % 2 == 0]\nle = [x for x in A if x % 2 != 0]\nprint(\"Các số chẵn:\", chan)\nprint(\"Các số lẻ:\", le)"
+                    }
+                ],
+                "table": {
+                    "headers": [
+                        "Phương thức",
+                        "Cú pháp mẫu",
+                        "Ý nghĩa / Tác dụng",
+                        "Ví dụ kết quả"
+                    ],
+                    "rows": [
+                        [
+                            "append",
+                            "L.append(x)",
+                            "Thêm x vào vị trí cuối cùng",
+                            "[1, 2].append(3) => [1, 2, 3]"
+                        ],
+                        [
+                            "insert",
+                            "L.insert(i, x)",
+                            "Chèn x vào chỉ số i",
+                            "[1, 3].insert(1, 2) => [1, 2, 3]"
+                        ],
+                        [
+                            "remove",
+                            "L.remove(x)",
+                            "Xóa giá trị x đầu tiên gặp",
+                            "[1, 2, 2].remove(2) => [1, 2]"
+                        ],
+                        [
+                            "pop",
+                            "L.pop(i)",
+                            "Xóa phần tử ở vị trí i (mặc định cuối)",
+                            "[10, 20].pop() => 20"
+                        ],
+                        [
+                            "count",
+                            "L.count(x)",
+                            "Đếm số lần xuất hiện của x",
+                            "[1, 2, 1, 1].count(1) => 3"
+                        ],
+                        [
+                            "sort",
+                            "L.sort()",
+                            "Sắp xếp tăng dần tại chỗ",
+                            "[3, 1, 2].sort() => [1, 2, 3]"
+                        ],
+                        [
+                            "reverse",
+                            "L.reverse()",
+                            "Đảo ngược danh sách tại chỗ",
+                            "[1, 2, 3].reverse() => [3, 2, 1]"
+                        ],
+                        [
+                            "clear",
+                            "L.clear()",
+                            "Xóa sạch toàn bộ phần tử",
+                            "[1, 2].clear() => []"
+                        ]
+                    ]
+                }
+            },
+            {
+                "id": "sec-6",
+                "number": "6.",
+                "title": "Cấu trúc dữ liệu Từ điển (Dictionary)",
+                "content": "Danh sách (List) rất tốt để lưu trữ dữ liệu tuần tự, nhưng không phù hợp khi một đối tượng có nhiều thuộc tính khác nhau (ví dụ: một học sinh gồm mã định danh, họ tên, ngày sinh, điểm số). Để lưu trữ dữ liệu có cấu trúc ánh xạ rõ ràng, Python cung cấp kiểu dữ liệu Từ điển (Dictionary).",
+                "subSections": [
+                    {
+                        "id": "sec-6-1",
+                        "letter": "a)",
+                        "title": "Khái niệm Dictionary, tính chất của Khóa (Key) và Giá trị (Value)",
+                        "content": "• Cấu trúc Dictionary:\nTrong từ điển, mỗi phần tử được lưu dưới dạng một cặp: <khóa> : <giá_trị> (<key> : <value>).\nCác phần tử được phân cách nhau bởi dấu phẩy và đặt trong cặp ngoặc nhọn { }.\n\n• 4 Đặc tính sống còn của Dictionary:\n1. Khóa (Key) phải là duy nhất: Mỗi khóa chỉ được xuất hiện đúng một lần trong từ điển. Nếu gán lại khóa đã có, giá trị cũ sẽ bị ghi đè.\n2. Khóa (Key) phải thuộc kiểu dữ liệu bất biến (immutable, hashable) như str, int, float, tuple. Không thể dùng List làm khóa.\n3. Giá trị (Value) có thể mang bất kỳ kiểu dữ liệu nào (số, chuỗi, list, hoặc thậm chí một dictionary khác) và các giá trị có thể trùng nhau.\n4. Truy xuất dữ liệu theo Khóa (Key) với tốc độ O(1) cực nhanh, không phụ thuộc vào vị trí hay số lượng phần tử.",
+                        "imageUrl": "/images/topics/10_PYTHON/python-dict-structure.png",
+                        "imageCaption": "Cấu trúc lưu trữ dữ liệu dạng cặp Khóa : Giá trị (Key : Value) trong Dictionary",
+                        "codeSnippet": "# Khai báo từ điển thông tin học sinh (Note Python Tháng 6 & 7)\nhoc_sinh = {\n    \"ma_hs\": \"HS001\",\n    \"ho_ten\": \"Nguyễn Văn An\",\n    \"tuoi\": 16,\n    \"lop\": \"10A1\",\n    \"diem_tb\": 8.8\n}\nprint(hoc_sinh)"
+                    },
+                    {
+                        "id": "sec-6-2",
+                        "letter": "b)",
+                        "title": "Khởi tạo, truy xuất, cập nhật, thêm mới và xóa phần tử",
+                        "content": "• Khởi tạo từ điển: Dùng cú pháp d = {} hoặc d = dict().\n\n• Truy xuất giá trị theo khóa:\n- Cách 1: d[key] — Nếu key không tồn tại sẽ báo lỗi KeyError.\n- Cách 2: d.get(key, default) — An toàn hơn, nếu key không tồn tại sẽ trả về giá trị default (hoặc None) chứ không làm dừng chương trình.\n\n• Thêm mới hoặc Cập nhật giá trị:\n- Cú pháp: d[key] = value\n- Nếu key chưa có: Từ điển tự động thêm cặp key: value mới.\n- Nếu key đã có: Giá trị tương ứng với key đó sẽ được cập nhật giá trị mới.\n\n• Xóa phần tử:\n- del d[key]: Xóa cặp key: value ra khỏi từ điển.\n- d.pop(key): Xóa key và trả về giá trị vừa bị xóa.",
+                        "codeSnippet": "sv = {\"ten\": \"Lê Bình\", \"tuoi\": 16, \"dia_chi\": \"Quảng Ngãi\"}\n\n# Truy cập\nprint(\"Họ tên:\", sv[\"ten\"])               # Lê Bình\nprint(\"Điện thoại:\", sv.get(\"sdt\", \"Chưa có\")) # Chưa có\n\n# Cập nhật giá trị đã có\nsv[\"tuoi\"] = 17\n\n# Thêm thuộc tính mới\nsv[\"truong\"] = \"THPT Trần Quốc Tuấn\"\n\n# Xóa thuộc tính\ndel sv[\"dia_chi\"]\n\nprint(\"Từ điển sau khi sửa đổi:\", sv)"
+                    },
+                    {
+                        "id": "sec-6-3",
+                        "letter": "c)",
+                        "title": "Duyệt Dictionary & Ứng dụng quản lý danh sách học sinh",
+                        "content": "• Các phương thức duyệt Dictionary:\n- for k in d: hoặc for k in d.keys(): Duyệt qua tất cả các Khóa.\n- for v in d.values(): Duyệt qua tất cả các Giá trị.\n- for k, v in d.items(): Duyệt đồng thời cả Khóa và Giá trị.\n\n• Ứng dụng đếm tần suất xuất hiện của các phần tử:\nMột bài toán kinh điển trong các kỳ thi là đếm xem mỗi số hoặc mỗi từ xuất hiện bao nhiêu lần. Dùng Dictionary giải bài toán này với độ phức tạp tối ưu O(N).",
+                        "codeSnippet": "# Đếm số lần xuất hiện của từng phần tử trong danh sách\nday_so = [1, 2, 3, 2, 1, 4, 2, 5, 1, 2]\ntan_suat = {}\n\nfor so in day_so:\n    if so in tan_suat:\n        tan_suat[so] += 1\n    else:\n        tan_suat[so] = 1\n\nprint(\"Tần suất xuất hiện:\")\nfor k, v in tan_suat.items():\n    print(f\"Số {k} xuất hiện {v} lần\")"
+                    }
+                ]
+            },
+            {
+                "id": "sec-7",
+                "number": "7.",
+                "title": "Định nghĩa & Sử dụng Hàm (Function def)",
+                "content": "Hàm (Function) là một khối mã lệnh có tên gọi, được định nghĩa một lần và có thể gọi thực thi nhiều lần ở các vị trí khác nhau trong chương trình. Hàm giúp mã nguồn module hóa, tránh trùng lặp code (nguyên lý DRY - Don't Repeat Yourself) và dễ kiểm thử, bảo trì.",
+                "subSections": [
+                    {
+                        "id": "sec-7-1",
+                        "letter": "a)",
+                        "title": "Cú pháp def, tham số và giá trị trả về return",
+                        "content": "• Cú pháp định nghĩa hàm:\ndef <tên_hàm>(<tham_số_1>, <tham_số_2>, ...):\n    <khối_lệnh_xử_lý>\n    return <giá_trị_trả_về>\n\n• Thành phần của hàm:\n1. Từ khóa def: Báo hiệu định nghĩa hàm mới.\n2. Tên hàm: Đặt theo quy tắc đặt tên biến (chữ thường, gạch dưới).\n3. Tham số (Parameters): Các biến nhận dữ liệu truyền vào khi hàm được gọi.\n4. Khối lệnh: Thụt lề 4 khoảng trắng.\n5. Lệnh return: Trả giá trị kết quả về cho nơi gọi hàm và kết thúc hàm ngay lập tức. Nếu hàm không có lệnh return, nó ngầm định trả về giá trị đặc biệt None.\n\n• Phân biệt print() và return:\n- print() chỉ in kết quả ra màn hình để người dùng đọc, chương trình không thể lấy kết quả đó để tiếp tục tính toán.\n- return gửi giá trị về cho biến lưu trữ để tiếp tục tham gia vào các phép tính khác.",
+                        "imageUrl": "/images/topics/10_PYTHON/python-function-def.png",
+                        "imageCaption": "Cấu trúc định nghĩa hàm với từ khóa def, danh sách tham số và giá trị trả về return",
+                        "codeSnippet": "# Định nghĩa hàm tính diện tích hình chữ nhật\ndef tinh_dien_tich_hcn(dai, rong):\n    dt = dai * rong\n    return dt\n\n# Gọi hàm và sử dụng kết quả trả về\ns1 = tinh_dien_tich_hcn(5, 3)\ns2 = tinh_dien_tich_hcn(10, 4)\ntong_dien_tich = s1 + s2\nprint(\"Tổng diện tích 2 hình chữ nhật:\", tong_dien_tich)  # 55"
+                    },
+                    {
+                        "id": "sec-7-2",
+                        "letter": "b)",
+                        "title": "Phân loại hàm: Không tham số, có tham số, tham số mặc định",
+                        "content": "• 4 dạng hàm phổ biến:\n1. Hàm không có tham số: Dùng để in thực đơn menu, lời chào mẫu.\n2. Hàm có 1 hoặc nhiều tham số bắt buộc.\n3. Hàm có tham số mặc định (Default Argument): Cho phép gán giá trị mặc định cho tham số nếu lúc gọi hàm không truyền giá trị vào.\n   Ví dụ: def chao(ten, loi_chao=\"Xin chào\"):\n4. Biến cục bộ (Local variable) và Biến toàn cục (Global variable):\n   - Biến khai báo bên trong hàm là biến cục bộ, chỉ tồn tại khi hàm đang chạy, bên ngoài hàm không thể truy cập.\n   - Biến khai báo ngoài hàm là biến toàn cục, có thể đọc ở mọi nơi.",
+                        "codeSnippet": "# Hàm có tham số mặc định\ndef tinh_luong(so_gio, don_gia=50000):\n    return so_gio * don_gia\n\nprint(\"Lương mặc định:\", tinh_luong(8))        # 8 * 50000 = 400.000\nprint(\"Lương ca đêm:\", tinh_luong(8, 70000))  # 8 * 70000 = 560.000"
+                    },
+                    {
+                        "id": "sec-7-3",
+                        "letter": "c)",
+                        "title": "Các mẫu hàm thuật toán chuẩn: Kiểm tra nguyên tố, giai thừa, đối xứng",
+                        "content": "Dưới đây là các hàm mẫu chuẩn thường xuyên xuất hiện trong các bài kiểm tra và kỳ thi Tin học THPT:",
+                        "codeSnippet": "# 1. Hàm kiểm tra số chẵn lẻ\ndef is_even(n):\n    return n % 2 == 0\n\n# 2. Hàm kiểm tra số nguyên tố tối ưu (chạy đến căn bậc 2 của n)\ndef is_prime(n):\n    if n < 2:\n        return False\n    for i in range(2, int(n ** 0.5) + 1):\n        if n % i == 0:\n            return False\n    return True\n\n# 3. Hàm tính giai thừa n! (Note Python Tháng 7)\ndef tinh_giai_thua(n):\n    if n <= 1:\n        return 1\n    gt = 1\n    for i in range(2, n + 1):\n        gt *= i\n    return gt\n\n# 4. Hàm kiểm tra xâu đối xứng (Palindrome)\ndef is_palindrome(s):\n    return s == s[::-1]\n\nprint(\"17 có phải số nguyên tố?\", is_prime(17))        # True\nprint(\"Giai thừa của 5:\", tinh_giai_thua(5))           # 120\nprint(\"radar có đối xứng?\", is_palindrome(\"radar\"))    # True"
+                    },
+                    {
+                        "id": "sec-7-4",
+                        "letter": "d)",
+                        "title": "Quy trình 4 bước chuẩn giải bài toán lập trình bằng hàm",
+                        "content": "Trích Note Python Tháng 7: Để giải một bài tập lập trình một cách khoa học, chuyên nghiệp và tránh sai sót, hãy tuân theo quy trình 4 bước chuẩn sau:\n\n• Bước 1: Phân tích Input & Output\n- Xác định rõ dữ liệu vào gồm những gì, kiểu dữ liệu gì (int, float, chuỗi hay mảng số).\n- Xác định kết quả đầu ra cần in ra theo định dạng nào.\n\n• Bước 2: Thiết kế và Viết hàm xử lý nghiệp vụ\n- Đặt tên hàm ngắn gọn, súc tích, mô tả đúng chức năng.\n- Định nghĩa các tham số cần thiết và viết thuật toán bên trong thân hàm, dùng return để trả kết quả.\n\n• Bước 3: Đọc dữ liệu từ bàn phím và Gọi hàm\n- Dùng input() và ép kiểu hoặc map(int, input().split()).\n- Truyền dữ liệu vừa nhập vào hàm để tính toán.\n\n• Bước 4: Định dạng và Xuất kết quả\n- Dùng print() kết hợp f-string hoặc định dạng số thập phân để in ra đúng yêu cầu của đề bài.",
+                        "codeSnippet": "# Ví dụ áp dụng quy trình 4 bước: Tính tổng các ước số dương của n\n\n# Bước 2: Viết hàm tính tổng ước\ndef tong_uoc_so(n):\n    tong = 0\n    for i in range(1, n + 1):\n        if n % i == 0:\n            tong += i\n    return tong\n\n# Bước 1 & 3: Nhập Input và gọi hàm\nso_n = 12  # Giả sử người dùng nhập 12\nket_qua = tong_uoc_so(so_n)\n\n# Bước 4: Xuất kết quả Output\nprint(f\"Tổng các ước số của {so_n} là: {ket_qua}\")  # 1+2+3+4+6+12 = 28"
+                    }
+                ]
+            },
+            {
+                "id": "sec-8",
+                "number": "8.",
+                "title": "Xử lý Chuỗi ký tự (String) nâng cao",
+                "content": "Chuỗi ký tự (String) trong Python là một dãy tuần tự các ký tự, được bao bởi dấu nháy đơn '...' hoặc nháy kép \"...\". Chuỗi là kiểu dữ liệu bất biến (immutable) - không thể thay đổi từng ký tự tại chỗ như List, nhưng có hệ thống phương thức xử lý văn bản cực kỳ mạnh mẽ.",
+                "subSections": [
+                    {
+                        "id": "sec-8-1",
+                        "letter": "a)",
+                        "title": "Các hàm chuỗi: count, find, replace, strip, split, join",
+                        "content": "Các phương thức xử lý chuỗi thông dụng nhất (Note Python Tháng 7):\n\n• Tìm kiếm & Thống kê:\n- s.count(sub): Đếm số lần xuất hiện của chuỗi con sub trong s.\n- s.find(sub): Tìm vị trí chỉ số xuất hiện đầu tiên của chuỗi con sub. Nếu không tìm thấy, hàm trả về -1 (không gây lỗi).\n\n• Biến đổi & Làm sạch chuỗi:\n- s.replace(old, new): Thay thế tất cả các chuỗi old thành chuỗi new.\n- s.strip(): Xóa bỏ tất cả các khoảng trắng thừa ở hai đầu chuỗi.\n- s.lower(): Chuyển toàn bộ chuỗi thành chữ thường.\n- s.upper(): Chuyển toàn bộ chuỗi thành chữ hoa.\n- s.title(): Viết hoa chữ cái đầu tiên của mỗi từ (chuẩn hóa họ tên).\n\n• Tách & Nối chuỗi:\n- s.split(sep): Tách chuỗi s thành một danh sách các từ dựa trên ký tự phân cách sep (mặc định là dấu cách).\n- sep.join(list_str): Nối một danh sách các chuỗi thành một chuỗi duy nhất, ngăn cách bởi ký tự sep.\n\n• Kiểm tra tính chất ký tự:\n- s.isdigit(): Kiểm tra chuỗi có toàn là chữ số hay không.\n- s.isalpha(): Kiểm tra chuỗi có toàn là chữ cái hay không.",
+                        "codeSnippet": "s = \"  Tin học Lớp 10 THPT Trần Quốc Tuấn  \"\n\n# Làm sạch khoảng trắng\ns_clean = s.strip()\nprint(\"Chuỗi sau làm sạch:\", s_clean)\n\n# Đếm từ\nprint(\"Số chữ 'T' (hoa):\", s_clean.count(\"T\")) # 3\n\n# Tách từ\nwords = s_clean.split()\nprint(\"Danh sách từ:\", words)\nprint(\"Số lượng từ:\", len(words))\n\n# Nối lại bằng dấu gạch ngang\ns_slug = \"-\".join(words)\nprint(\"Nối từ:\", s_slug)  # Tin-học-Lớp-10-THPT-Trần-Quốc-Tuấn"
+                    },
+                    {
+                        "id": "sec-8-2",
+                        "letter": "b)",
+                        "title": "Kỹ thuật đảo ngược xâu s[::-1] & Kiểm tra xâu đối xứng Palindrome",
+                        "content": "• Cắt lát trên chuỗi:\nGiống như List, chuỗi ký tự hỗ trợ chỉ số âm và cắt lát s[start:stop:step].\nĐể đảo ngược một chuỗi ký tự trong Python, cách ngắn gọn và hiệu quả nhất là sử dụng bước nhảy âm step = -1: s[::-1].\n\n• Kiểm tra xâu đối xứng (Palindrome):\nXâu đối xứng là xâu đọc từ trái sang phải hay từ phải sang trái đều giống hệt nhau (ví dụ: 'madam', 'radar', '12321').\nTrong Python, chỉ cần kiểm tra s == s[::-1].",
+                        "codeSnippet": "# Kiểm tra xâu đối xứng không phân biệt hoa thường và khoảng trắng\ndef kiem_tra_doi_xung(van_ban):\n    s = van_ban.lower().replace(\" \", \"\")\n    return s == s[::-1]\n\nprint(kiem_tra_doi_xung(\"A ba\"))    # True (sau khi chuẩn hóa thành 'aba')\nprint(kiem_tra_doi_xung(\"Python\"))  # False"
+                    }
+                ],
+                "table": {
+                    "headers": [
+                        "Phương thức",
+                        "Cú pháp mẫu",
+                        "Công dụng chính",
+                        "Ví dụ kết quả"
+                    ],
+                    "rows": [
+                        [
+                            "count",
+                            "s.count(sub)",
+                            "Đếm số lần xuất hiện của chuỗi con sub",
+                            "'banana'.count('a') => 3"
+                        ],
+                        [
+                            "find",
+                            "s.find(sub)",
+                            "Tìm vị trí đầu tiên của sub (-1 nếu không có)",
+                            "'python'.find('th') => 2"
+                        ],
+                        [
+                            "replace",
+                            "s.replace(old, new)",
+                            "Thay thế chuỗi con old thành new",
+                            "'c++'.replace('+', '#') => 'c##'"
+                        ],
+                        [
+                            "strip",
+                            "s.strip()",
+                            "Xóa khoảng trắng thừa ở hai đầu",
+                            "' hello '.strip() => 'hello'"
+                        ],
+                        [
+                            "split",
+                            "s.split()",
+                            "Tách chuỗi thành danh sách các từ",
+                            "'a b c'.split() => ['a', 'b', 'c']"
+                        ],
+                        [
+                            "join",
+                            "'-'.join(list)",
+                            "Nối danh sách chuỗi thành 1 chuỗi",
+                            "'-'.join(['x','y']) => 'x-y'"
+                        ],
+                        [
+                            "isdigit",
+                            "s.isdigit()",
+                            "Kiểm tra chuỗi có hoàn toàn là số",
+                            "'2026'.isdigit() => True"
+                        ]
+                    ]
+                }
+            }
+        ],
+        "memoryNotes": [
+            "Python phân biệt chữ HOA và chữ thường; quy tắc thụt lề 4 khoảng trắng (Indentation) là bắt buộc để xác định khối lệnh.",
+            "Hàm input() LUÔN LUÔN trả về kiểu chuỗi (str). Muốn tính toán số học bắt buộc phải ép kiểu int(input()) hoặc float(input()).",
+            "Toán tử chia thực / luôn trả về kiểu float; phép chia nguyên // lấy phần nguyên; phép chia dư % lấy phần dư; phép lũy thừa ** tính số mũ.",
+            "Hàm range(start, stop, step) tuân thủ nguyên lý bán mở: luôn dừng lại trước stop (phần tử cuối là stop - 1).",
+            "List [] là danh sách có thể thay đổi (mutable); chỉ số âm L[-1] là phần tử cuối cùng; cắt lát L[::-1] giúp đảo ngược danh sách tức thời.",
+            "Dictionary {} lưu dữ liệu dạng cặp Khóa : Giá trị (Key : Value). Khóa phải là duy nhất và bất biến. Truy cập khóa có tốc độ O(1).",
+            "Hàm def giúp module hóa chương trình; lệnh return trả kết quả về cho biểu thức gọi hàm và kết thúc hàm ngay lập tức.",
+            "Độ phức tạp Big-O: Khi N <= 10^6 có thể duyệt 1 vòng for O(N); khi N lớn (N >= 10^8) phải dùng công thức toán học O(1) để tránh TLE."
+        ],
+        "practiceQuestions": [
+            {
+                "id": "10py-q1",
+                "question": "Câu 1. Trong các tên biến sau đây trong Python, tên biến nào là HỢP LỆ?",
+                "options": {
+                    "A": "2so_nguyen",
+                    "B": "_diem_tong_ket",
+                    "C": "class",
+                    "D": "diem-toan"
+                },
+                "correctAnswer": "B",
+                "explanation": "Tên biến hợp lệ trong Python chỉ chứa chữ cái, chữ số và dấu gạch dưới, không được bắt đầu bằng chữ số (A sai), không được chứa dấu gạch ngang (D sai), và không được trùng từ khóa chuẩn (C trùng từ khóa class)."
+            },
+            {
+                "id": "10py-q2",
+                "question": "Câu 2. Kết quả của đoạn mã Python sau là gì?\nx = 19 // 4\ny = 19 % 4\nz = 2 ** 3\nprint(x, y, z)",
+                "options": {
+                    "A": "4 3 8",
+                    "B": "4.75 3 6",
+                    "C": "4 3 6",
+                    "D": "3 4 8"
+                },
+                "correctAnswer": "A",
+                "explanation": "19 chia 4 bằng 4 dư 3. Phép chia lấy nguyên // trả về 4, phép chia lấy dư % trả về 3. Phép lũy thừa 2 ** 3 = 8. Vậy kết quả in ra là 4 3 8."
+            },
+            {
+                "id": "10py-q3",
+                "question": "Câu 3. Trong Python, câu lệnh a = int(input()) dùng để làm gì?",
+                "options": {
+                    "A": "In số nguyên a ra màn hình.",
+                    "B": "Nhập một chuỗi ký tự bất kỳ từ bàn phím gán cho a.",
+                    "C": "Nhập một giá trị từ bàn phím và ép kiểu thành số nguyên lưu vào biến a.",
+                    "D": "Kiểm tra xem biến a có phải là số nguyên hay không."
+                },
+                "correctAnswer": "C",
+                "explanation": "Hàm input() nhận dữ liệu nhập từ bàn phím dưới dạng chuỗi (str), sau đó hàm int(...) thực hiện ép kiểu chuỗi đó thành số nguyên và gán cho biến a."
+            },
+            {
+                "id": "10py-q4",
+                "question": "Câu 4. Kết quả của phép toán 10 / 2 trong Python trả về giá trị và kiểu dữ liệu nào?",
+                "options": {
+                    "A": "5 thuộc kiểu int",
+                    "B": "5.0 thuộc kiểu float",
+                    "C": "5 thuộc kiểu float",
+                    "D": "'5' thuộc kiểu str"
+                },
+                "correctAnswer": "B",
+                "explanation": "Trong Python, kết quả của toán tử chia thực / LUÔN LUÔN là một số thực kiểu float, do đó 10 / 2 trả về 5.0."
+            },
+            {
+                "id": "10py-q5",
+                "question": "Câu 5. Đoạn mã sau in ra kết quả gì?\na = 10\nb = 5\na += b * 2\nprint(a)",
+                "options": {
+                    "A": "30",
+                    "B": "20",
+                    "C": "25",
+                    "D": "15"
+                },
+                "correctAnswer": "B",
+                "explanation": "Phép toán b * 2 = 10 được thực hiện trước. Sau đó phép gán kết hợp a += 10 tương đương a = 10 + 10 = 20."
+            },
+            {
+                "id": "10py-q6",
+                "question": "Câu 6. Biểu thức logic nào sau đây kiểm tra số nguyên n là số có 2 chữ số?",
+                "options": {
+                    "A": "n >= 10 or n <= 99",
+                    "B": "10 <= n <= 99",
+                    "C": "n > 9 and n < 100",
+                    "D": "Cả B và C đều đúng"
+                },
+                "correctAnswer": "D",
+                "explanation": "Trong Python, cú pháp so sánh kép 10 <= n <= 99 và n > 9 and n < 100 đều đúng và tương đương nhau."
+            },
+            {
+                "id": "10py-q7",
+                "question": "Câu 7. Vòng lặp for i in range(3, 10, 2) sẽ duyệt qua các giá trị nào của biến i?",
+                "options": {
+                    "A": "3, 5, 7, 9",
+                    "B": "3, 5, 7, 9, 11",
+                    "C": "3, 4, 5, 6, 7, 8, 9",
+                    "D": "5, 7, 9"
+                },
+                "correctAnswer": "A",
+                "explanation": "Hàm range(3, 10, 2) bắt đầu từ 3, bước nhảy 2 và dừng trước 10 => các giá trị sinh ra là 3, 5, 7, 9."
+            },
+            {
+                "id": "10py-q8",
+                "question": "Câu 8. Vòng lặp for i in range(5, 0, -1) thực hiện bao nhiêu lần lặp?",
+                "options": {
+                    "A": "4 lần lặp",
+                    "B": "5 lần lặp",
+                    "C": "6 lần lặp",
+                    "D": "0 lần lặp"
+                },
+                "correctAnswer": "B",
+                "explanation": "Với bước nhảy âm -1, hàm range(5, 0, -1) sinh các giá trị 5, 4, 3, 2, 1 (dừng trước 0) => thực hiện đúng 5 lần lặp."
+            },
+            {
+                "id": "10py-q9",
+                "question": "Câu 9. Câu lệnh nào dùng để thoát khỏi vòng lặp ngay lập tức?",
+                "options": {
+                    "A": "continue",
+                    "B": "pass",
+                    "C": "break",
+                    "D": "return"
+                },
+                "correctAnswer": "C",
+                "explanation": "Lệnh break dùng để thoát khỏi vòng lặp ngay lập tức; lệnh continue chỉ bỏ qua lần lặp hiện tại."
+            },
+            {
+                "id": "10py-q10",
+                "question": "Câu 10. Cho danh sách L = [10, 20, 30, 40, 50]. Giá trị của L[-2] là:",
+                "options": {
+                    "A": "20",
+                    "B": "30",
+                    "C": "40",
+                    "D": "50"
+                },
+                "correctAnswer": "C",
+                "explanation": "Chỉ số âm đếm từ phải qua trái bắt đầu từ -1: L[-1] = 50, L[-2] = 40."
+            },
+            {
+                "id": "10py-q11",
+                "question": "Câu 11. Cho danh sách A = [1, 2, 3, 4, 5]. Biểu thức A[1:4] trả về kết quả nào?",
+                "options": {
+                    "A": "[1, 2, 3]",
+                    "B": "[2, 3, 4]",
+                    "C": "[2, 3, 4, 5]",
+                    "D": "[1, 2, 3, 4]"
+                },
+                "correctAnswer": "B",
+                "explanation": "Cắt lát A[1:4] lấy các phần tử từ chỉ số 1 đến 3 (chỉ số 1 là 2, chỉ số 2 là 3, chỉ số 3 là 4) => kết quả là [2, 3, 4]."
+            },
+            {
+                "id": "10py-q12",
+                "question": "Câu 12. Phương thức nào dùng để thêm một phần tử vào vị trí cuối cùng của List?",
+                "options": {
+                    "A": "L.insert(x)",
+                    "B": "L.push(x)",
+                    "C": "L.append(x)",
+                    "D": "L.add(x)"
+                },
+                "correctAnswer": "C",
+                "explanation": "Trong Python, phương thức L.append(x) thêm phần tử x vào cuối danh sách. L.insert(i, x) chèn tại vị trí i."
+            },
+            {
+                "id": "10py-q13",
+                "question": "Câu 13. Sự khác nhau giữa L.remove(x) và L.pop(i) là gì?",
+                "options": {
+                    "A": "remove(x) xóa theo giá trị; pop(i) xóa theo vị trí chỉ số.",
+                    "B": "remove(x) xóa theo chỉ số; pop(i) xóa theo giá trị.",
+                    "C": "Hai phương thức này hoàn toàn giống nhau.",
+                    "D": "pop(i) không làm thay đổi danh sách ban đầu."
+                },
+                "correctAnswer": "A",
+                "explanation": "L.remove(x) tìm và xóa phần tử đầu tiên có giá trị bằng x. L.pop(i) xóa phần tử ở vị trí chỉ số i và trả về phần tử đó."
+            },
+            {
+                "id": "10py-q14",
+                "question": "Câu 14. Cho danh sách L = [5, 2, 9, 1, 7]. Để sắp xếp danh sách L theo thứ tự giảm dần, ta dùng lệnh:",
+                "options": {
+                    "A": "L.sort()",
+                    "B": "L.sort(reverse=True)",
+                    "C": "L.reverse()",
+                    "D": "sorted(L)"
+                },
+                "correctAnswer": "B",
+                "explanation": "L.sort() sắp xếp tăng dần; để sắp xếp giảm dần ta truyền tham số reverse=True: L.sort(reverse=True)."
+            },
+            {
+                "id": "10py-q15",
+                "question": "Câu 15. Câu lệnh nào dùng để nhập một danh sách các số nguyên trên cùng một dòng ngang cách nhau bởi dấu cách?",
+                "options": {
+                    "A": "A = input().split()",
+                    "B": "A = list(input())",
+                    "C": "A = list(map(int, input().split()))",
+                    "D": "A = [int(input())]"
+                },
+                "correctAnswer": "C",
+                "explanation": "Hàm input().split() tách dòng nhập thành danh sách các chuỗi, map(int, ...) ép kiểu từng chuỗi thành số nguyên, và list(...) đóng gói lại thành mảng số nguyên."
+            },
+            {
+                "id": "10py-q16",
+                "question": "Câu 16. Trong Dictionary của Python, khẳng định nào sau đây là ĐÚNG?",
+                "options": {
+                    "A": "Khóa (Key) có thể bị trùng lặp nhiều lần.",
+                    "B": "Khóa (Key) phải là duy nhất và thuộc kiểu dữ liệu bất biến (immutable).",
+                    "C": "Giá trị (Value) bắt buộc phải là duy nhất.",
+                    "D": "Không thể thay đổi giá trị của một khóa sau khi đã tạo."
+                },
+                "correctAnswer": "B",
+                "explanation": "Trong Dictionary, mỗi Khóa (Key) là duy nhất và phải thuộc kiểu bất biến (như str, int, tuple). Giá trị (Value) có thể trùng nhau và có thể cập nhật."
+            },
+            {
+                "id": "10py-q17",
+                "question": "Câu 17. Cho d = {'ten': 'Hoa', 'tuoi': 16}. Câu lệnh d['lop'] = '10A' sẽ thực hiện thao tác gì?",
+                "options": {
+                    "A": "Báo lỗi KeyError vì khóa 'lop' chưa tồn tại.",
+                    "B": "Thêm cặp khóa-giá trị mới 'lop': '10A' vào từ điển d.",
+                    "C": "Xóa khóa 'ten' khỏi từ điển d.",
+                    "D": "Không làm thay đổi từ điển d."
+                },
+                "correctAnswer": "B",
+                "explanation": "Trong Python, khi gán d[key] = value mà key chưa tồn tại trong từ điển, Python sẽ tự động tạo mới cặp key-value đó."
+            },
+            {
+                "id": "10py-q18",
+                "question": "Câu 18. Phương thức nào dùng để duyệt đồng thời cả Khóa (Key) và Giá trị (Value) trong Dictionary?",
+                "options": {
+                    "A": "d.keys()",
+                    "B": "d.values()",
+                    "C": "d.items()",
+                    "D": "d.all()"
+                },
+                "correctAnswer": "C",
+                "explanation": "Phương thức d.items() trả về tập hợp các cặp (key, value), cho phép dùng cú pháp for k, v in d.items() để duyệt đồng thời."
+            },
+            {
+                "id": "10py-q19",
+                "question": "Câu 19. Từ khóa nào trong Python được dùng để định nghĩa một hàm mới?",
+                "options": {
+                    "A": "function",
+                    "B": "def",
+                    "C": "func",
+                    "D": "define"
+                },
+                "correctAnswer": "B",
+                "explanation": "Python dùng từ khóa def để bắt đầu định nghĩa một hàm (ví dụ: def tinh_tong(a, b):)."
+            },
+            {
+                "id": "10py-q20",
+                "question": "Câu 20. Khẳng định nào sau đây là ĐÚNG về lệnh return trong hàm?",
+                "options": {
+                    "A": "Lệnh return chỉ in kết quả ra màn hình mà không trả về giá trị.",
+                    "B": "Một hàm có thể thực thi nhiều lệnh return cùng một lúc.",
+                    "C": "Khi gặp lệnh return, hàm sẽ trả về giá trị và kết thúc thực thi ngay lập tức.",
+                    "D": "Mọi hàm trong Python bắt buộc phải có lệnh return."
+                },
+                "correctAnswer": "C",
+                "explanation": "Khi gặp lệnh return, hàm sẽ gửi giá trị trả về cho nơi gọi hàm và thoát khỏi hàm ngay lập tức."
+            },
+            {
+                "id": "10py-q21",
+                "question": "Câu 21. Đoạn mã sau in ra kết quả gì?\ndef f(x, y=10):\n    return x + y\nprint(f(5))",
+                "options": {
+                    "A": "5",
+                    "B": "10",
+                    "C": "15",
+                    "D": "Báo lỗi thiếu tham số y"
+                },
+                "correctAnswer": "C",
+                "explanation": "Tham số y có giá trị mặc định là 10. Khi gọi f(5), x nhận giá trị 5 và y nhận giá trị mặc định 10 => kết quả là 5 + 10 = 15."
+            },
+            {
+                "id": "10py-q22",
+                "question": "Câu 22. Đoạn mã sau dùng để kiểm tra số nguyên dương n:\ndef kiem_tra(n):\n    if n < 2:\n        return False\n    for i in range(2, int(n**0.5) + 1):\n        if n % i == 0:\n            return False\n    return True\nHàm trên dùng để kiểm tra tính chất nào của số n?",
+                "options": {
+                    "A": "Kiểm tra n là số chẵn.",
+                    "B": "Kiểm tra n là số chính phương.",
+                    "C": "Kiểm tra n là số nguyên tố.",
+                    "D": "Kiểm tra n là số hoàn hảo."
+                },
+                "correctAnswer": "C",
+                "explanation": "Đây là thuật toán kiểm tra số nguyên tố chuẩn tối ưu, lặp kiểm tra ước từ 2 đến căn bậc hai của n."
+            },
+            {
+                "id": "10py-q23",
+                "question": "Câu 23. Trong Python, biểu thức nào dùng để đảo ngược một chuỗi ký tự s?",
+                "options": {
+                    "A": "s.reverse()",
+                    "B": "reverse(s)",
+                    "C": "s[::-1]",
+                    "D": "s[-1:0]"
+                },
+                "correctAnswer": "C",
+                "explanation": "Chuỗi ký tự trong Python là bất biến nên không có phương thức s.reverse(). Cách đảo ngược chuỗi chuẩn trong Python là dùng cắt lát bước nhảy âm s[::-1]."
+            },
+            {
+                "id": "10py-q24",
+                "question": "Câu 24. Cho chuỗi s = 'tin hoc 10'. Phương thức s.title() trả về kết quả gì?",
+                "options": {
+                    "A": "'TIN HOC 10'",
+                    "B": "'Tin Hoc 10'",
+                    "C": "'Tin hoc 10'",
+                    "D": "'tin hoc 10'"
+                },
+                "correctAnswer": "B",
+                "explanation": "Phương thức s.title() viết hoa chữ cái đầu tiên của từng từ trong chuỗi => 'Tin Hoc 10'."
+            },
+            {
+                "id": "10py-q25",
+                "question": "Câu 25. Để tính tổng S = 1 + 2 + ... + N với N = 10^9 trong thời gian chạy dưới 0.01 giây, ta nên chọn cách nào?",
+                "options": {
+                    "A": "Dùng vòng lặp for i in range(1, N + 1) với độ phức tạp O(N).",
+                    "B": "Dùng vòng lặp while với độ phức tạp O(N).",
+                    "C": "Dùng công thức toán học S = N * (N + 1) // 2 với độ phức tạp O(1).",
+                    "D": "Tạo list L = list(range(1, N + 1)) rồi dùng hàm sum(L)."
+                },
+                "correctAnswer": "C",
+                "explanation": "Với N = 10^9, mọi vòng lặp O(N) sẽ thực hiện hàng tỷ phép tính và bị lỗi quá thời gian (TLE). Áp dụng công thức cấp số cộng O(1) chỉ mất 1 phép nhân và 1 phép chia nguyên, thực hiện ngay lập tức trong 0.0001 giây."
+            }
+        ],
+        "application": {
+            "realLife": "Lập trình Python được ứng dụng sâu rộng trong phát triển Trí tuệ Nhân tạo (Machine Learning, Deep Learning), phân tích dữ liệu lớn (Big Data), lập trình web backend (Django, FastAPI), và viết các công cụ tự động hóa công việc văn phòng, tài chính.",
+            "examTraps": [
+                "Quên rằng hàm range(start, stop) không bao giờ chạm đến giá trị stop mà dừng trước stop đúng 1 đơn vị.",
+                "Quên rằng kết quả của phép chia / trong Python luôn là số thực float (10 / 2 = 5.0).",
+                "Nhầm lẫn giữa gán giá trị (=) và so sánh bằng (==) trong câu lệnh rẽ nhánh if.",
+                "Quên ép kiểu dữ liệu cho hàm input() khi thực hiện tính toán số học (input() luôn trả về chuỗi ký tự).",
+                "Lỗi IndentationError do thụt lề không đồng nhất (trộn lẫn tab và phím cách)."
+            ],
+            "tips": [
+                "Luôn nhớ quy tắc bán mở của range() và cắt lát: [start, stop) lấy từ start đến stop - 1.",
+                "Sử dụng s[::-1] để đảo ngược chuỗi hoặc list cực nhanh.",
+                "Áp dụng map(int, input().split()) để đọc dữ liệu trên cùng một dòng ngang trong các bài thi chấm tự động.",
+                "Khi N lớn hơn 10^7, luôn nghĩ đến công thức toán học O(1) thay vì vòng lặp for/while để tránh lỗi TLE."
+            ]
         },
-        "correctAnswer": "A",
-        "explanation": "Hàm range(2, 8, 2) bắt đầu từ 2, dừng trước 8 và bước nhảy là 2 => các giá trị sinh ra là 2, 4, 6 (tổng cộng 3 lần lặp)."
-      }
-    ],
-    "application": {
-      "realLife": "Tự động hoá các tác vụ tính toán hàng ngày như tính chỉ số BMI, đổi tiền tệ, tính lãi suất ngân hàng.",
-      "examTraps": [
-        "Quên rằng range(start, stop) không bao gồm giá trị stop."
-      ],
-      "tips": [
-        "Nhớ // là chia nguyên, % là chia dư, ** là luỹ thừa."
-      ]
-    },
-    "requirements": [
-      "Biết kiểu dữ liệu và toán tử.",
-      "Sử dụng if-else, for, while, def."
-    ],
-    "keyConcepts": [
-      {
-        "term": "Indentation",
-        "definition": "Quy tắc thụt lề bắt buộc trong Python."
-      }
-    ],
-    "theorySections": [
-      {
-        "title": "1. Python cơ bản",
-        "content": "Cú pháp, biến, vòng lặp và hàm."
-      }
-    ],
-    "practicalTips": [
-      "Thuộc range(a, b, step)."
-    ],
-    "commonPitfalls": [
-      "Quên dấu hai chấm sau if/for/def."
-    ]
-  }
+        "requirements": [
+            "Nắm vững 4 kiểu dữ liệu chuẩn: int, float, str, bool.",
+            "Hiểu bản chất các toán tử số học (//, %, **), toán tử gán, so sánh và logic.",
+            "Sử dụng thành thạo cấu trúc rẽ nhánh if-elif-else và cấu trúc lặp for/while.",
+            "Thao tác thuần thục trên cấu trúc dữ liệu List và Dictionary.",
+            "Biết cách định nghĩa hàm với từ khóa def và trả về giá trị qua return."
+        ],
+        "keyConcepts": [
+            {
+                "term": "Indentation (Thụt lề)",
+                "definition": "Quy tắc bắt buộc dùng khoảng trắng (thường là 4 spaces) ở đầu dòng để xác định một khối lệnh con trong Python thay cho cặp ngoặc nhọn { }."
+            },
+            {
+                "term": "Dynamic Typing (Định kiểu động)",
+                "definition": "Cơ chế của Python trong đó kiểu dữ liệu của biến được xác định tự động dựa trên giá trị được gán, không cần khai báo kiểu trước."
+            },
+            {
+                "term": "Floor Division (//)",
+                "definition": "Phép chia lấy phần nguyên, làm tròn xuống số nguyên lớn nhất không vượt quá thương số thực."
+            },
+            {
+                "term": "List (Danh sách)",
+                "definition": "Cấu trúc dữ liệu dạng mảng động tuần tự, bao bởi ngoặc vuông [ ], có thể thay đổi giá trị (mutable) và hỗ trợ chỉ số âm."
+            },
+            {
+                "term": "Dictionary (Từ điển)",
+                "definition": "Cấu trúc dữ liệu lưu trữ theo cặp Khóa : Giá trị (Key : Value) trong cặp ngoặc nhọn { }, cho phép tìm kiếm cực nhanh O(1) theo khóa."
+            },
+            {
+                "term": "Function (Hàm)",
+                "definition": "Khối lệnh có tên gọi bắt đầu bằng từ khóa def, nhận tham số đầu vào và trả về kết quả qua lệnh return để tái sử dụng mã nguồn."
+            },
+            {
+                "term": "Big-O Notation",
+                "definition": "Ký hiệu toán học dùng để đánh giá độ phức tạp thời gian của thuật toán khi kích thước dữ liệu đầu vào N tăng lên."
+            }
+        ],
+        "theorySections": [
+            {
+                "title": "1. Tổng quan & Biến, Kiểu dữ liệu",
+                "content": "Python là ngôn ngữ thông dịch, hỗ trợ định kiểu động, 4 kiểu dữ liệu cơ bản int, float, str, bool. Quy tắc đặt tên biến không bắt đầu bằng số và không trùng từ khóa."
+            },
+            {
+                "title": "2. Toán tử số học, gán, so sánh và logic",
+                "content": "Phép chia / ra float, // chia nguyên, % chia dư, ** lũy thừa. Toán tử logic and, or, not."
+            },
+            {
+                "title": "3. Rẽ nhánh & Vòng lặp",
+                "content": "Cú pháp if-elif-else thụt lề 4 spaces. Vòng lặp for i in range(...) bán mở, vòng lặp while điều kiện, lệnh break và continue."
+            },
+            {
+                "title": "4. List & Dictionary",
+                "content": "List [] đánh chỉ số âm L[-1], cắt lát L[1:4], các phương thức append, pop, sort. Dictionary {} lưu cặp key:value tra cứu O(1)."
+            },
+            {
+                "title": "5. Hàm & Độ phức tạp",
+                "content": "Định nghĩa hàm def, lệnh return trả kết quả. Đánh giá độ phức tạp thuật toán O(1), O(N), O(N^2) để tránh TLE."
+            }
+        ],
+        "practicalTips": [
+            "Nhớ thuộc lòng cú pháp nhập mảng 1 dòng: A = list(map(int, input().split())).",
+            "Dùng s[::-1] để đảo ngược chuỗi hoặc kiểm tra đối xứng.",
+            "Luôn kiểm tra điều kiện chia cho 0 trước khi thực hiện /, //, %.",
+            "Dùng f-string f'{bien}' để in kết quả rõ ràng, chuyên nghiệp."
+        ],
+        "commonPitfalls": [
+            "Quên dấu hai chấm (:) ở cuối dòng if, elif, else, for, while, def.",
+            "Lẫn lộn giữa phép gán = và phép so sánh bằng ==.",
+            "Quên ép kiểu int(input()) dẫn đến cộng chuỗi thay vì cộng số học ('5' + '5' = '55' thay vì 10).",
+            "Quên rằng range(n) chỉ chạy đến n - 1 chứ không chạy đến n."
+        ]
+    }
 };
