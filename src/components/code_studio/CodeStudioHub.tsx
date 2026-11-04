@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect } from 'react';
+﻿import React, { useState, useMemo, useEffect } from 'react';
 import {
   Code2,
   Search,
@@ -171,7 +171,7 @@ export const CodeStudioHub: React.FC<CodeStudioHubProps> = ({ onNavigateTab }) =
   ]);
 
   // Mở bài tập trong trình chấm OnlineCodeEditor ngay lập tức
-  const handleOpenProblem = (p: CodeProblem, openInNewTab = false) => {
+  const handleOpenProblem = (p: CodeProblem, openInNewTab = true) => {
     if (openInNewTab) {
       const url = `?tab=code_studio&mode=editor&prob=${encodeURIComponent(p.code)}&lang=${p.recommendedLang}`;
       window.open(url, '_blank');
@@ -182,7 +182,7 @@ export const CodeStudioHub: React.FC<CodeStudioHubProps> = ({ onNavigateTab }) =
     setViewMode('editor');
   };
 
-  const handleOpenFreeEditor = (lang: SupportedLanguage = 'python', openInNewTab = false) => {
+  const handleOpenFreeEditor = (lang: SupportedLanguage = 'python', openInNewTab = true) => {
     if (openInNewTab) {
       const url = `?tab=code_studio&mode=editor&lang=${lang}`;
       window.open(url, '_blank');
