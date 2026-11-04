@@ -89,8 +89,16 @@ export default function App() {
     }
   };
 
-  // Navigation state (Mặc định vào dashboard sau khi đăng nhập)
-  const [currentTab, setCurrentTab] = useState<string>('home');
+  // Navigation state (Hỗ trợ mở trực tiếp tab ?tab=code_studio trong tab mới)
+  const [currentTab, setCurrentTab] = useState<string>(() => {
+    if (typeof window !== 'undefined') {
+      const params = new URLSearchParams(window.location.search);
+      if (params.get('tab') === 'code_studio' || window.location.pathname === '/code') {
+        return 'code_studio';
+      }
+    }
+    return 'home';
+  });
   const [activeTopicId, setActiveTopicId] = useState<SubjectTopicId>('12B');
 
   // Completed topics record
