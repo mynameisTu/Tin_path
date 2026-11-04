@@ -151,26 +151,19 @@ export const Navbar: React.FC<NavbarProps> = ({
                 );
               })}
 
-              {/* Code Online Studio quick tab - Mở ra tab bên cạnh */}
-              <a
-                href="?tab=code_studio"
-                target="_blank"
-                rel="noopener noreferrer"
-                onClick={(e) => {
-                  e.preventDefault();
-                  window.open('?tab=code_studio', '_blank');
-                }}
+              {/* Code Online Studio tab (Giữ nguyên ở web trên tab hiện tại) */}
+              <button
+                onClick={() => onSelectTab('code_studio')}
                 className={`h-full px-3 xl:px-3.5 flex items-center gap-1.5 transition-colors whitespace-nowrap text-[12.5px] font-semibold uppercase ${
                   currentTab === 'code_studio'
                     ? 'text-white font-bold bg-white/10 border-b-2 border-emerald-400'
                     : 'text-emerald-400 hover:text-white hover:bg-white/5'
                 }`}
-                title="Mở TinPath Code Studio trong tab mới bên cạnh"
+                title="TinPath Code Studio - Lập trình C++, Python, HTML/CSS Trực Tuyến"
               >
                 <Code2 className="w-4 h-4 text-emerald-400" />
                 <span>CODE ONLINE</span>
-                <ExternalLink className="w-3 h-3 text-emerald-400/80 ml-0.5" />
-              </a>
+              </button>
             </nav>
           </div>
 
@@ -353,15 +346,12 @@ export const Navbar: React.FC<NavbarProps> = ({
                     </button>
                     <button
                       onClick={() => {
-                        window.open('?tab=code_studio', '_blank');
+                        onSelectTab('code_studio');
                         setUserDropdownOpen(false);
                       }}
-                      className="w-full text-left px-4 py-1.5 text-emerald-400 hover:text-white hover:bg-white/5 flex items-center justify-between"
+                      className="w-full text-left px-4 py-1.5 text-emerald-400 hover:text-white hover:bg-white/5 flex items-center gap-2"
                     >
-                      <span className="flex items-center gap-2">
-                        <Code2 className="w-3.5 h-3.5 text-emerald-400" /> Lập trình Code Online
-                      </span>
-                      <ExternalLink className="w-3 h-3 opacity-80" />
+                      <Code2 className="w-3.5 h-3.5 text-emerald-400" /> Lập trình Code Online
                     </button>
                   </div>
 
@@ -402,10 +392,14 @@ export const Navbar: React.FC<NavbarProps> = ({
             );
           })}
           <button
-            onClick={() => window.open('?tab=code_studio', '_blank')}
-            className="px-3 py-1 rounded whitespace-nowrap text-[12px] font-semibold uppercase text-emerald-400 hover:text-white flex items-center gap-1"
+            onClick={() => onSelectTab('code_studio')}
+            className={`px-3 py-1 rounded whitespace-nowrap text-[12px] font-semibold uppercase flex items-center gap-1 ${
+              currentTab === 'code_studio'
+                ? 'bg-emerald-600 text-white font-bold'
+                : 'text-emerald-400 hover:text-white'
+            }`}
           >
-            <Code2 className="w-3.5 h-3.5 text-emerald-400" /> Code Online ↗
+            <Code2 className="w-3.5 h-3.5 text-emerald-400" /> Code Online
           </button>
         </div>
       </header>

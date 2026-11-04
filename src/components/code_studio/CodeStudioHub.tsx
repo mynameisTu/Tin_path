@@ -30,10 +30,19 @@ interface CodeStudioHubProps {
 }
 
 export const CodeStudioHub: React.FC<CodeStudioHubProps> = ({ onNavigateTab }) => {
-  // Mode: 'hub' (problem list & banners) or 'editor' (split IDE)
-  const [viewMode, setViewMode] = useState<'hub' | 'editor'>('hub');
-  const [selectedProblem, setSelectedProblem] = useState<CodeProblem | null>(null);
-  const [editorLanguage, setEditorLanguage] = useState<SupportedLanguage>('python');
+  // Đọc tham số URL khi editor được mở sang 1 tab mới bên cạnh
+  const urlParams = typeof window !== 'undefined' ? new URLSearchParams(window.location.search) : null;
+  const isUrlEditorMode = urlParams?.get('mode') === 'editor';
+  const urlProbCode = urlParams?.get('prob');
+  const urlLang = urlParams?.get('lang') as SupportedLanguage | null;
+  const initialProb = urlProbCode ? CODE_PROBLEMS.find((p) => p.code === urlProbCode) : null;
+
+  // Mode: 'hub' (giữ nguyên ở web) hoặc 'editor' (mở sang tab mới)
+  const [viewMode, setViewMode] = useState<'hub' | 'editor'>(isUrlEditorMode ? 'editor' : 'hub');
+  const [selectedProblem, setSelectedProblem] = useState<CodeProblem | null>(initialProb || null);
+  const [editorLanguage, setEditorLanguage] = useState<SupportedLanguage>(
+    initialProb ? initialProb.language : (urlLang || 'python')
+  );
 
   // Filters
   const [activeCategoryTab, setActiveCategoryTab] = useState<'all' | 'cpp' | 'python' | 'web'>('all');
@@ -80,18 +89,16 @@ export const CodeStudioHub: React.FC<CodeStudioHubProps> = ({ onNavigateTab }) =
     });
   }, [activeCategoryTab, searchKeyword, filterLang, filterDifficulty, hideSolved, sortBy]);
 
-  // Open editor for a specific problem
+  // Mở Code Editor sang 1 tab mới bên cạnh trên trình duyệt (giữ nguyên trang danh sách bài ở web)
   const handleOpenProblem = (p: CodeProblem) => {
-    setSelectedProblem(p);
-    setEditorLanguage(p.language);
-    setViewMode('editor');
+    const url = `?tab=code_studio&mode=editor&prob=${encodeURIComponent(p.code)}&lang=${p.language}`;
+    window.open(url, '_blank');
   };
 
-  // Open free code editor
+  // Mở trình soạn thảo tự do sang 1 tab mới bên cạnh trên trình duyệt
   const handleOpenFreeEditor = (lang: SupportedLanguage = 'python') => {
-    setSelectedProblem(null);
-    setEditorLanguage(lang);
-    setViewMode('editor');
+    const url = `?tab=code_studio&mode=editor&lang=${lang}`;
+    window.open(url, '_blank');
   };
 
   // Random problem
@@ -100,13 +107,24 @@ export const CodeStudioHub: React.FC<CodeStudioHubProps> = ({ onNavigateTab }) =
     handleOpenProblem(rand);
   };
 
-  if (viewMode === 'editor') {
+  // Khi ở chế độ Editor (được mở trên tab mới), hiển thị giao diện IDE toàn màn hình
+  if (viewMode === 'editor' || isUrlEditorMode) {
     return (
-      <div className="w-full h-full">
+      <div className="fixed inset-0 z-50 w-screen h-screen bg-[#0B0F17] flex flex-col">
         <OnlineCodeEditor
           initialLanguage={editorLanguage}
           problem={selectedProblem}
-          onBackToHub={() => setViewMode('hub')}
+          onBackToHub={() => {
+            if (isUrlEditorMode) {
+              window.close();
+              setTimeout(() => {
+                window.location.href = window.location.pathname + '?tab=code_studio';
+              }, 150);
+            } else {
+              setViewMode('hub');
+            }
+          }}
+          isStandaloneFullscreen={true}
         />
       </div>
     );

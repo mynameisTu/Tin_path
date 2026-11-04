@@ -512,6 +512,13 @@ export default function App() {
     );
   }
 
+  const isDirectEditorMode = typeof window !== 'undefined' && new URLSearchParams(window.location.search).get('mode') === 'editor';
+
+  // Nếu người dùng mở trực tiếp link editor trong tab mới, hiển thị thẳng Editor
+  if (isDirectEditorMode) {
+    return <CodeStudioHub onNavigateTab={setCurrentTab} />;
+  }
+
   return (
     <div className="min-h-screen flex flex-col bg-[#f6f8fa] dark:bg-[#121212] text-[#202020] dark:text-[#E0E0E0] transition-colors">
       {/* ── UNAUTHENTICATED: Show Landing Page or Login Page ── */}
