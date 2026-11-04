@@ -246,6 +246,12 @@ function stripCppComments(code: string): string {
     .replace(/\/\/.*$/gm, '');
 }
 
+function stripStringAndCharLiterals(code: string): string {
+  return code
+    .replace(/"(?:\\.|[^"\\])*"/g, '""')
+    .replace(/'(?:\\.|[^'\\])*'/g, "''");
+}
+
 function validateCppSyntax(code: string): string | null {
   const clean = stripCppComments(code).trim();
   if (!clean) return 'Compilation Error: Mã nguồn C++ trống.';
@@ -253,10 +259,11 @@ function validateCppSyntax(code: string): string | null {
     return "error: undefined reference to `main' — Chương trình C++ phải có hàm `int main()`.";
   }
 
+  const noLiterals = stripStringAndCharLiterals(clean);
   let braceCount = 0;
   let parenCount = 0;
-  for (let i = 0; i < clean.length; i++) {
-    const ch = clean[i];
+  for (let i = 0; i < noLiterals.length; i++) {
+    const ch = noLiterals[i];
     if (ch === '{') braceCount++;
     else if (ch === '}') braceCount--;
     else if (ch === '(') parenCount++;
@@ -271,7 +278,6 @@ function validateCppSyntax(code: string): string | null {
     return "error: expected ')' before ';' token (Thiếu dấu đóng ngoặc tròn ')').";
   }
 
-  // Check obvious missing semicolons on cout / cin / return lines
   const lines = clean.split('\n');
   for (let idx = 0; idx < lines.length; idx++) {
     const line = lines[idx].trim();
@@ -305,8 +311,7 @@ function validatePythonSyntax(code: string): string | null {
     const trimmed = raw.trim();
     if (!trimmed || trimmed.startsWith('#')) continue;
 
-    // Strip string literals before checking colons/brackets
-    const noStr = trimmed.replace(/(['"])(?:(?!\1|\\).|\\.)*\1/g, '""');
+    const noStr = stripStringAndCharLiterals(trimmed);
     for (const ch of noStr) {
       if (ch === '(') paren++;
       else if (ch === ')') paren--;
@@ -328,11 +333,50 @@ function validatePythonSyntax(code: string): string | null {
   return null;
 }
 
-/**
- * Transpiles standard competitive programming C++ into executable JS inside a sandboxed Function
- * so arbitrary student logic (variables, cin, cout, arithmetic, if/else, loops, vectors, functions)
- * runs directly in the browser on any testcase input.
- */
+interface CppSandboxCtx {
+  tokens: string[];
+  lines: string[];
+  stdin: string;
+  readToken: () => string | null;
+  readNumber: () => number | null;
+  lineIdxRef: () => string;
+  writeOut: (val: any) => void;
+  checkLoop: () => void;
+}
+
+function splitTopLevel(expr: string, delimiter: string): string[] {
+  const result: string[] = [];
+  let current = '';
+  let depth = 0;
+  let inStr: string | null = null;
+
+  for (let i = 0; i < expr.length; i++) {
+    const ch = expr[i];
+    if (inStr) {
+      current += ch;
+      if (ch === inStr && expr[i - 1] !== '\\') inStr = null;
+      continue;
+    }
+    if (ch === '"' || ch === "'") {
+      inStr = ch;
+      current += ch;
+      continue;
+    }
+    if (ch === '(' || ch === '[' || ch === '{') depth++;
+    else if (ch === ')' || ch === ']' || ch === '}') depth--;
+
+    if (depth === 0 && expr.slice(i, i + delimiter.length) === delimiter) {
+      result.push(current.trim());
+      current = '';
+      i += delimiter.length - 1;
+    } else {
+      current += ch;
+    }
+  }
+  if (current.trim()) result.push(current.trim());
+  return result;
+}
+
 function executeCppInBrowserSandbox(code: string, stdin: string): ExecutionResult {
   const startTime = performance.now();
   const syntaxError = validateCppSyntax(code);
@@ -348,7 +392,6 @@ function executeCppInBrowserSandbox(code: string, stdin: string): ExecutionResul
 
   const clean = stripCppComments(code);
 
-  // Check for known algorithmic structures or transpile C++ body to JS
   try {
     const tokens = stdin.trim() ? stdin.trim().split(/\s+/) : [];
     const lines = stdin.replace(/\r\n/g, '\n').split('\n');
@@ -377,7 +420,6 @@ function executeCppInBrowserSandbox(code: string, stdin: string): ExecutionResul
       return Number.isNaN(n) ? 0 : n;
     };
 
-    // Transpile C++ helper functions and main body to JS
     const jsResult = transpileAndRunCpp(clean, {
       tokens,
       lines,
@@ -388,7 +430,6 @@ function executeCppInBrowserSandbox(code: string, stdin: string): ExecutionResul
       writeOut: (val: any) => {
         if (val === undefined || val === null) return;
         if (typeof val === 'number' && !Number.isInteger(val)) {
-          // Format floating point like C++ default cout (6 significant digits)
           outBuffer += Number(val.toPrecision(6)).toString();
         } else {
           outBuffer += String(val);
@@ -436,63 +477,15 @@ function executeCppInBrowserSandbox(code: string, stdin: string): ExecutionResul
   };
 }
 
-interface CppSandboxCtx {
-  tokens: string[];
-  lines: string[];
-  stdin: string;
-  readToken: () => string | null;
-  readNumber: () => number | null;
-  lineIdxRef: () => string;
-  writeOut: (val: any) => void;
-  checkLoop: () => void;
-}
-
-function splitTopLevel(expr: string, delimiter: string): string[] {
-  const result: string[] = [];
-  let current = '';
-  let depth = 0;
-  let inStr: string | null = null;
-
-  for (let i = 0; i < expr.length; i++) {
-    const ch = expr[i];
-    if (inStr) {
-      current += ch;
-      if (ch === inStr && expr[i - 1] !== '\\') inStr = null;
-      continue;
-    }
-    if (ch === '"' || ch === "'") {
-      inStr = ch;
-      current += ch;
-      continue;
-    }
-    if (ch === '(' || ch === '[' || ch === '{') depth++;
-    else if (ch === ')' || ch === ']' || ch === '}') depth--;
-
-    if (depth === 0 && expr.slice(i, i + delimiter.length) === delimiter) {
-      // Make sure '<<' or '>>' is not bitwise inside parens; at depth 0 in cout/cin it is stream operator
-      result.push(current.trim());
-      current = '';
-      i += delimiter.length - 1;
-    } else {
-      current += ch;
-    }
-  }
-  if (current.trim()) result.push(current.trim());
-  return result;
-}
-
 function transpileAndRunCpp(cleanCode: string, ctx: CppSandboxCtx): { handled: boolean } {
-  // Remove #include and using namespace std;
   let src = cleanCode
     .replace(/^\s*#include\b.*$/gm, '')
     .replace(/\busing\s+namespace\s+std\s*;/g, '');
 
-  // Track variable types (int/long long vs double vs string)
   const intVars = new Set<string>();
   const floatVars = new Set<string>();
   const stringVars = new Set<string>();
 
-  // Collect declarations like: long long a, b, c; or int n, m; or double x, y; or string s;
   const declRegex = /\b(long\s+long|int|double|float|string|char|bool)\s+([^;({]+);/g;
   let m: RegExpExecArray | null;
   while ((m = declRegex.exec(src)) !== null) {
@@ -509,7 +502,7 @@ function transpileAndRunCpp(cleanCode: string, ctx: CppSandboxCtx): { handled: b
     }
   }
 
-  // Handle specialized C++ STL structures if present (BFS queue/pair, BST struct Node*, MergeSort, Bitmask DP, Stack)
+  // Specialized C++ STL structures (BST, BFS Queue, Stack, Stringstream)
   if (/\bstruct\s+Node\b/.test(src) && /\binsertBST\b/.test(src)) {
     const nums = ctx.tokens.map(Number);
     if (nums.length > 0) {
@@ -585,17 +578,22 @@ function transpileAndRunCpp(cleanCode: string, ctx: CppSandboxCtx): { handled: b
     return { handled: true };
   }
 
-  // General C++ -> JS transpilation
   let js = src;
 
-  // Replace vector<vector<int>> name(r, vector<int>(c, val)) or vector<vector<int>> name(r, vector<int>(c))
+  // Replace 2D vector: vector<vector<int>> name(r, vector<int>(c, fillVal))
   js = js.replace(
     /\bvector\s*<\s*vector\s*<\s*(?:int|long\s+long|bool|double)\s*>\s*>\s+([a-zA-Z_]\w*)\s*\(\s*([^,]+)\s*,\s*vector\s*<\s*(?:int|long\s+long|bool|double)\s*>\s*\(\s*([^,)]+)(?:\s*,\s*([^)]+))?\s*\)\s*\)/g,
     (_, name, r, c, fillVal) =>
       `let ${name} = Array.from({ length: (${r}) }, () => Array(${c}).fill(${fillVal ?? 0}))`
   );
 
-  // Replace 1D vector: vector<type> name(size, fillVal) or vector<type> name(size) or vector<type> name;
+  // Replace 1D vector range slice: vector<int> left(arr.begin() + l, arr.begin() + m + 1)
+  js = js.replace(
+    /\bvector\s*<\s*(?:int|long\s+long|bool|double|string)\s*>\s+([a-zA-Z_]\w*)\s*\(\s*([a-zA-Z_]\w*)\.begin\(\)\s*\+\s*([^,]+),\s*\2\.begin\(\)\s*\+\s*([^)]+)\)/g,
+    'let $1 = $2.slice($3, $4)'
+  );
+
+  // Replace 1D vector with size/fill: vector<type> name(size, fillVal)
   js = js.replace(
     /\bvector\s*<\s*(?:int|long\s+long|bool|double|string)\s*>\s+([a-zA-Z_]\w*)\s*\(\s*([^,)]+)(?:\s*,\s*([^)]+))?\s*\)/g,
     (_, name, sz, fillVal) => `let ${name} = Array(${sz}).fill(${fillVal ?? 0})`
@@ -615,19 +613,21 @@ function transpileAndRunCpp(cleanCode: string, ctx: CppSandboxCtx): { handled: b
   js = js.replace(/\bsort\s*\(\s*([a-zA-Z_]\w*)\.begin\(\)\s*,\s*\1\.end\(\)\s*\)/g, '$1.sort((a,b)=>a-b)');
   js = js.replace(/\bsort\s*\(\s*([a-zA-Z_]\w*)\s*,\s*\1\s*\+\s*\d+\s*\)/g, '$1.sort((a,b)=>a-b)');
 
-  // Replace max({a, b, c}) -> Math.max(a, b, c) and max(a, b) / min(a, b)
+  // Replace max({a, b, c}) -> Math.max(a, b, c) and max(a, b) / min(a, b) without double Math.Math
   js = js.replace(/\bmax\s*\(\s*\{([^}]+)\}\s*\)/g, 'Math.max($1)');
   js = js.replace(/\bmin\s*\(\s*\{([^}]+)\}\s*\)/g, 'Math.min($1)');
-  js = js.replace(/\bmax\s*\(/g, 'Math.max(');
-  js = js.replace(/\bmin\s*\(/g, 'Math.min(');
+  js = js.replace(/(?<!Math\.)\bmax\s*\(/g, 'Math.max(');
+  js = js.replace(/(?<!Math\.)\bmin\s*\(/g, 'Math.min(');
 
-  // Replace .push_back( -> .push( and .size() -> .length and .empty() -> (.length === 0)
+  // Replace STL methods
   js = js.replace(/\.push_back\s*\(/g, '.push(');
+  js = js.replace(/\(\s*int\s*\)\s*([a-zA-Z_]\w*)\.size\s*\(\s*\)/g, '$1.length');
   js = js.replace(/\.size\s*\(\s*\)/g, '.length');
+  js = js.replace(/\.length\s*\(\s*\)/g, '.length');
   js = js.replace(/\.empty\s*\(\s*\)/g, '.length === 0');
-  js = js.replace(/\.erase\s*\(\s*0\s*,\s*1\s*\)/g, ' = s.slice(1)');
+  js = js.replace(/([a-zA-Z_]\w*)\.erase\s*\(\s*0\s*,\s*1\s*\)/g, '$1 = $1.slice(1)');
 
-  // Replace function definitions: e.g. bool isPrime(long long n) { or void hanoi(int n, char from, char to, char aux) {
+  // Replace function definitions
   js = js.replace(
     /\b(?:long\s+long|int|bool|void|double|string)\s+([a-zA-Z_]\w*)\s*\(([^)]*)\)\s*\{/g,
     (_, fnName, params) => {
@@ -646,18 +646,12 @@ function transpileAndRunCpp(cleanCode: string, ctx: CppSandboxCtx): { handled: b
     }
   );
 
-  // Replace variable declarations (const int, long long, int, double, float, bool, string, char, size_t)
+  // Replace variable declarations
   js = js.replace(/\bconst\s+(?:long\s+long|int|double)\s+/g, 'const ');
   js = js.replace(/\b(?:unsigned\s+)?(?:long\s+long|int|double|float|bool|string|char|size_t)\s+/g, 'let ');
 
-  // Replace if (cin >> a >> b) or (!(cin >> n)) or plain cin >> a >> b;
-  js = js.replace(/\bcin\s*>>\s*([a-zA-Z0-9_.\[\]\s>]+)/g, (match, rest) => {
-    // Only take the chain of >> identifiers before any ), ;, or {
-    return match;
-  });
-
-  // Transform `cin >> v1 >> v2 ...` expressions
-  js = js.replace(/cin\s*(?:>>\s*[a-zA-Z_]\w*(?:\[[^\]]+\])*)+/g, match => {
+  // Transform `cin >> v1 >> v2 ...` expressions (allowing whitespace around every variable)
+  js = js.replace(/\bcin\s*(?:>>\s*[a-zA-Z_]\w*(?:\[[^\]]+\])*\s*)+/g, match => {
     const vars = match
       .replace(/^cin\s*>>\s*/, '')
       .split('>>')
@@ -673,42 +667,40 @@ function transpileAndRunCpp(cleanCode: string, ctx: CppSandboxCtx): { handled: b
     return `(${reads.join(' && ')})`;
   });
 
-  // Transform `cout << e1 << e2 ... ;` statements
-  js = js.replace(/cout\s*<<([\s\S]*?);/g, (_, chainStr) => {
+  // Transform integer division BEFORE cout replacement
+  js = js.replace(
+    /\b([a-zA-Z_]\w*)\s*\/=\s*([a-zA-Z0-9_]+)\b/g,
+    '$1 = Math.trunc($1 / $2)'
+  );
+  // Match `expr / divisor` where expr is `a`, `n * (n + 1)`, `(l + r)`, etc.
+  js = js.replace(
+    /([a-zA-Z_]\w*\s*\*\s*\([^()]+\)|\([^()]+\)|[a-zA-Z_]\w*)\s*\/\s*([a-zA-Z0-9_]+)\b/g,
+    (full, lhs, rhs) => {
+      const cleanLhs = lhs.trim();
+      if (
+        floatVars.has(cleanLhs) ||
+        floatVars.has(rhs) ||
+        cleanLhs.includes('.') ||
+        rhs.includes('.')
+      ) {
+        return full;
+      }
+      return `Math.trunc((${cleanLhs}) / ${rhs})`;
+    }
+  );
+
+  // Transform `cout << e1 << e2 ... ;` statements (wrap in block `{ ... }` so braceless if/for loops stay scoped)
+  js = js.replace(/\bcout\s*<<([\s\S]*?);/g, (_, chainStr) => {
     const parts = splitTopLevel(chainStr, '<<');
     const calls = parts.map(p => {
       if (p === 'endl') return '__writeOut("\\n")';
       return `__writeOut(${p})`;
     });
-    return calls.join('; ') + ';';
+    return `{ ${calls.join('; ')}; }`;
   });
 
-  // Transform integer division for known integer expressions in C++ (e.g. a / b, n / 10, n / 2, (l + r) / 2)
-  // In C++, dividing two int/long long variables truncates toward zero: Math.trunc(lhs / rhs)
-  js = js.replace(
-    /\b([a-zA-Z_]\w*)\s*\/=\s*([a-zA-Z0-9_]+)\b/g,
-    '$1 = Math.trunc($1 / $2)'
-  );
-  js = js.replace(
-    /\b([a-zA-Z_]\w*)\s*\/\s*([a-zA-Z0-9_]+)\b/g,
-    (full, lhs, rhs) => {
-      if (floatVars.has(lhs) || floatVars.has(rhs) || lhs.includes('.') || rhs.includes('.')) {
-        return full;
-      }
-      return `Math.trunc(${lhs} / ${rhs})`;
-    }
-  );
-  js = js.replace(
-    /\(([^()]+)\)\s*\/\s*([0-9]+)\b/g,
-    'Math.trunc(($1) / $2)'
-  );
-
-  // Inject loop guard into for / while loops
+  // Inject loop guard into `{` blocks of for / while loops
   js = js.replace(/\b(for|while)\s*\(([^)]*)\)\s*\{/g, '$1 ($2) { __checkLoop();');
-  js = js.replace(
-    /\b(for|while)\s*\(([^)]*)\)\s*(?!\{)([^\n;]+;)/g,
-    '$1 ($2) { __checkLoop(); $3 }'
-  );
 
   const runner = new Function(
     '__readToken',
@@ -775,7 +767,6 @@ function executePythonInBrowserSandbox(code: string, stdin: string): ExecutionRe
       );
     };
 
-    // Transpile Python indentation & syntax to JS
     const jsCode = transpilePythonToJs(code);
     const fn = new Function(
       '__input',
@@ -792,7 +783,7 @@ function executePythonInBrowserSandbox(code: string, stdin: string): ExecutionRe
         gcd: (a, b) => { a = Math.abs(a); b = Math.abs(b); while (b) { [a, b] = [b, a % b]; } return a; }
       };
       const int = (x) => {
-        const v = parseInt(String(x).trim(), 10);
+        const v = Math.trunc(Number(String(x).trim()));
         if (Number.isNaN(v)) throw new Error("ValueError: invalid literal for int(): '" + x + "'");
         return v;
       };
@@ -866,12 +857,30 @@ function executePythonInBrowserSandbox(code: string, stdin: string): ExecutionRe
 function transpilePythonExpr(expr: string): string {
   let e = expr.trim();
 
-  // Handle bytearray sieve pattern in Python
-  if (e.includes('bytearray')) {
-    e = e.replace(/bytearray\(\[1\]\)\s*\*\s*\(([^)]+)\)/g, 'Array($1).fill(1)');
-  }
+  // 1. Replace slicing first: tokens[1:n+1] -> tokens.slice(1, n+1) and negative index stack[-1] -> stack[stack.length - 1]
+  e = transpilePythonSlice(e);
+  e = e.replace(/([a-zA-Z_]\w*)\[\s*-1\s*\]/g, '$1[$1.length - 1]');
 
-  // Handle f-strings: f"{x + y:.6g}" or f"{n} x {i} = {n * i}"
+  // 2. Handle 2D list multiplication: [[0] * n for _ in range(n)] or [[INF] * n for _ in range(FULL)]
+  e = e.replace(
+    /\[\s*\[\s*([^\[\]]+?)\s*\]\s*\*\s*([a-zA-Z0-9_]+)\s+for\s+([a-zA-Z_]\w*)\s+in\s+range\(([^)]+)\)\s*\]/g,
+    (_, fillVal, cols, v, rows) => {
+      const jsVal = fillVal.trim() === 'True' ? 'true' : fillVal.trim() === 'False' ? 'false' : fillVal.trim();
+      return `Array.from({ length: ${transpilePythonExpr(rows)} }, () => Array(${cols}).fill(${jsVal}))`;
+    }
+  );
+
+  // 3. Handle 1D list multiplication: [True] * (R + 1) or [0] * (m + 1)
+  e = e.replace(/\[\s*(True|False|0|-1|INF)\s*\]\s*\*\s*\(([^)]+)\)/g, (_, val, sz) => {
+    const jsVal = val === 'True' ? 'true' : val === 'False' ? 'false' : val;
+    return `Array(${transpilePythonExpr(sz)}).fill(${jsVal})`;
+  });
+  e = e.replace(/\[\s*(True|False|0|-1|INF)\s*\]\s*\*\s*([a-zA-Z0-9_]+)/g, (_, val, sz) => {
+    const jsVal = val === 'True' ? 'true' : val === 'False' ? 'false' : val;
+    return `Array(${sz}).fill(${jsVal})`;
+  });
+
+  // 4. Handle f-strings: f"{x + y:.6g}" or f"{n} x {i} = {n * i}"
   e = e.replace(/f(['"])((?:(?!\1|\\).|\\.)*)\1/g, (_, _q, content) => {
     const inner = content.replace(/\{([^}:]+)(?::([^}]+))?\}/g, (__: string, subExpr: string, fmt?: string) => {
       const tSub = transpilePythonExpr(subExpr);
@@ -888,7 +897,55 @@ function transpilePythonExpr(expr: string): string {
     return '`' + inner + '`';
   });
 
-  // Handle Python string methods
+  // 5. Handle list comprehension WITH `if` first, then WITHOUT `if`
+  e = e.replace(
+    /\[\s*([^\n]+?)\s+for\s+([a-zA-Z_]\w*)\s+in\s+([^\n]+?)\s+if\s+([^\n]+)\s*\]/g,
+    (full, mapExpr, v, iterExpr, condExpr) => {
+      if (mapExpr.startsWith('[')) return full;
+      const tIter = transpilePythonExpr(iterExpr.trim());
+      const tMap = transpilePythonExpr(mapExpr.trim());
+      const tCond = transpilePythonExpr(condExpr.trim());
+      return `Array.from(${tIter}).filter((${v}) => (${tCond})).map((${v}) => (${tMap}))`;
+    }
+  );
+
+  e = e.replace(
+    /\[\s*([^\n]+?)\s+for\s+([a-zA-Z_]\w*)\s+in\s+([^\n]+)\s*\]/g,
+    (full, mapExpr, v, iterExpr) => {
+      if (mapExpr.startsWith('[')) return full;
+      const tIter = transpilePythonExpr(iterExpr.trim());
+      const tMap = transpilePythonExpr(mapExpr.trim());
+      return `Array.from(${tIter}).map((${v}) => (${tMap}))`;
+    }
+  );
+
+  // 6. Handle generator comprehension inside sum/min/max/set/list/sorted/join:
+  e = e.replace(
+    /(['"][^'"]*['"])\.join\(\s*([^()]+(?:\([^()]*\)[^()]*)*?)\s+for\s+([a-zA-Z_]\w*)\s+in\s+([^()]+(?:\([^()]*\)[^()]*)*?)\s*\)/g,
+    (_, sep, mapExpr, v, iterExpr) => {
+      const tIter = transpilePythonExpr(iterExpr.trim());
+      const tMap = transpilePythonExpr(mapExpr.trim());
+      return `Array.from(${tIter}).map((${v}) => (${tMap})).join(${sep})`;
+    }
+  );
+
+  e = e.replace(
+    /\b(sum|min|max|set|list|sorted)\s*\(\s*([^()]+(?:\([^()]*\)[^()]*)*?)\s+for\s+([a-zA-Z_]\w*)\s+in\s+([^()]+(?:\([^()]*\)[^()]*)*?)\s*\)/g,
+    (_, fnName, mapExpr, v, iterExpr) => {
+      const tIter = transpilePythonExpr(iterExpr.trim());
+      const tMap = transpilePythonExpr(mapExpr.trim());
+      return `${fnName}(Array.from(${tIter}).map((${v}) => (${tMap})))`;
+    }
+  );
+
+  // 6b. Convert Python tuple literals `(a, b)` or `(a, b, c)` (not preceded by identifier) into JS arrays `[a, b]`
+  e = e.replace(
+    /(?<![a-zA-Z0-9_])\(([^()]+\s*,\s*[^()]+)\)/g,
+    '[$1]'
+  );
+
+  // 7. Handle string & list methods
+  e = e.replace(/\.sort\(\s*\)/g, '.sort((a, b) => (typeof a === "number" && typeof b === "number" ? a - b : String(a).localeCompare(String(b))))');
   e = e.replace(/\.strip\(\)/g, '.trim()');
   e = e.replace(/\.lstrip\((['"][^'"]*['"])\)/g, '.replace(new RegExp("^[" + $1 + "]+"), "")');
   e = e.replace(/\.split\(\)/g, '.trim().split(/\\s+/).filter(Boolean)');
@@ -896,62 +953,31 @@ function transpilePythonExpr(expr: string): string {
   e = e.replace(/(['"][^'"]*['"])\.join\(([^)]+)\)/g, '($2).join($1)');
   e = e.replace(/\.append\(/g, '.push(');
 
-  // Handle input() -> __input()
+  // 8. Handle input() -> __input()
   e = e.replace(/\binput\s*\(\s*\)/g, '__input()');
 
-  // Handle list/generator comprehension inside sum/join/list:
-  // e.g. [int(x) for x in tokens[1:n+1]] or [str(x) for x in range(L, R + 1) if is_prime[x]]
+  // 9. Handle integer floor division `//` BEFORE ternary so both branches get transformed
   e = e.replace(
-    /\[\s*([^\[\]]+?)\s+for\s+([a-zA-Z_]\w*)\s+in\s+([^\[\]]+?)(?:\s+if\s+([^\[\]]+))?\s*\]/g,
-    (_, mapExpr, v, iterExpr, condExpr) => {
-      const tIter = transpilePythonSlice(iterExpr.trim());
-      const tMap = transpilePythonExpr(mapExpr.trim());
-      if (condExpr) {
-        const tCond = transpilePythonExpr(condExpr.trim());
-        return `Array.from(${tIter}).filter((${v}) => (${tCond})).map((${v}) => (${tMap}))`;
-      }
-      return `Array.from(${tIter}).map((${v}) => (${tMap}))`;
-    }
+    /([a-zA-Z0-9_)\]]+(?:\s*\*\s*\([^()]+\)|\s*\*\s*[a-zA-Z0-9_]+)*)\s*\/\/\s*([a-zA-Z0-9_(\[]+)/g,
+    'Math.floor(($1) / ($2))'
   );
 
-  // Generator comprehension inside sum(...) or min(...) or join(...):
-  // e.g. sum(int(ch) for ch in n) or " ".join(word.capitalize() for word in words)
-  e = e.replace(
-    /\b(sum|min|max)\s*\(\s*([^()]+(?:\([^()]*\)[^()]*)*?)\s+for\s+([a-zA-Z_]\w*)\s+in\s+([^()]+(?:\([^()]*\)[^()]*)*?)\s*\)/g,
-    (_, fnName, mapExpr, v, iterExpr) => {
-      const tIter = transpilePythonSlice(iterExpr.trim());
-      const tMap = transpilePythonExpr(mapExpr.trim());
-      return `${fnName}(Array.from(${tIter}).map((${v}) => (${tMap})))`;
-    }
-  );
-  e = e.replace(
-    /\(\s*([^()]+(?:\([^()]*\)[^()]*)*?)\s+for\s+([a-zA-Z_]\w*)\s+in\s+([a-zA-Z_]\w*)\s*\)\.join/g,
-    (_, mapExpr, v, iterExpr) => `Array.from(${iterExpr}).map((${v}) => (${transpilePythonExpr(mapExpr)})).join`
-  );
-
-  // Handle [0] * n or [True] * (R + 1) or [[0] * n for _ in range(n)]
-  e = e.replace(/\[\s*(True|False|0|-1|INF)\s*\]\s*\*\s*\(([^)]+)\)/g, (_, val, sz) => {
-    const jsVal = val === 'True' ? 'true' : val === 'False' ? 'false' : val;
-    return `Array(${sz}).fill(${jsVal})`;
-  });
-  e = e.replace(/\[\s*(True|False|0|-1|INF)\s*\]\s*\*\s*([a-zA-Z0-9_]+)/g, (_, val, sz) => {
-    const jsVal = val === 'True' ? 'true' : val === 'False' ? 'false' : val;
-    return `Array(${sz}).fill(${jsVal})`;
-  });
-
-  // Handle slicing: tokens[1:n+1] -> tokens.slice(1, n+1)
-  e = transpilePythonSlice(e);
-
-  // Handle Python ternary: X if COND else Y
+  // 10. Handle Python inline ternary: X if COND else Y
   if (/\bif\b.+\belse\b/.test(e) && !e.startsWith('if ')) {
-    e = e.replace(/^(.+?)\s+if\s+(.+?)\s+else\s+(.+)$/, '($2 ? ($1) : ($3))');
+    e = e.replace(/^(.+?)\s+if\s+(.+?)\s+else\s+(.+)$/, (_, tr, cond, fa) => {
+      const c = cond.trim();
+      const truthyCond = /^[a-zA-Z_]\w*$/.test(c)
+        ? `(Array.isArray(${c}) ? ${c}.length > 0 : Boolean(${c}))`
+        : c;
+      return `(${truthyCond} ? (${tr}) : (${fa}))`;
+    });
   }
 
-  // Handle operators: // -> Math.floor, ** -> **, and -> &&, or -> ||, not -> !, True -> true, False -> false
-  e = e.replace(/([a-zA-Z0-9_)\]]+)\s*\/\/\s*([a-zA-Z0-9_(\[]+)/g, 'Math.floor($1 / $2)');
+  // 11. Handle Python keywords & operators
   e = e.replace(/\bTrue\b/g, 'true').replace(/\bFalse\b/g, 'false').replace(/\bNone\b/g, 'null');
   e = e.replace(/\band\b/g, '&&').replace(/\bor\b/g, '||');
-  e = e.replace(/\bnot\s+([a-zA-Z_]\w*)\b/g, '(!($1 === true || (Array.isArray($1) ? $1.length > 0 : Boolean($1))))');
+  e = e.replace(/\bnot\s+([a-zA-Z_]\w*(?:\[[^\]]+\])+)/g, '(!($1))');
+  e = e.replace(/\bnot\s+([a-zA-Z_]\w*)\b(?!\[)/g, '(!($1 === true || (Array.isArray($1) ? $1.length > 0 : Boolean($1))))');
   e = e.replace(/\bnot\s*\(/g, '!(');
 
   // Handle `ch in '([{'` or `ch in pairs`
@@ -963,13 +989,12 @@ function transpilePythonExpr(expr: string): string {
 
 function transpilePythonSlice(expr: string): string {
   return expr.replace(
-    /([a-zA-Z_]\w*)\[\s*([^:\]]*)\s*:\s*([^:\]]*)\s*\]/g,
-    (_, arr, start, end) => `${arr}.slice(${start || 0}, ${end || `${arr}.length`})`
+    /([a-zA-Z_]\w*)\[\s*([^:\]]+)\s*:\s*([^:\]]*)\s*\]/g,
+    (_, arr, start, end) => `${arr}.slice(${start.trim()}, ${end.trim() || `${arr}.length`})`
   );
 }
 
 function transpilePythonToJs(code: string): string {
-  // Special handling for sieve slice assignment if present
   if (code.includes('sieve[i*i : n+1 : i]')) {
     return `
       const n = int(__input().trim());
@@ -989,62 +1014,73 @@ function transpilePythonToJs(code: string): string {
 
   const lines = code.replace(/\r\n/g, '\n').split('\n');
   const indentStack: number[] = [0];
-  const declaredVars = new Set<string>();
+  const scopeDeclaredStack: Set<string>[] = [new Set<string>()];
   const jsLines: string[] = [];
 
-  for (let raw of lines) {
-    // Strip inline comments outside quotes
+  const isDeclaredInCurrentScope = (name: string): boolean => {
+    for (let i = scopeDeclaredStack.length - 1; i >= 0; i--) {
+      if (scopeDeclaredStack[i].has(name)) return true;
+    }
+    return false;
+  };
+
+  const declareVar = (name: string) => {
+    scopeDeclaredStack[scopeDeclaredStack.length - 1].add(name);
+  };
+
+  for (const raw of lines) {
     const noComment = raw.replace(/(^|\s)#.*$/, '');
     if (!noComment.trim()) continue;
 
     const indent = noComment.match(/^\s*/)?.[0].length ?? 0;
-    let stmt = noComment.trim();
+    const stmt = noComment.trim();
 
     while (indent < indentStack[indentStack.length - 1]) {
       indentStack.pop();
+      scopeDeclaredStack.pop();
       jsLines.push('}');
     }
 
-    // Ignore imports
     if (stmt.startsWith('import ') || stmt.startsWith('from ')) {
       continue;
     }
 
-    // def func(a, b):
     const defMatch = stmt.match(/^def\s+([a-zA-Z_]\w*)\s*\(([^)]*)\)\s*:$/);
     if (defMatch) {
-      declaredVars.add(defMatch[1]);
+      declareVar(defMatch[1]);
+      const fnScope = new Set<string>();
       defMatch[2].split(',').forEach(p => {
-        if (p.trim()) declaredVars.add(p.trim());
+        if (p.trim()) fnScope.add(p.trim());
       });
       jsLines.push(`function ${defMatch[1]}(${defMatch[2]}) { __checkLoop();`);
       indentStack.push(indent + 1);
+      scopeDeclaredStack.push(fnScope);
       continue;
     }
 
-    // if / elif / else / while / for
     const ifMatch = stmt.match(/^if\s+(.+)\s*:$/);
     if (ifMatch) {
       let cond = transpilePythonExpr(ifMatch[1]);
-      // Chained comparison: 0 <= nr < n
       cond = cond.replace(/(\b0\b)\s*<=\s*([a-zA-Z_]\w*)\s*<\s*([a-zA-Z_]\w*)/g, '($1 <= $2 && $2 < $3)');
       if (/^[a-zA-Z_]\w*$/.test(cond)) {
         cond = `(Array.isArray(${cond}) ? ${cond}.length > 0 : Boolean(${cond}))`;
       }
       jsLines.push(`if (${cond}) {`);
       indentStack.push(indent + 1);
+      // In Python, variables assigned inside `if` belong to the enclosing function/module scope!
+      scopeDeclaredStack.push(scopeDeclaredStack[scopeDeclaredStack.length - 1]);
       continue;
     }
 
     const elifMatch = stmt.match(/^elif\s+(.+)\s*:$/);
     if (elifMatch) {
-      // Pop the previous block's closing brace if it was just pushed
       if (jsLines[jsLines.length - 1] === '}') {
         jsLines.pop();
       }
       const cond = transpilePythonExpr(elifMatch[1]);
       jsLines.push(`} else if (${cond}) {`);
       indentStack.push(indent + 1);
+      scopeDeclaredStack.push(scopeDeclaredStack[scopeDeclaredStack.length - 1]);
       continue;
     }
 
@@ -1054,6 +1090,7 @@ function transpilePythonToJs(code: string): string {
       }
       jsLines.push('} else {');
       indentStack.push(indent + 1);
+      scopeDeclaredStack.push(scopeDeclaredStack[scopeDeclaredStack.length - 1]);
       continue;
     }
 
@@ -1065,6 +1102,7 @@ function transpilePythonToJs(code: string): string {
       }
       jsLines.push(`while (${cond}) { __checkLoop();`);
       indentStack.push(indent + 1);
+      scopeDeclaredStack.push(scopeDeclaredStack[scopeDeclaredStack.length - 1]);
       continue;
     }
 
@@ -1072,24 +1110,22 @@ function transpilePythonToJs(code: string): string {
     if (forMatch) {
       const vars = forMatch[1].trim();
       const iter = transpilePythonExpr(forMatch[2].trim());
-      vars.split(',').forEach(v => declaredVars.add(v.trim()));
       if (vars.includes(',')) {
         jsLines.push(`for (const [${vars}] of ${iter}) { __checkLoop();`);
       } else {
         jsLines.push(`for (const ${vars} of ${iter}) { __checkLoop();`);
       }
       indentStack.push(indent + 1);
+      scopeDeclaredStack.push(scopeDeclaredStack[scopeDeclaredStack.length - 1]);
       continue;
     }
 
-    // print(*(arr)) or print(*arr)
     const printStarMatch = stmt.match(/^print\s*\(\s*\*\s*\(?([a-zA-Z_]\w*)\)?\s*\)$/);
     if (printStarMatch) {
       jsLines.push(`__print(...${printStarMatch[1]});`);
       continue;
     }
 
-    // print(...)
     const printMatch = stmt.match(/^print\s*\(([\s\S]*)\)$/);
     if (printMatch) {
       const inner = transpilePythonExpr(printMatch[1]);
@@ -1097,41 +1133,70 @@ function transpilePythonToJs(code: string): string {
       continue;
     }
 
-    // Tuple / multiple assignment: a, b = b, a + b or a, b, c = map(int, input().split())
+    // Tuple / multiple assignment: a, b = b, a + b or n, m = int(lines[0]), int(lines[1])
     const multiAssignMatch = stmt.match(/^([a-zA-Z_]\w*(?:\s*,\s*[a-zA-Z_]\w*)+)\s*=\s*(.+)$/);
     if (multiAssignMatch) {
       const lhsVars = multiAssignMatch[1].split(',').map(v => v.trim());
       const rhsRaw = multiAssignMatch[2].trim();
-      const allDeclared = lhsVars.every(v => declaredVars.has(v));
-      lhsVars.forEach(v => declaredVars.add(v));
-      const rhs = rhsRaw.includes(',') && !rhsRaw.includes('(')
-        ? `[${rhsRaw.split(',').map(x => transpilePythonExpr(x)).join(', ')}]`
-        : transpilePythonExpr(rhsRaw);
-      jsLines.push(`${allDeclared ? '' : 'let '}[${lhsVars.join(', ')}] = ${rhs};`);
+      for (const v of lhsVars) {
+        if (!isDeclaredInCurrentScope(v)) {
+          declareVar(v);
+          jsLines.push(`let ${v};`);
+        }
+      }
+      const rhsParts = splitTopLevel(rhsRaw, ',');
+      const rhs =
+        rhsParts.length > 1
+          ? `[${rhsParts.map(x => transpilePythonExpr(x)).join(', ')}]`
+          : transpilePythonExpr(rhsRaw);
+      jsLines.push(`[${lhsVars.join(', ')}] = ${rhs};`);
       continue;
     }
 
-    // Single variable assignment: x = expr (not ==, !=, <=, >=, +=, -=)
+    // Single variable assignment: x = expr
     const singleAssignMatch = stmt.match(/^([a-zA-Z_]\w*)\s*=\s*(?!=)(.+)$/);
     if (singleAssignMatch) {
       const vName = singleAssignMatch[1];
       const rhs = transpilePythonExpr(singleAssignMatch[2]);
-      const prefix = declaredVars.has(vName) ? '' : 'let ';
-      declaredVars.add(vName);
-      jsLines.push(`${prefix}${vName} = ${rhs};`);
+      if (!isDeclaredInCurrentScope(vName)) {
+        declareVar(vName);
+        jsLines.push(`let ${vName};`);
+      }
+      jsLines.push(`${vName} = ${rhs};`);
       continue;
     }
 
-    // Indexed or augmented assignment: dp[j] = ... or idx += 1
     jsLines.push(`${transpilePythonExpr(stmt)};`);
   }
 
   while (indentStack.length > 1) {
     indentStack.pop();
+    scopeDeclaredStack.pop();
     jsLines.push('}');
   }
 
-  return jsLines.join('\n');
+  // Hoist all `let varName;` declarations inside each scope to the top of that scope so `if/else` assignments work in JS block scope
+  return hoistLetDeclarations(jsLines);
+}
+
+function hoistLetDeclarations(lines: string[]): string {
+  const result: string[] = [];
+  const letRegex = /^let\s+([a-zA-Z_]\w*)\s*;$/;
+  const topLevelVars: string[] = [];
+
+  for (const line of lines) {
+    const m = line.match(letRegex);
+    if (m) {
+      if (!topLevelVars.includes(m[1])) topLevelVars.push(m[1]);
+    } else {
+      result.push(line);
+    }
+  }
+
+  if (topLevelVars.length > 0) {
+    result.unshift(`let ${topLevelVars.join(', ')};`);
+  }
+  return result.join('\n');
 }
 
 // ============================================================================
@@ -1161,45 +1226,46 @@ export async function runCodeAsync(
     };
   }
 
-  // Try native backend execution first (/api/code/run)
-  try {
-    const res = await fetch('/api/code/run', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        language,
-        code,
-        inputs: [stdin],
-        timeLimitMs: 2500,
-      }),
-    });
-    if (res.ok) {
-      const data = await res.json();
-      if (data.supported) {
-        if (data.compileError) {
-          return {
-            output: '',
-            error: data.compileError,
-            executionTimeMs: 0,
-            exitCode: 1,
-            engine: 'native-server',
-          };
-        }
-        const first = data.results?.[0];
-        if (first) {
-          return {
-            output: (first.stdout || '').replace(/\r\n/g, '\n').replace(/\n$/, ''),
-            error: first.exitCode !== 0 ? (first.stderr || 'Runtime Error') : null,
-            executionTimeMs: first.timeMs || 1,
-            exitCode: first.exitCode,
-            timedOut: first.timedOut,
-            engine: 'native-server',
-          };
+  if (typeof window !== 'undefined') {
+    try {
+      const res = await fetch('/api/code/run', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          language,
+          code,
+          inputs: [stdin],
+          timeLimitMs: 2500,
+        }),
+      });
+      if (res.ok) {
+        const data = await res.json();
+        if (data.supported) {
+          if (data.compileError) {
+            return {
+              output: '',
+              error: data.compileError,
+              executionTimeMs: 0,
+              exitCode: 1,
+              engine: 'native-server',
+            };
+          }
+          const first = data.results?.[0];
+          if (first) {
+            return {
+              output: (first.stdout || '').replace(/\r\n/g, '\n').replace(/\n$/, ''),
+              error: first.exitCode !== 0 ? (first.stderr || 'Runtime Error') : null,
+              executionTimeMs: first.timeMs || 1,
+              exitCode: first.exitCode,
+              timedOut: first.timedOut,
+              engine: 'native-server',
+            };
+          }
         }
       }
+    } catch {
+      // Fallback to browser sandbox when offline or serverless
     }
-  } catch {
-    // Fallback to browser sandbox when offline or serverless
   }
 
   return language === 'python'
@@ -1226,7 +1292,6 @@ export async function judgeProblemSubmission(
         },
       ];
 
-  // Special grading for Web problems (HTML/CSS/JS)
   if (language === 'web' && webCode) {
     const html = webCode.html.trim();
     const css = webCode.css.trim();
@@ -1279,39 +1344,39 @@ export async function judgeProblemSubmission(
     };
   }
 
-  // Try batch execution on native server first
   const inputs = testCases.map(tc => tc.input);
   let engineUsed: 'native-server' | 'browser-sandbox' = 'browser-sandbox';
   let rawRuns: { stdout: string; stderr: string; exitCode: number; timedOut: boolean; timeMs: number }[] | null = null;
   let compileError: string | null = null;
 
-  try {
-    const res = await fetch('/api/code/run', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        language,
-        code,
-        inputs,
-        timeLimitMs: 2000,
-      }),
-    });
-    if (res.ok) {
-      const data = await res.json();
-      if (data.supported) {
-        engineUsed = 'native-server';
-        if (data.compileError) {
-          compileError = data.compileError;
-        } else if (Array.isArray(data.results)) {
-          rawRuns = data.results;
+  if (typeof window !== 'undefined') {
+    try {
+      const res = await fetch('/api/code/run', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          language,
+          code,
+          inputs,
+          timeLimitMs: 2000,
+        }),
+      });
+      if (res.ok) {
+        const data = await res.json();
+        if (data.supported) {
+          engineUsed = 'native-server';
+          if (data.compileError) {
+            compileError = data.compileError;
+          } else if (Array.isArray(data.results)) {
+            rawRuns = data.results;
+          }
         }
       }
+    } catch {
+      // Fallback to browser sandbox
     }
-  } catch {
-    // Fallback to browser sandbox
   }
 
-  // If native server did not handle it, run each testcase in browser sandbox
   if (!rawRuns && !compileError) {
     const syntaxErr = language === 'python' ? validatePythonSyntax(code) : validateCppSyntax(code);
     if (syntaxErr) {
