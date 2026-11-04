@@ -1,4 +1,8 @@
 import { IncomingMessage, ServerResponse } from 'http';
+import { spawnSync } from 'child_process';
+import fs from 'fs';
+import os from 'os';
+import path from 'path';
 import {
   generateHighThinkingExplanation,
   searchGroundedQuery,
@@ -12,6 +16,131 @@ import {
   generateRagTutorResponse,
   generateRemedialExamFromMistakes,
 } from './gemini.ts';
+
+function findGppBinary(): string | null {
+  const candidates = [
+    'g++',
+    'C:\\MinGW\\bin\\g++.exe',
+    'C:\\msys64\\ucrt64\\bin\\g++.exe',
+    'C:\\msys64\\mingw64\\bin\\g++.exe',
+    'C:\\Program Files\\CodeBlocks\\MinGW\\bin\\g++.exe',
+    'C:\\Program Files (x86)\\Dev-Cpp\\MinGW64\\bin\\g++.exe',
+  ];
+  for (const cmd of candidates) {
+    try {
+      const res = spawnSync(cmd, ['--version'], { timeout: 2000, encoding: 'utf-8' });
+      if (res.status === 0) return cmd;
+    } catch {
+      // ignore
+    }
+  }
+  return null;
+}
+
+function findPythonBinary(): string | null {
+  const candidates = ['python', 'python3', 'py'];
+  for (const cmd of candidates) {
+    try {
+      const res = spawnSync(cmd, ['--version'], { timeout: 2000, encoding: 'utf-8' });
+      if (res.status === 0) return cmd;
+    } catch {
+      // ignore
+    }
+  }
+  return null;
+}
+
+function executeNativeBatch(language: 'python' | 'cpp', code: string, inputs: string[], timeLimitMs = 2000) {
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'tinpath-judge-'));
+  try {
+    if (language === 'python') {
+      const pyBin = findPythonBinary();
+      if (!pyBin) return { supported: false };
+      const srcPath = path.join(tmpDir, 'solution.py');
+      fs.writeFileSync(srcPath, code, 'utf-8');
+
+      const compileCheck = spawnSync(pyBin, ['-m', 'py_compile', srcPath], {
+        timeout: 3000,
+        encoding: 'utf-8',
+      });
+      if (compileCheck.status !== 0) {
+        return {
+          supported: true,
+          compileError: (compileCheck.stderr || compileCheck.stdout || 'SyntaxError').trim(),
+          results: [],
+        };
+      }
+
+      const results = inputs.map(stdin => {
+        const t0 = Date.now();
+        const run = spawnSync(pyBin, ['-I', srcPath], {
+          input: stdin,
+          timeout: timeLimitMs,
+          encoding: 'utf-8',
+          maxBuffer: 2 * 1024 * 1024,
+        });
+        const elapsed = Date.now() - t0;
+        const timedOut = run.error && (run.error as any).code === 'ETIMEDOUT';
+        return {
+          stdout: run.stdout || '',
+          stderr: run.stderr || '',
+          exitCode: timedOut ? 124 : (run.status ?? 1),
+          timedOut: Boolean(timedOut),
+          timeMs: Math.max(1, elapsed),
+        };
+      });
+      return { supported: true, results };
+    }
+
+    if (language === 'cpp') {
+      const gppBin = findGppBinary();
+      if (!gppBin) return { supported: false };
+      const srcPath = path.join(tmpDir, 'solution.cpp');
+      const exePath = path.join(tmpDir, process.platform === 'win32' ? 'solution.exe' : 'solution.out');
+      fs.writeFileSync(srcPath, code, 'utf-8');
+
+      const compile = spawnSync(gppBin, ['-O2', '-std=c++17', srcPath, '-o', exePath], {
+        timeout: 8000,
+        encoding: 'utf-8',
+      });
+      if (compile.status !== 0) {
+        return {
+          supported: true,
+          compileError: (compile.stderr || compile.stdout || 'Compilation Error').trim(),
+          results: [],
+        };
+      }
+
+      const results = inputs.map(stdin => {
+        const t0 = Date.now();
+        const run = spawnSync(exePath, [], {
+          input: stdin,
+          timeout: timeLimitMs,
+          encoding: 'utf-8',
+          maxBuffer: 2 * 1024 * 1024,
+        });
+        const elapsed = Date.now() - t0;
+        const timedOut = run.error && (run.error as any).code === 'ETIMEDOUT';
+        return {
+          stdout: run.stdout || '',
+          stderr: run.stderr || '',
+          exitCode: timedOut ? 124 : (run.status ?? 1),
+          timedOut: Boolean(timedOut),
+          timeMs: Math.max(1, elapsed),
+        };
+      });
+      return { supported: true, results };
+    }
+
+    return { supported: false };
+  } finally {
+    try {
+      fs.rmSync(tmpDir, { recursive: true, force: true });
+    } catch {
+      // ignore cleanup error
+    }
+  }
+}
 
 // Helper to parse JSON body from incoming stream
 async function parseJsonBody(req: IncomingMessage): Promise<any> {
@@ -66,6 +195,24 @@ export async function handleApiRoute(req: IncomingMessage, res: ServerResponse):
         appName: 'TinPath',
         version: '1.0.0',
         timestamp: new Date().toISOString(),
+      });
+      return true;
+    }
+
+    // 1b. Native Code Execution Sandbox (ported from NTV-Judge sandbox_runner.py)
+    if (url === '/api/code/run' && req.method === 'POST') {
+      const body = await parseJsonBody(req);
+      const language = body.language === 'cpp' ? 'cpp' : 'python';
+      const code = String(body.code || '');
+      const inputs: string[] = Array.isArray(body.inputs)
+        ? body.inputs.map((x: any) => String(x ?? ''))
+        : [String(body.stdin ?? '')];
+      const timeLimitMs = Math.min(Math.max(Number(body.timeLimitMs) || 2000, 200), 5000);
+
+      const batchResult = executeNativeBatch(language, code, inputs, timeLimitMs);
+      sendJson(res, 200, {
+        success: true,
+        ...batchResult,
       });
       return true;
     }
@@ -197,22 +344,19 @@ export async function handleApiRoute(req: IncomingMessage, res: ServerResponse):
       let reason = '';
 
       if (type === 'daily_challenge') {
-        // Daily challenge rule: 10 questions. Base 30 XP + 5 XP per correct question
         const validCorrect = Math.min(Math.max(correctCount || 0, 0), 10);
         awardedXP = 30 + validCorrect * 5;
         reason = `Hoàn thành thử thách 10 câu hằng ngày (${validCorrect}/10 câu đúng)`;
       } else if (type === 'exam') {
-        // Exam completion rule: score based on 10-point scale
         const validScore = Math.min(Math.max(score || 0, 0), 10);
-        awardedXP = Math.round(validScore * 10); // e.g. 8.5 điểm = 85 XP
+        awardedXP = Math.round(validScore * 10);
         if (validScore >= 9.0) {
-          awardedXP += 25; // Bonus for distinction
+          awardedXP += 25;
           reason = `Đạt điểm xuất sắc (${validScore}đ) bài thi thử tốt nghiệp`;
         } else {
           reason = `Hoàn thành bài thi thử (${validScore}đ)`;
         }
       } else if (type === 'streak_milestone') {
-        // Streak milestones: 7 days (+50 XP), 14 days (+100 XP), 30 days (+200 XP)
         if (currentStreak === 7) awardedXP = 50;
         else if (currentStreak === 14) awardedXP = 100;
         else if (currentStreak === 30) awardedXP = 200;
