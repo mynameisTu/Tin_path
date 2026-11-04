@@ -39,6 +39,9 @@ export interface TopicLesson {
     number: string;
     title: string;
     content: string;
+    imageUrl?: string;
+    imageCaption?: string;
+    images?: { url: string; caption?: string; alt?: string }[];
     subSections?: {
       id: string;
       letter: string;
@@ -46,6 +49,9 @@ export interface TopicLesson {
       content: string;
       example?: string;
       codeSnippet?: string;
+      imageUrl?: string;
+      imageCaption?: string;
+      images?: { url: string; caption?: string; alt?: string }[];
     }[];
     table?: { headers: string[]; rows: string[][] };
     codeSnippet?: string;
@@ -187,31 +193,37 @@ export const TOPIC_LESSONS: Record<SubjectTopicId, TopicLesson> = {
         "id": "sec-1",
         "number": "1.",
         "title": "Giới thiệu về trí tuệ nhân tạo (AI - Artificial Intelligence)",
-        "content": "Năm 1955, Giáo sư John McCarthy (Đại học Dartmouth, Mỹ) lần đầu tiên đưa ra định nghĩa về ngành Trí tuệ nhân tạo là 'khoa học và kĩ thuật chế tạo máy móc thông minh'. Một năm sau, năm 1956, Hội thảo khoa học tại Đại học Dartmouth quy tụ nhiều nhà khoa học máy tính hàng đầu thế giới được xem là sự kiện lịch sử chính thức khai sinh ngành Trí tuệ nhân tạo.\\nNgày nay, AI đã phát triển vượt bậc và trở thành một ngành khoa học mũi nhọn, định hình tương lai của nhân loại.",
+        "imageUrl": "/images/topics/12A/ai-history.jpg",
+        "imageCaption": "Sơ đồ các mốc lịch sử phát triển quan trọng của Trí tuệ Nhân tạo (AI)",
+        "content": "Năm 1955, Giáo sư John McCarthy (Đại học Dartmouth, Mỹ) lần đầu tiên đưa ra định nghĩa về ngành Trí tuệ nhân tạo là 'khoa học và kĩ thuật chế tạo máy móc thông minh'. Một năm sau, năm 1956, Hội thảo khoa học tại Đại học Dartmouth quy tụ nhiều nhà khoa học máy tính hàng đầu thế giới được xem là sự kiện lịch sử chính thức khai sinh ngành Trí tuệ nhân tạo.\nNgày nay, AI đã phát triển vượt bậc và trở thành một ngành khoa học mũi nhọn, định hình tương lai của nhân loại.",
         "subSections": [
           {
             "id": "sec-1-1",
             "letter": "a)",
             "title": "Khái niệm trí tuệ nhân tạo và bản chất",
-            "content": "• Bản chất công việc trí tuệ: Là công việc thực hiện đòi hỏi trí tuệ đặc trưng của con người như khả năng suy luận, khái quát hoá, hiểu ngôn ngữ và ra quyết định.\\n• Máy tính thông thường: Xử lí khối lượng dữ liệu khổng lồ cực kì nhanh và chính xác trong thời gian ngắn, nhưng không có khả năng tự suy luận hay thích ứng nếu không được lập trình cụ thể.\\n• Ngành Trí tuệ nhân tạo: Ra đời nhằm nghiên cứu và phát triển trí tuệ của máy tính, làm cho máy tính có các năng lực trí tuệ tương tự như con người.\\n• Định nghĩa thông dụng: Trí tuệ nhân tạo là khả năng của máy tính có thể làm những công việc mang tính trí tuệ con người, như khả năng học, khả năng suy luận, khả năng hiểu ngôn ngữ tự nhiên và khả năng giải quyết vấn đề phức tạp."
+            "imageUrl": "/images/topics/12A/ai-overview.jpg",
+            "imageCaption": "Hình ảnh minh họa: Khái niệm Trí tuệ Nhân tạo và các năng lực trí tuệ mô phỏng con người",
+            "content": "• Bản chất công việc trí tuệ: Là công việc thực hiện đòi hỏi trí tuệ đặc trưng của con người như khả năng suy luận, khái quát hoá, hiểu ngôn ngữ và ra quyết định.\n• Máy tính thông thường: Xử lí khối lượng dữ liệu khổng lồ cực kì nhanh và chính xác trong thời gian ngắn, nhưng không có khả năng tự suy luận hay thích ứng nếu không được lập trình cụ thể.\n• Ngành Trí tuệ nhân tạo: Ra đời nhằm nghiên cứu và phát triển trí tuệ của máy tính, làm cho máy tính có các năng lực trí tuệ tương tự như con người.\n• Định nghĩa thông dụng: Trí tuệ nhân tạo là khả năng của máy tính có thể làm những công việc mang tính trí tuệ con người, như khả năng học, khả năng suy luận, khả năng hiểu ngôn ngữ tự nhiên và khả năng giải quyết vấn đề phức tạp."
           },
           {
             "id": "sec-1-2",
             "letter": "b)",
             "title": "Các đặc trưng của trí tuệ nhân tạo",
-            "content": "Theo sách Hướng dẫn ôn thi tốt nghiệp môn Tin học (Bộ GD&ĐT), trí tuệ nhân tạo được nhận biết qua các đặc trưng cốt lõi sau:\\n1. Khả năng học: Khái quát hoá, trích rút ra các tri thức (mô hình, quy luật, mẫu) từ dữ liệu lớn đã có và sử dụng tri thức đó để đưa ra quyết định hợp lí. Ví dụ: phần mềm nhận dạng chữ viết tay, hệ thống dịch tự động đa ngôn ngữ, hệ thống nhận diện khuôn mặt người tham gia giao thông.\\n2. Khả năng suy luận: Vận dụng các quy tắc suy luận logic và cơ sở tri thức có từ trước để rút ra kết luận mới hoặc quyết định. Ví dụ kinh điển: Phần mềm hệ chuyên gia y tế MYCIN đưa vào cơ sở tri thức các luật dạng 'NẾU có các triệu chứng A1, A2... THÌ bệnh nhân mắc bệnh B', sau đó hỗ trợ bác sĩ chẩn đoán bệnh nhiễm trùng máu chính xác.\\n3. Khả năng nhận thức: Cảm nhận (thu nhận, phân tích) và hiểu biết (xử lí) về môi trường xung quanh thông qua các cảm biến (sensor) hoặc thiết bị thu nhận tín hiệu đầu vào. Ví dụ: Hệ thống xe ô tô tự lái nhận biết biển báo, người đi bộ, chướng ngại vật thông qua camera và cảm biến LiDAR gắn trên thân xe.\\n4. Khả năng hiểu ngôn ngữ: Giao tiếp trực tiếp với con người bằng ngôn ngữ tự nhiên, bao gồm đọc, hiểu ý đồ và diễn giải bằng cả văn bản lẫn tiếng nói. Ví dụ: Tra cứu thông tin trên Internet thông qua tương tác với trợ lí ảo Siri, Google Assistant, Alexa.\\n5. Khả năng giải quyết vấn đề: Phối hợp linh hoạt các khả năng trên để giải quyết những tình huống phức tạp hoặc tối ưu theo mục tiêu đặt ra. Ví dụ: Thuật toán tự động sắp xếp thời khoá biểu cho trường học dựa trên các ràng buộc phòng học và giáo viên."
+            "imageUrl": "/images/topics/12A/mycin-system.jpg",
+            "imageCaption": "Hệ chuyên gia y tế MYCIN: Minh họa cho khả năng suy luận logic dựa trên tri thức luật NẾU - THÌ",
+            "content": "Theo sách Hướng dẫn ôn thi tốt nghiệp môn Tin học (Bộ GD&ĐT), trí tuệ nhân tạo được nhận biết qua các đặc trưng cốt lõi sau:\n1. Khả năng học: Khái quát hoá, trích rút ra các tri thức (mô hình, quy luật, mẫu) từ dữ liệu lớn đã có và sử dụng tri thức đó để đưa ra quyết định hợp lí. Ví dụ: phần mềm nhận dạng chữ viết tay, hệ thống dịch tự động đa ngôn ngữ, hệ thống nhận diện khuôn mặt người tham gia giao thông.\n2. Khả năng suy luận: Vận dụng các quy tắc suy luận logic và cơ sở tri thức có từ trước để rút ra kết luận mới hoặc quyết định. Ví dụ kinh điển: Phần mềm hệ chuyên gia y tế MYCIN đưa vào cơ sở tri thức các luật dạng 'NẾU có các triệu chứng A1, A2... THÌ bệnh nhân mắc bệnh B', sau đó hỗ trợ bác sĩ chẩn đoán bệnh nhiễm trùng máu chính xác.\n3. Khả năng nhận thức: Cảm nhận (thu nhận, phân tích) và hiểu biết (xử lí) về môi trường xung quanh thông qua các cảm biến (sensor) hoặc thiết bị thu nhận tín hiệu đầu vào. Ví dụ: Hệ thống xe ô tô tự lái nhận biết biển báo, người đi bộ, chướng ngại vật thông qua camera và cảm biến LiDAR gắn trên thân xe.\n4. Khả năng hiểu ngôn ngữ: Giao tiếp trực tiếp với con người bằng ngôn ngữ tự nhiên, bao gồm đọc, hiểu ý đồ và diễn giải bằng cả văn bản lẫn tiếng nói. Ví dụ: Tra cứu thông tin trên Internet thông qua tương tác với trợ lí ảo Siri, Google Assistant, Alexa.\n5. Khả năng giải quyết vấn đề: Phối hợp linh hoạt các khả năng trên để giải quyết những tình huống phức tạp hoặc tối ưu theo mục tiêu đặt ra. Ví dụ: Thuật toán tự động sắp xếp thời khoá biểu cho trường học dựa trên các ràng buộc phòng học và giáo viên."
           },
           {
             "id": "sec-1-3",
             "letter": "c)",
             "title": "Phân loại AI: AI hẹp (ANI) và AI rộng (AGI)",
-            "content": "Dựa trên mức độ mô phỏng trí tuệ con người, AI được chia thành 2 cấp độ phân loại chính:\\n• AI hẹp (Artificial Narrow Intelligence - ANI) hay AI yếu: Được xây dựng để giải quyết các nhiệm vụ chuyên biệt nằm trong phạm vi hẹp của một lĩnh vực cụ thể. Ví dụ: Hệ thống nhận diện biển báo giao thông hoạt động rất tốt khi phát hiện biển báo, nhưng không thể nhận dạng khuôn mặt hay dịch văn bản; phần mềm chơi cờ vua Stockfish hoặc cờ vây AlphaGo có thể đánh bại đại kiện tướng thế giới nhưng không thể lái xe hay làm thơ. Tất cả các hệ thống AI hiện nay (kể cả ChatGPT, Gemini) đều thuộc nhóm AI hẹp.\\n• AI rộng (Artificial General Intelligence - AGI) hay AI mạnh: Được định hướng nhằm thực hiện các hoạt động trí tuệ tổng hợp trên nhiều lĩnh vực giống như con người. Đặc trưng nổi bật của AGI là khả năng tự học độc lập từ dữ liệu mới và hành động có ý thức không phụ thuộc hoàn toàn vào lập trình viên. Hiện nay AGI vẫn đang trong quá trình nghiên cứu lâu dài trong tương lai.\\n• Bài kiểm tra Turing (Turing Test): Do nhà toán học thiên tài Alan Turing đề xuất năm 1950. Phép thử đặt ra rằng: nếu một giám khảo con người trò chuyện qua màn hình với một đối tượng (người hoặc máy) mà không thể phân biệt được mình đang nói chuyện với người hay với máy, thì cỗ máy đó được xem là đã đạt đến Trí tuệ nhân tạo."
+            "content": "Dựa trên mức độ mô phỏng trí tuệ con người, AI được chia thành 2 cấp độ phân loại chính:\n• AI hẹp (Artificial Narrow Intelligence - ANI) hay AI yếu: Được xây dựng để giải quyết các nhiệm vụ chuyên biệt nằm trong phạm vi hẹp của một lĩnh vực cụ thể. Ví dụ: Hệ thống nhận diện biển báo giao thông hoạt động rất tốt khi phát hiện biển báo, nhưng không thể nhận dạng khuôn mặt hay dịch văn bản; phần mềm chơi cờ vua Stockfish hoặc cờ vây AlphaGo có thể đánh bại đại kiện tướng thế giới nhưng không thể lái xe hay làm thơ. Tất cả các hệ thống AI hiện nay (kể cả ChatGPT, Gemini) đều thuộc nhóm AI hẹp.\n• AI rộng (Artificial General Intelligence - AGI) hay AI mạnh: Được định hướng nhằm thực hiện các hoạt động trí tuệ tổng hợp trên nhiều lĩnh vực giống như con người. Đặc trưng nổi bật của AGI là khả năng tự học độc lập từ dữ liệu mới và hành động có ý thức không phụ thuộc hoàn toàn vào lập trình viên. Hiện nay AGI vẫn đang trong quá trình nghiên cứu lâu dài trong tương lai.\n• Bài kiểm tra Turing (Turing Test): Do nhà toán học thiên tài Alan Turing đề xuất năm 1950. Phép thử đặt ra rằng: nếu một giám khảo con người trò chuyện qua màn hình với một đối tượng (người hoặc máy) mà không thể phân biệt được mình đang nói chuyện với người hay với máy, thì cỗ máy đó được xem là đã đạt đến Trí tuệ nhân tạo."
           },
           {
             "id": "sec-1-4",
             "letter": "d)",
             "title": "Một số lĩnh vực nghiên cứu phát triển AI",
-            "content": "Trí tuệ nhân tạo là một ngành khoa học liên ngành rộng lớn, gồm 4 phân ngành nghiên cứu trọng tâm:\\n1. Học máy (Machine Learning): Nghiên cứu các thuật toán cho phép máy tính tự học hỏi và cải thiện hiệu suất từ dữ liệu mà không cần phải lập trình quy tắc tường minh.\\n2. Thị giác máy tính (Computer Vision): Nghiên cứu các phương pháp giúp máy tính thu nhận, xử lí, phân tích và hiểu được các hình ảnh kĩ thuật số cũng như video thực tế.\\n3. AI tạo sinh (Generative AI): Tạo ra các nội dung mới (văn bản, mã nguồn, hình ảnh, âm thanh, video) dựa trên các mẫu dữ liệu đã học (ví dụ: ChatGPT, Gemini, Midjourney).\\n4. Xử lí ngôn ngữ tự nhiên (Natural Language Processing - NLP): Nghiên cứu khả năng giúp máy tính hiểu, dịch thuật và phát sinh ngôn ngữ con người một cách tự nhiên."
+            "content": "Trí tuệ nhân tạo là một ngành khoa học liên ngành rộng lớn, gồm 4 phân ngành nghiên cứu trọng tâm:\n1. Học máy (Machine Learning): Nghiên cứu các thuật toán cho phép máy tính tự học hỏi và cải thiện hiệu suất từ dữ liệu mà không cần phải lập trình quy tắc tường minh.\n2. Thị giác máy tính (Computer Vision): Nghiên cứu các phương pháp giúp máy tính thu nhận, xử lí, phân tích và hiểu được các hình ảnh kĩ thuật số cũng như video thực tế.\n3. AI tạo sinh (Generative AI): Tạo ra các nội dung mới (văn bản, mã nguồn, hình ảnh, âm thanh, video) dựa trên các mẫu dữ liệu đã học (ví dụ: ChatGPT, Gemini, Midjourney).\n4. Xử lí ngôn ngữ tự nhiên (Natural Language Processing - NLP): Nghiên cứu khả năng giúp máy tính hiểu, dịch thuật và phát sinh ngôn ngữ con người một cách tự nhiên."
           }
         ],
         "table": {
@@ -254,13 +266,23 @@ export const TOPIC_LESSONS: Record<SubjectTopicId, TopicLesson> = {
             "id": "sec-2-1",
             "letter": "a)",
             "title": "Một số lĩnh vực phát triển nhờ ứng dụng của AI",
-            "content": "• Trong giáo dục: Cá nhân hoá lộ trình học tập, tự động chấm điểm và đánh giá kết quả, phát hiện các lỗ hổng kiến thức để đề xuất ôn tập kịp thời; phần mềm giám sát thi tích hợp AI chống gian lận.\\n• Trong y tế: Chẩn đoán bệnh sớm với độ chính xác cao qua ảnh X-quang, MRI; hệ thống MYCIN hỗ trợ vi trùng máu; IBM Watson hỗ trợ phác đồ điều trị ung thư; rút ngắn thời gian thử nghiệm lâm sàng dược phẩm.\\n• Trong sản xuất và nông nghiệp: Tối ưu hoá quy trình tự động hoá, kiểm tra phân loại chất lượng nông sản bằng thị giác máy tính, dự báo chính xác chuỗi cung ứng hàng hoá.\\n• Trong giao thông: Hệ thống điều khiển đèn giao thông thông minh chống ùn tắc; xe tự hành (Tesla, Waymo)."
+            "images": [
+              {
+                "url": "/images/topics/12A/ai-applications-1.jpg",
+                "caption": "Các lĩnh vực ứng dụng Trí tuệ Nhân tạo trong đời sống"
+              },
+              {
+                "url": "/images/topics/12A/ai-applications-2.jpg",
+                "caption": "Hệ sinh thái và mô hình giải pháp AI đa ngành"
+              }
+            ],
+            "content": "• Trong giáo dục: Cá nhân hoá lộ trình học tập, tự động chấm điểm và đánh giá kết quả, phát hiện các lỗ hổng kiến thức để đề xuất ôn tập kịp thời; phần mềm giám sát thi tích hợp AI chống gian lận.\n• Trong y tế: Chẩn đoán bệnh sớm với độ chính xác cao qua ảnh X-quang, MRI; hệ thống MYCIN hỗ trợ vi trùng máu; IBM Watson hỗ trợ phác đồ điều trị ung thư; rút ngắn thời gian thử nghiệm lâm sàng dược phẩm.\n• Trong sản xuất và nông nghiệp: Tối ưu hoá quy trình tự động hoá, kiểm tra phân loại chất lượng nông sản bằng thị giác máy tính, dự báo chính xác chuỗi cung ứng hàng hoá.\n• Trong giao thông: Hệ thống điều khiển đèn giao thông thông minh chống ùn tắc; xe tự hành (Tesla, Waymo)."
           },
           {
             "id": "sec-2-2",
             "letter": "b)",
             "title": "Ảnh hưởng của AI đến con người và cảnh báo xã hội",
-            "content": "1. Đạo đức và tính đúng đắn: Dữ liệu huấn luyện đúng đắn và không thiên vị là điều kiện tiên quyết để AI hoạt động chuẩn mực. Nếu dữ liệu bị thiên lệch, AI có thể đưa ra các phán đoán phân biệt chủng tộc, giới tính hoặc sai lệch lịch sử.\\n2. An ninh mạng và tội phạm số: AI bị kẻ xấu lợi dụng để tạo ra công nghệ 'Deepfake' – giả mạo khuôn mặt, hình ảnh, giọng nói của người thân nạn nhân để gọi điện lừa đảo vay tiền, chiếm đoạt tài sản.\\n3. Xâm phạm quyền riêng tư: Các mô hình AI thu thập khối lượng dữ liệu cá nhân (lịch sử duyệt web, vị trí, tin nhắn) có nguy cơ bị rò rỉ hoặc bán cho bên thứ ba vì mục đích vụ lợi.\\n4. Tác động đến việc làm: Nhiều công việc hành chính, nhập liệu, dịch thuật và chăm sóc khách hàng đang dần bị thay thế bởi chatbot và tự động hoá, đòi hỏi người lao động phải không ngừng nâng cao kĩ năng số."
+            "content": "1. Đạo đức và tính đúng đắn: Dữ liệu huấn luyện đúng đắn và không thiên vị là điều kiện tiên quyết để AI hoạt động chuẩn mực. Nếu dữ liệu bị thiên lệch, AI có thể đưa ra các phán đoán phân biệt chủng tộc, giới tính hoặc sai lệch lịch sử.\n2. An ninh mạng và tội phạm số: AI bị kẻ xấu lợi dụng để tạo ra công nghệ 'Deepfake' – giả mạo khuôn mặt, hình ảnh, giọng nói của người thân nạn nhân để gọi điện lừa đảo vay tiền, chiếm đoạt tài sản.\n3. Xâm phạm quyền riêng tư: Các mô hình AI thu thập khối lượng dữ liệu cá nhân (lịch sử duyệt web, vị trí, tin nhắn) có nguy cơ bị rò rỉ hoặc bán cho bên thứ ba vì mục đích vụ lợi.\n4. Tác động đến việc làm: Nhiều công việc hành chính, nhập liệu, dịch thuật và chăm sóc khách hàng đang dần bị thay thế bởi chatbot và tự động hoá, đòi hỏi người lao động phải không ngừng nâng cao kĩ năng số."
           }
         ]
       }
@@ -393,7 +415,7 @@ export const TOPIC_LESSONS: Record<SubjectTopicId, TopicLesson> = {
       },
       {
         "title": "2. Các ứng dụng thực tế nổi bật",
-        "content": "– Y tế: Hệ chuyên gia y tế MYCIN, IBM Watson.\\n– Giao thông: Xe tự lái kết hợp camera + LiDAR.\\n– Giáo dục: Cá nhân hóa lộ trình học.\\n– Trợ lý ảo: Siri, Google Assistant, Alexa."
+        "content": "– Y tế: Hệ chuyên gia y tế MYCIN, IBM Watson.\n– Giao thông: Xe tự lái kết hợp camera + LiDAR.\n– Giáo dục: Cá nhân hóa lộ trình học.\n– Trợ lý ảo: Siri, Google Assistant, Alexa."
       }
     ],
     "practicalTips": [
@@ -523,7 +545,7 @@ export const TOPIC_LESSONS: Record<SubjectTopicId, TopicLesson> = {
         "id": "sec-1",
         "number": "1.",
         "title": "Khái niệm, ích lợi của mạng máy tính",
-        "content": "• Khái niệm mạng máy tính: Là một hệ thống các thiết bị số được kết nối với nhau thông qua các phương tiện truyền dẫn (có dây hoặc không dây) để truyền dữ liệu và trao đổi thông tin.\\n• Lợi ích của mạng máy tính: Giúp người dùng chia sẻ tài nguyên phần cứng (máy in, máy quét, ổ cứng mạng), chia sẻ phần mềm, tài liệu học tập và giao tiếp trao đổi thông tin nhanh chóng, tiết kiệm chi phí."
+        "content": "• Khái niệm mạng máy tính: Là một hệ thống các thiết bị số được kết nối với nhau thông qua các phương tiện truyền dẫn (có dây hoặc không dây) để truyền dữ liệu và trao đổi thông tin.\n• Lợi ích của mạng máy tính: Giúp người dùng chia sẻ tài nguyên phần cứng (máy in, máy quét, ổ cứng mạng), chia sẻ phần mềm, tài liệu học tập và giao tiếp trao đổi thông tin nhanh chóng, tiết kiệm chi phí."
       },
       {
         "id": "sec-2",
@@ -541,7 +563,7 @@ export const TOPIC_LESSONS: Record<SubjectTopicId, TopicLesson> = {
             "id": "sec-2-2",
             "letter": "b)",
             "title": "Chức năng của Switch, Router, Modem, Access Point",
-            "content": "1. Switch (Bộ chuyển mạch): Là thiết bị trung tâm kết nối các máy tính trong cùng mạng LAN bằng cáp mạng UTP. Switch xây dựng bảng địa chỉ MAC của từng cổng, từ đó chỉ chuyển tiếp gói tin đến đúng cổng của thiết bị nhận đích mà không gửi tràn lan sang các cổng khác.\\n2. Router (Bộ định tuyến): Thiết bị quan trọng kết nối các mạng LAN khác nhau với nhau hoặc nối LAN ra mạng diện rộng WAN/Internet. Router đọc địa chỉ IP đích để tìm tuyến đường đi tốt nhất cho gói tin.\\n3. Access Point (Điểm truy cập không dây): Tiếp nhận tín hiệu từ mạng LAN có dây và phát sóng Wi-Fi cho các thiết bị di động (laptop, điện thoại) kết nối vào mạng LAN.\\n4. Modem: Thiết bị điều chế (chuyển đổi tín hiệu số Digital từ máy tính thành tín hiệu tương tự Analog để truyền qua đường dây viễn thông) và giải điều chế (chuyển tín hiệu tương tự nhận được thành tín hiệu số)."
+            "content": "1. Switch (Bộ chuyển mạch): Là thiết bị trung tâm kết nối các máy tính trong cùng mạng LAN bằng cáp mạng UTP. Switch xây dựng bảng địa chỉ MAC của từng cổng, từ đó chỉ chuyển tiếp gói tin đến đúng cổng của thiết bị nhận đích mà không gửi tràn lan sang các cổng khác.\n2. Router (Bộ định tuyến): Thiết bị quan trọng kết nối các mạng LAN khác nhau với nhau hoặc nối LAN ra mạng diện rộng WAN/Internet. Router đọc địa chỉ IP đích để tìm tuyến đường đi tốt nhất cho gói tin.\n3. Access Point (Điểm truy cập không dây): Tiếp nhận tín hiệu từ mạng LAN có dây và phát sóng Wi-Fi cho các thiết bị di động (laptop, điện thoại) kết nối vào mạng LAN.\n4. Modem: Thiết bị điều chế (chuyển đổi tín hiệu số Digital từ máy tính thành tín hiệu tương tự Analog để truyền qua đường dây viễn thông) và giải điều chế (chuyển tín hiệu tương tự nhận được thành tín hiệu số)."
           }
         ]
       },
@@ -549,7 +571,7 @@ export const TOPIC_LESSONS: Record<SubjectTopicId, TopicLesson> = {
         "id": "sec-3",
         "number": "3.",
         "title": "Môi trường truyền dẫn: Cáp xoắn và Cáp quang",
-        "content": "• Cáp xoắn UTP (Unshielded Twisted Pair): Gồm 4 cặp dây đồng bện xoắn đôi vào nhau để khử nhiễu điện từ. Đầu cáp bấm giắc RJ-45 chuẩn chuẩn T568A hoặc T568B. Chuẩn cáp CAT 5e hỗ trợ tốc độ 1 Gbps, CAT 6 hỗ trợ lên đến 10 Gbps trong cự li 100m.\\n• Cáp quang (Fiber Optic): Cấu tạo gồm 3 lớp (lõi thủy tinh core, lớp phản quang cladding, lớp vỏ nhựa bảo vệ coating). Truyền dữ liệu bằng các xung ánh sáng dựa trên hiện tượng phản xạ toàn phần. Cáp quang có ưu điểm: tốc độ cực cao, cự li truyền xa hàng ngàn km, hoàn toàn không bị ảnh hưởng bởi nhiễu điện từ hay sấm sét."
+        "content": "• Cáp xoắn UTP (Unshielded Twisted Pair): Gồm 4 cặp dây đồng bện xoắn đôi vào nhau để khử nhiễu điện từ. Đầu cáp bấm giắc RJ-45 chuẩn chuẩn T568A hoặc T568B. Chuẩn cáp CAT 5e hỗ trợ tốc độ 1 Gbps, CAT 6 hỗ trợ lên đến 10 Gbps trong cự li 100m.\n• Cáp quang (Fiber Optic): Cấu tạo gồm 3 lớp (lõi thủy tinh core, lớp phản quang cladding, lớp vỏ nhựa bảo vệ coating). Truyền dữ liệu bằng các xung ánh sáng dựa trên hiện tượng phản xạ toàn phần. Cáp quang có ưu điểm: tốc độ cực cao, cự li truyền xa hàng ngàn km, hoàn toàn không bị ảnh hưởng bởi nhiễu điện từ hay sấm sét."
       },
       {
         "id": "sec-4",
@@ -561,13 +583,13 @@ export const TOPIC_LESSONS: Record<SubjectTopicId, TopicLesson> = {
             "id": "sec-4-1",
             "letter": "a)",
             "title": "Bộ giao thức TCP/IP",
-            "content": "• Giao thức TCP (Transmission Control Protocol): Hoạt động ở tầng Giao vận, phụ trách việc chia nhỏ thông điệp thành các gói tin (packet), đánh số thứ tự, kiểm soát luồng và kiểm tra phát hiện lỗi. Nếu có gói tin bị thất lạc, TCP yêu cầu gửi lại, đảm bảo truyền dữ liệu chính xác và tin cậy tuyệt đối.\\n• Giao thức IP (Internet Protocol): Hoạt động ở tầng Mạng, phụ trách việc gán địa chỉ IP nguồn và IP đích cho gói tin, định tuyến đường đi tốt nhất qua các Router trên toàn cầu."
+            "content": "• Giao thức TCP (Transmission Control Protocol): Hoạt động ở tầng Giao vận, phụ trách việc chia nhỏ thông điệp thành các gói tin (packet), đánh số thứ tự, kiểm soát luồng và kiểm tra phát hiện lỗi. Nếu có gói tin bị thất lạc, TCP yêu cầu gửi lại, đảm bảo truyền dữ liệu chính xác và tin cậy tuyệt đối.\n• Giao thức IP (Internet Protocol): Hoạt động ở tầng Mạng, phụ trách việc gán địa chỉ IP nguồn và IP đích cho gói tin, định tuyến đường đi tốt nhất qua các Router trên toàn cầu."
           },
           {
             "id": "sec-4-2",
             "letter": "b)",
             "title": "Cấu trúc địa chỉ IPv4 và IPv6",
-            "content": "• IPv4: Có độ dài 32 bit, chia thành 4 octet (mỗi octet 8 bit = 1 byte), biểu diễn bằng 4 số thập phân phân cách bởi dấu chấm (ví dụ: 192.168.1.1). IPv4 cung cấp khoảng 2^32 ≈ 4,3 tỉ địa chỉ và hiện nay đã cạn kiệt.\\n• IPv6: Có độ dài 128 bit (16 byte), gồm 8 nhóm số thập lục phân (hex) phân cách bởi dấu hai chấm (ví dụ: 2001:0db8:85a3:0000:0000:8a2e:0370:7334). Cung cấp 2^128 địa chỉ (gần như vô tận).\\n• Hệ thống tên miền (DNS): Đóng vai trò như 'danh bạ', chuyển đổi tên miền dạng chữ (ví dụ: moet.gov.vn) sang địa chỉ IP dạng số mà máy tính có thể hiểu được."
+            "content": "• IPv4: Có độ dài 32 bit, chia thành 4 octet (mỗi octet 8 bit = 1 byte), biểu diễn bằng 4 số thập phân phân cách bởi dấu chấm (ví dụ: 192.168.1.1). IPv4 cung cấp khoảng 2^32 ≈ 4,3 tỉ địa chỉ và hiện nay đã cạn kiệt.\n• IPv6: Có độ dài 128 bit (16 byte), gồm 8 nhóm số thập lục phân (hex) phân cách bởi dấu hai chấm (ví dụ: 2001:0db8:85a3:0000:0000:8a2e:0370:7334). Cung cấp 2^128 địa chỉ (gần như vô tận).\n• Hệ thống tên miền (DNS): Đóng vai trò như 'danh bạ', chuyển đổi tên miền dạng chữ (ví dụ: moet.gov.vn) sang địa chỉ IP dạng số mà máy tính có thể hiểu được."
           }
         ]
       },
@@ -575,7 +597,7 @@ export const TOPIC_LESSONS: Record<SubjectTopicId, TopicLesson> = {
         "id": "sec-5",
         "number": "5.",
         "title": "Thực hành chia sẻ tài nguyên trên mạng LAN",
-        "content": "• Chia sẻ thư mục trên Windows:\\nBước 1: Nhấp chuột phải vào thư mục cần chia sẻ, chọn Properties -> tab Sharing -> nút Share.\\nBước 2: Chọn tài khoản người dùng hoặc nhóm 'Everyone', sau đó gán quyền truy cập: Read (chỉ đọc), Change (sửa/xoá), Full Control (toàn quyền).\\n• Chia sẻ máy in:\\nBước 1: Mở Control Panel -> Devices and Printers -> nhấp chuột phải vào máy in -> Printer properties -> tab Sharing -> chọn 'Share this printer'.\\nBước 2: Trên máy khách cần in, mở Add a printer -> chọn 'Select a shared printer by name' -> nhập đường dẫn mạng đến máy in đã chia sẻ."
+        "content": "• Chia sẻ thư mục trên Windows:\nBước 1: Nhấp chuột phải vào thư mục cần chia sẻ, chọn Properties -> tab Sharing -> nút Share.\nBước 2: Chọn tài khoản người dùng hoặc nhóm 'Everyone', sau đó gán quyền truy cập: Read (chỉ đọc), Change (sửa/xoá), Full Control (toàn quyền).\n• Chia sẻ máy in:\nBước 1: Mở Control Panel -> Devices and Printers -> nhấp chuột phải vào máy in -> Printer properties -> tab Sharing -> chọn 'Share this printer'.\nBước 2: Trên máy khách cần in, mở Add a printer -> chọn 'Select a shared printer by name' -> nhập đường dẫn mạng đến máy in đã chia sẻ."
       }
     ],
     "memoryNotes": [
@@ -685,7 +707,7 @@ export const TOPIC_LESSONS: Record<SubjectTopicId, TopicLesson> = {
     "theorySections": [
       {
         "title": "1. Các thiết bị mạng trọng tâm",
-        "content": "• Switch: Tạo kết nối có dây nội bộ LAN, tra cứu bảng MAC để gửi đích xác cổng nhận.\\n• Access Point (AP): Phát sóng Wi-Fi cho laptop, điện thoại kết nối vào LAN.\\n• Modem: Chuyển đổi tín hiệu số thành tương tự và ngược lại.\\n• Router: Nối mạng LAN với Internet, định tuyến gói tin."
+        "content": "• Switch: Tạo kết nối có dây nội bộ LAN, tra cứu bảng MAC để gửi đích xác cổng nhận.\n• Access Point (AP): Phát sóng Wi-Fi cho laptop, điện thoại kết nối vào LAN.\n• Modem: Chuyển đổi tín hiệu số thành tương tự và ngược lại.\n• Router: Nối mạng LAN với Internet, định tuyến gói tin."
       }
     ],
     "practicalTips": [
@@ -788,7 +810,7 @@ export const TOPIC_LESSONS: Record<SubjectTopicId, TopicLesson> = {
         "id": "sec-1",
         "number": "1.",
         "title": "Một số tác động tiêu cực của công nghệ kĩ thuật số",
-        "content": "Không gian mạng mang lại nhiều ưu điểm to lớn như thực hiện giao tiếp mọi lúc mọi nơi, mở rộng kết nối xã hội không giới hạn địa lí, tiết kiệm tối đa thời gian và chi phí đi lại, sinh hoạt. Tuy nhiên, theo sách Hướng dẫn ôn thi tốt nghiệp môn Tin học (trang 48-50), bên cạnh những ưu điểm, giao tiếp trên môi trường số cũng bộc lộ những tác động tiêu cực và hạn chế tiềm ẩn sâu sắc:\\n\\n• 1.1. Thiếu ngôn ngữ hình thể và tín hiệu cảm xúc: Các phương thức giao tiếp như tin nhắn, email thiếu ánh mắt, nét mặt, cử chỉ cơ thể và ngữ điệu âm thanh của giọng nói. Điều này rất dễ gây ra hiểu lầm do người đọc diễn giải sai ý nghĩa của lời văn. Ngoài ra, việc ẩn danh còn tạo cơ hội cho kẻ xấu mạo danh cá nhân, tổ chức uy tín để thực hiện hành vi lừa đảo.\\n\\n• 1.2. Giảm hiệu quả giao tiếp và kĩ năng ngôn ngữ: Lạm dụng ngôn ngữ mạng, teencode, viết tắt tuỳ tiện, sai chính tả, sai ngữ pháp làm xói mòn sự trong sáng của tiếng Việt. Việc bị phân tán bởi thông báo tin nhắn liên tục cũng làm giảm độ tập trung trong học tập và công việc.\\n\\n• 1.3. Nguy cơ nghiện Internet và lối sống ảo: Dành quá nhiều thời gian trên thế giới ảo dẫn đến lười vận động, ngại giao tiếp thực tế ngoài đời, trở nên ngây ngô trong ứng xử xã hội. Hiện tượng câu like, khoe khoang ảo tạo ra tâm lí so sánh, ghen tị và trầm cảm ở thanh thiếu niên.\\n\\n• 1.4. Nguy cơ về bảo mật và lộ lọt quyền riêng tư: Rủi ro bị lộ mật khẩu, mất thông tin cá nhân (CCCD, số điện thoại, tài khoản ngân hàng), bị theo dõi định vị hoặc bị tống tiền qua các nội dung riêng tư nhạy cảm.\\n\\n• 1.5. Phụ thuộc nặng nề vào hạ tầng kĩ thuật: Khi gặp sự cố đứt cáp quang, mất điện hoặc thiết bị không tương thích, việc giao tiếp bị gián đoạn hoàn toàn, ảnh hưởng lớn đến tiến độ học tập và kinh tế."
+        "content": "Không gian mạng mang lại nhiều ưu điểm to lớn như thực hiện giao tiếp mọi lúc mọi nơi, mở rộng kết nối xã hội không giới hạn địa lí, tiết kiệm tối đa thời gian và chi phí đi lại, sinh hoạt. Tuy nhiên, theo sách Hướng dẫn ôn thi tốt nghiệp môn Tin học (trang 48-50), bên cạnh những ưu điểm, giao tiếp trên môi trường số cũng bộc lộ những tác động tiêu cực và hạn chế tiềm ẩn sâu sắc:\n\n• 1.1. Thiếu ngôn ngữ hình thể và tín hiệu cảm xúc: Các phương thức giao tiếp như tin nhắn, email thiếu ánh mắt, nét mặt, cử chỉ cơ thể và ngữ điệu âm thanh của giọng nói. Điều này rất dễ gây ra hiểu lầm do người đọc diễn giải sai ý nghĩa của lời văn. Ngoài ra, việc ẩn danh còn tạo cơ hội cho kẻ xấu mạo danh cá nhân, tổ chức uy tín để thực hiện hành vi lừa đảo.\n\n• 1.2. Giảm hiệu quả giao tiếp và kĩ năng ngôn ngữ: Lạm dụng ngôn ngữ mạng, teencode, viết tắt tuỳ tiện, sai chính tả, sai ngữ pháp làm xói mòn sự trong sáng của tiếng Việt. Việc bị phân tán bởi thông báo tin nhắn liên tục cũng làm giảm độ tập trung trong học tập và công việc.\n\n• 1.3. Nguy cơ nghiện Internet và lối sống ảo: Dành quá nhiều thời gian trên thế giới ảo dẫn đến lười vận động, ngại giao tiếp thực tế ngoài đời, trở nên ngây ngô trong ứng xử xã hội. Hiện tượng câu like, khoe khoang ảo tạo ra tâm lí so sánh, ghen tị và trầm cảm ở thanh thiếu niên.\n\n• 1.4. Nguy cơ về bảo mật và lộ lọt quyền riêng tư: Rủi ro bị lộ mật khẩu, mất thông tin cá nhân (CCCD, số điện thoại, tài khoản ngân hàng), bị theo dõi định vị hoặc bị tống tiền qua các nội dung riêng tư nhạy cảm.\n\n• 1.5. Phụ thuộc nặng nề vào hạ tầng kĩ thuật: Khi gặp sự cố đứt cáp quang, mất điện hoặc thiết bị không tương thích, việc giao tiếp bị gián đoạn hoàn toàn, ảnh hưởng lớn đến tiến độ học tập và kinh tế."
       },
       {
         "id": "sec-2",
@@ -800,13 +822,13 @@ export const TOPIC_LESSONS: Record<SubjectTopicId, TopicLesson> = {
             "id": "sec-2-a",
             "letter": "a)",
             "title": "Những hành vi vi phạm pháp luật, trái đạo đức, thiếu văn hoá khi hoạt động trong môi trường số",
-            "content": "Theo quy định của pháp luật Việt Nam và chuẩn mực văn hoá số, các hành vi sau đây bị nghiêm cấm và phải chịu trách nhiệm pháp lí:\\n\\n1. Mạo danh và lừa đảo trực tuyến: Giả mạo tài khoản mạng xã hội của lãnh đạo, cơ quan nhà nước, giáo viên hoặc người thân để vay tiền, chiếm đoạt tài sản.\\n2. Phát tán thông tin sai sự thật (Tin giả - Fake News): Đăng tải hoặc chia sẻ các thông tin chưa được kiểm chứng, tin đồn thất thiệt về dịch bệnh, thiên tai, an ninh trật tự gây hoang mang trong dư luận.\\n3. Xúc phạm danh dự, nhân phẩm và quấy rối trực tuyến (Cyberbullying): Sử dụng từ ngữ lăng mạ, châm chọc, body shaming, công kích cá nhân, kích động bạo lực mạng nhắm vào học sinh, thầy cô hoặc người khác.\\n4. Vi phạm quyền riêng tư và bí mật đời tư: Tự ý chụp ảnh, quay video người khác rồi đăng lên mạng khi chưa được sự đồng ý; chia sẻ dữ liệu cá nhân, tin nhắn riêng tư lên các hội nhóm công cộng.\\n5. Vi phạm bản quyền và sở hữu trí tuệ: Tải về, sao chép, sử dụng trái phép các phần mềm bẻ khoá (crack), sách, ảnh, bài giảng của tác giả khác mà không xin phép hoặc không trích dẫn nguồn hợp pháp."
+            "content": "Theo quy định của pháp luật Việt Nam và chuẩn mực văn hoá số, các hành vi sau đây bị nghiêm cấm và phải chịu trách nhiệm pháp lí:\n\n1. Mạo danh và lừa đảo trực tuyến: Giả mạo tài khoản mạng xã hội của lãnh đạo, cơ quan nhà nước, giáo viên hoặc người thân để vay tiền, chiếm đoạt tài sản.\n2. Phát tán thông tin sai sự thật (Tin giả - Fake News): Đăng tải hoặc chia sẻ các thông tin chưa được kiểm chứng, tin đồn thất thiệt về dịch bệnh, thiên tai, an ninh trật tự gây hoang mang trong dư luận.\n3. Xúc phạm danh dự, nhân phẩm và quấy rối trực tuyến (Cyberbullying): Sử dụng từ ngữ lăng mạ, châm chọc, body shaming, công kích cá nhân, kích động bạo lực mạng nhắm vào học sinh, thầy cô hoặc người khác.\n4. Vi phạm quyền riêng tư và bí mật đời tư: Tự ý chụp ảnh, quay video người khác rồi đăng lên mạng khi chưa được sự đồng ý; chia sẻ dữ liệu cá nhân, tin nhắn riêng tư lên các hội nhóm công cộng.\n5. Vi phạm bản quyền và sở hữu trí tuệ: Tải về, sao chép, sử dụng trái phép các phần mềm bẻ khoá (crack), sách, ảnh, bài giảng của tác giả khác mà không xin phép hoặc không trích dẫn nguồn hợp pháp."
           },
           {
             "id": "sec-2-b",
             "letter": "b)",
             "title": "Sử dụng dịch vụ Internet đúng luật và ứng xử nhân văn",
-            "content": "Để xây dựng môi trường mạng an toàn, văn minh và nhân văn, học sinh cần rèn luyện các nguyên tắc chuẩn mực sau:\\n\\n1. Thấu hiểu và đồng cảm: Luôn suy nghĩ trước khi bình luận; biết đặt mình vào hoàn cảnh của người khác; chia sẻ và động viên chân thành khi thấy bạn bè gặp khó khăn.\\n2. Ứng xử có văn hoá, lịch sự: Sử dụng ngôn ngữ chuẩn mực, văn minh; tôn trọng sự khác biệt về quan điểm, sở thích; kiên quyết không dùng từ ngữ kích động phân biệt vùng miền, giới tính hay tôn giáo.\\n3. Lan toả những điều tốt đẹp: Tích cực chia sẻ các tấm gương người tốt, việc tốt, các chương trình thiện nguyện giúp đỡ đồng bào bị ảnh hưởng bởi thiên tai bão lũ; lan toả nguồn cảm hứng học tập tích cực.\\n4. Đấu tranh với cái xấu một cách văn minh: Bày tỏ sự phản đối, không tiếp tay chia sẻ các bài viết độc hại; chủ động báo cáo (report) nội dung vi phạm cho nền tảng mạng xã hội hoặc cơ quan chức năng.\\n5. Nâng cao kĩ năng tự bảo vệ: Cài đặt mật khẩu mạnh (chữ hoa, số, kí tự đặc biệt), bật xác thực 2 lớp (2FA), không bấm vào các đường link lạ và cẩn trọng với các yêu cầu kết bạn từ người lạ."
+            "content": "Để xây dựng môi trường mạng an toàn, văn minh và nhân văn, học sinh cần rèn luyện các nguyên tắc chuẩn mực sau:\n\n1. Thấu hiểu và đồng cảm: Luôn suy nghĩ trước khi bình luận; biết đặt mình vào hoàn cảnh của người khác; chia sẻ và động viên chân thành khi thấy bạn bè gặp khó khăn.\n2. Ứng xử có văn hoá, lịch sự: Sử dụng ngôn ngữ chuẩn mực, văn minh; tôn trọng sự khác biệt về quan điểm, sở thích; kiên quyết không dùng từ ngữ kích động phân biệt vùng miền, giới tính hay tôn giáo.\n3. Lan toả những điều tốt đẹp: Tích cực chia sẻ các tấm gương người tốt, việc tốt, các chương trình thiện nguyện giúp đỡ đồng bào bị ảnh hưởng bởi thiên tai bão lũ; lan toả nguồn cảm hứng học tập tích cực.\n4. Đấu tranh với cái xấu một cách văn minh: Bày tỏ sự phản đối, không tiếp tay chia sẻ các bài viết độc hại; chủ động báo cáo (report) nội dung vi phạm cho nền tảng mạng xã hội hoặc cơ quan chức năng.\n5. Nâng cao kĩ năng tự bảo vệ: Cài đặt mật khẩu mạnh (chữ hoa, số, kí tự đặc biệt), bật xác thực 2 lớp (2FA), không bấm vào các đường link lạ và cẩn trọng với các yêu cầu kết bạn từ người lạ."
           }
         ],
         "table": {
@@ -933,11 +955,11 @@ export const TOPIC_LESSONS: Record<SubjectTopicId, TopicLesson> = {
     "theorySections": [
       {
         "title": "1. Ưu điểm nổi bật của giao tiếp trực tuyến",
-        "content": "– Thực hiện linh hoạt mọi lúc mọi nơi.\\n– Mở rộng mạng lưới quan hệ quốc tế.\\n– Tiết kiệm chi phí đi lại và sinh hoạt."
+        "content": "– Thực hiện linh hoạt mọi lúc mọi nơi.\n– Mở rộng mạng lưới quan hệ quốc tế.\n– Tiết kiệm chi phí đi lại và sinh hoạt."
       },
       {
         "title": "2. Mặt trái và quy định pháp luật cần nhớ",
-        "content": "– Luật An ninh mạng xử phạt nghiêm khắc hành vi tung tin giả, bôi nhọ người khác.\\n– Cần bảo mật mật khẩu và hạn chế chia sẻ dữ liệu nhạy cảm."
+        "content": "– Luật An ninh mạng xử phạt nghiêm khắc hành vi tung tin giả, bôi nhọ người khác.\n– Cần bảo mật mật khẩu và hạn chế chia sẻ dữ liệu nhạy cảm."
       }
     ],
     "practicalTips": [
@@ -1066,21 +1088,21 @@ export const TOPIC_LESSONS: Record<SubjectTopicId, TopicLesson> = {
         "id": "sec-1",
         "number": "1.",
         "title": "Ngôn ngữ đánh dấu siêu văn bản HTML",
-        "content": "HTML (HyperText Markup Language) là ngôn ngữ đánh dấu chuẩn để xây dựng cấu trúc của các trang web trên Internet.\\nMột phần tử HTML gồm thẻ mở <tên_thẻ thuộc_tính='giá_trị'>, nội dung và thẻ đóng </tên_thẻ>. Một số thẻ đơn không cần thẻ đóng như <br>, <hr>, <img>, <input>.",
+        "content": "HTML (HyperText Markup Language) là ngôn ngữ đánh dấu chuẩn để xây dựng cấu trúc của các trang web trên Internet.\nMột phần tử HTML gồm thẻ mở <tên_thẻ thuộc_tính='giá_trị'>, nội dung và thẻ đóng </tên_thẻ>. Một số thẻ đơn không cần thẻ đóng như <br>, <hr>, <img>, <input>.",
         "subSections": [
           {
             "id": "sec-1-1",
             "letter": "a)",
             "title": "Cấu trúc tài liệu HTML5 chuẩn",
-            "content": "Mọi trang web chuẩn HTML5 đều có khung sườn bắt buộc:\\n• <!DOCTYPE html>: Khai báo phiên bản HTML5 cho trình duyệt.\\n• <html lang='vi'>: Phần tử gốc chứa toàn bộ nội dung tài liệu web.\\n• <head>: Chứa siêu dữ liệu (metadata), tiêu đề trang <title>, liên kết tệp CSS <link> và bộ mã kí tự <meta charset='UTF-8'>. Phần này không hiển thị trực tiếp trong thân trang.\\n• <body>: Chứa toàn bộ nội dung hiển thị cho người xem (tiêu đề, hình ảnh, văn bản, video).",
-            "codeSnippet": "<!DOCTYPE html>\\n<html lang=\\\"vi\\\">\\n  <head>\\n    <meta charset=\\\"UTF-8\\\">\\n    <title>Trang web đầu tiên của tôi</title>\\n    <link rel=\\\"stylesheet\\\" href=\\\"style.css\\\">\\n  </head>\\n  <body>\\n    <h1>Xin chào các bạn!</h1>\\n    <p>Chào mừng bạn đến với TinPath.</p>\\n  </body>\\n</html>"
+            "content": "Mọi trang web chuẩn HTML5 đều có khung sườn bắt buộc:\n• <!DOCTYPE html>: Khai báo phiên bản HTML5 cho trình duyệt.\n• <html lang='vi'>: Phần tử gốc chứa toàn bộ nội dung tài liệu web.\n• <head>: Chứa siêu dữ liệu (metadata), tiêu đề trang <title>, liên kết tệp CSS <link> và bộ mã kí tự <meta charset='UTF-8'>. Phần này không hiển thị trực tiếp trong thân trang.\n• <body>: Chứa toàn bộ nội dung hiển thị cho người xem (tiêu đề, hình ảnh, văn bản, video).",
+            "codeSnippet": "<!DOCTYPE html>\n<html lang=\\\"vi\\\">\n  <head>\n    <meta charset=\\\"UTF-8\\\">\n    <title>Trang web đầu tiên của tôi</title>\n    <link rel=\\\"stylesheet\\\" href=\\\"style.css\\\">\n  </head>\n  <body>\n    <h1>Xin chào các bạn!</h1>\n    <p>Chào mừng bạn đến với TinPath.</p>\n  </body>\n</html>"
           },
           {
             "id": "sec-1-2",
             "letter": "b)",
             "title": "Định dạng văn bản, danh sách và bảng trong HTML",
-            "content": "• Tiêu đề (Headings): Từ <h1> (lớn nhất) đến <h6> (nhỏ nhất).\\n• Đoạn văn bản: Thẻ <p>. In đậm: <strong> hoặc <b>. In nghiêng: <em> hoặc <i>. Xuống dòng: <br>. Đường kẻ ngang phân cách: <hr>.\\n• Danh sách: Có thứ tự <ol type='1' start='1'> và Không thứ tự <ul type='disc'>. Mỗi mục trong danh sách bắt đầu bằng thẻ <li>.\\n• Bảng dữ liệu (Table): Khai báo bằng <table>. Mỗi hàng là <tr> (Table Row). Ô tiêu đề cột in đậm canh giữa là <th> (Table Header). Ô dữ liệu thông thường là <td> (Table Data). Thuộc tính rowspan gộp hàng, colspan gộp cột.",
-            "codeSnippet": "<table border=\\\"1\\\">\\n  <tr>\\n    <th>Họ và tên</th>\\n    <th>Điểm Tin</th>\\n  </tr>\\n  <tr>\\n    <td>Nguyễn Văn An</td>\\n    <td>9.5</td>\\n  </tr>\\n</table>"
+            "content": "• Tiêu đề (Headings): Từ <h1> (lớn nhất) đến <h6> (nhỏ nhất).\n• Đoạn văn bản: Thẻ <p>. In đậm: <strong> hoặc <b>. In nghiêng: <em> hoặc <i>. Xuống dòng: <br>. Đường kẻ ngang phân cách: <hr>.\n• Danh sách: Có thứ tự <ol type='1' start='1'> và Không thứ tự <ul type='disc'>. Mỗi mục trong danh sách bắt đầu bằng thẻ <li>.\n• Bảng dữ liệu (Table): Khai báo bằng <table>. Mỗi hàng là <tr> (Table Row). Ô tiêu đề cột in đậm canh giữa là <th> (Table Header). Ô dữ liệu thông thường là <td> (Table Data). Thuộc tính rowspan gộp hàng, colspan gộp cột.",
+            "codeSnippet": "<table border=\\\"1\\\">\n  <tr>\n    <th>Họ và tên</th>\n    <th>Điểm Tin</th>\n  </tr>\n  <tr>\n    <td>Nguyễn Văn An</td>\n    <td>9.5</td>\n  </tr>\n</table>"
           }
         ]
       },
@@ -1094,14 +1116,14 @@ export const TOPIC_LESSONS: Record<SubjectTopicId, TopicLesson> = {
             "id": "sec-2-a",
             "letter": "a)",
             "title": "Siêu liên kết và nhúng đa phương tiện",
-            "content": "• Siêu liên kết: Dùng thẻ <a> với thuộc tính href chỉ định URL đích. Thuộc tính target='_blank' giúp mở liên kết trong tab mới.\\n• Chèn ảnh: Thẻ đơn <img> với thuộc tính bắt buộc src='đường_dẫn' và alt='mô tả ảnh' khi ảnh bị lỗi.\\n• Chèn âm thanh và video: Thẻ <audio controls> và <video controls width='640'> với thẻ con <source src='...' type='video/mp4'>.\\n• Khung nội tuyến <iframe>: Nhúng tài liệu hoặc video từ trang web khác (ví dụ: Google Maps, video YouTube).",
-            "codeSnippet": "<a href=\\\"https://moet.gov.vn\\\" target=\\\"_blank\\\">Cổng thông tin Bộ GD&ĐT</a>\\n<img src=\\\"logo.png\\\" alt=\\\"Logo TinPath\\\" width=\\\"120\\\">\\n<video controls width=\\\"400\\\">\\n  <source src=\\\"baihoc.mp4\\\" type=\\\"video/mp4\\\">\\n</video>"
+            "content": "• Siêu liên kết: Dùng thẻ <a> với thuộc tính href chỉ định URL đích. Thuộc tính target='_blank' giúp mở liên kết trong tab mới.\n• Chèn ảnh: Thẻ đơn <img> với thuộc tính bắt buộc src='đường_dẫn' và alt='mô tả ảnh' khi ảnh bị lỗi.\n• Chèn âm thanh và video: Thẻ <audio controls> và <video controls width='640'> với thẻ con <source src='...' type='video/mp4'>.\n• Khung nội tuyến <iframe>: Nhúng tài liệu hoặc video từ trang web khác (ví dụ: Google Maps, video YouTube).",
+            "codeSnippet": "<a href=\\\"https://moet.gov.vn\\\" target=\\\"_blank\\\">Cổng thông tin Bộ GD&ĐT</a>\n<img src=\\\"logo.png\\\" alt=\\\"Logo TinPath\\\" width=\\\"120\\\">\n<video controls width=\\\"400\\\">\n  <source src=\\\"baihoc.mp4\\\" type=\\\"video/mp4\\\">\n</video>"
           },
           {
             "id": "sec-2-b",
             "letter": "b)",
             "title": "Xây dựng biểu mẫu nhập dữ liệu (Form)",
-            "content": "Thẻ <form action='xuly.php' method='POST'> chứa các phần tử nhập dữ liệu:\\n• <input type='text'>: Ô nhập một dòng chữ.\\n• <input type='password'>: Ô nhập mật khẩu (che dấu chấm).\\n• <input type='radio' name='gender'>: Nút chọn hình tròn (trong cùng name chỉ chọn được 1 phương án duy nhất).\\n• <input type='checkbox'>: Ô kiểm vuông cho phép chọn nhiều phương án.\\n• <select> cùng các thẻ con <option>: Danh sách chọn thả xuống (dropdown).\\n• <textarea rows='4' cols='50'>: Ô nhập văn bản nhiều dòng.\\n• <button type='submit'> hoặc <input type='submit'>: Nút gửi dữ liệu lên máy chủ."
+            "content": "Thẻ <form action='xuly.php' method='POST'> chứa các phần tử nhập dữ liệu:\n• <input type='text'>: Ô nhập một dòng chữ.\n• <input type='password'>: Ô nhập mật khẩu (che dấu chấm).\n• <input type='radio' name='gender'>: Nút chọn hình tròn (trong cùng name chỉ chọn được 1 phương án duy nhất).\n• <input type='checkbox'>: Ô kiểm vuông cho phép chọn nhiều phương án.\n• <select> cùng các thẻ con <option>: Danh sách chọn thả xuống (dropdown).\n• <textarea rows='4' cols='50'>: Ô nhập văn bản nhiều dòng.\n• <button type='submit'> hoặc <input type='submit'>: Nút gửi dữ liệu lên máy chủ."
           }
         ]
       },
@@ -1115,14 +1137,14 @@ export const TOPIC_LESSONS: Record<SubjectTopicId, TopicLesson> = {
             "id": "sec-3-a",
             "letter": "a)",
             "title": "Cách chèn CSS và độ ưu tiên bộ chọn (Selector)",
-            "content": "• 3 cách chèn CSS:\\n1. Inline CSS: Viết trực tiếp trong thuộc tính style của thẻ (ví dụ: <p style='color: red;'>).\\n2. Internal CSS: Viết trong khối thẻ <style> đặt bên trong phần tử <head>.\\n3. External CSS (Khuyến nghị): Viết trong tệp .css riêng biệt và liên kết qua thẻ <link rel='stylesheet' href='style.css'>.\\n• Độ ưu tiên bộ chọn (Specificity):\\n!important (Cao nhất) > Inline style > ID selector (#id) > Class selector (.class) > Element selector (tên thẻ p, h1, div). Nếu cùng cấp độ ưu tiên, quy tắc viết sau sẽ ghi đè quy tắc viết trước."
+            "content": "• 3 cách chèn CSS:\n1. Inline CSS: Viết trực tiếp trong thuộc tính style của thẻ (ví dụ: <p style='color: red;'>).\n2. Internal CSS: Viết trong khối thẻ <style> đặt bên trong phần tử <head>.\n3. External CSS (Khuyến nghị): Viết trong tệp .css riêng biệt và liên kết qua thẻ <link rel='stylesheet' href='style.css'>.\n• Độ ưu tiên bộ chọn (Specificity):\n!important (Cao nhất) > Inline style > ID selector (#id) > Class selector (.class) > Element selector (tên thẻ p, h1, div). Nếu cùng cấp độ ưu tiên, quy tắc viết sau sẽ ghi đè quy tắc viết trước."
           },
           {
             "id": "sec-3-b",
             "letter": "b)",
             "title": "Mô hình hộp (CSS Box Model)",
-            "content": "Mọi phần tử HTML hiển thị trên trang web đều được xem như một chiếc hộp hình chữ nhật, gồm 4 lớp từ trong ra ngoài:\\n1. Content (Nội dung): Vùng chứa văn bản hoặc hình ảnh thực tế (xác định bởi thuộc tính width và height).\\n2. Padding (Vùng đệm): Khoảng cách trong suốt ngăn cách giữa Content và Border.\\n3. Border (Đường viền): Đường bao quanh bọc lấy padding và content.\\n4. Margin (Lề ngoài): Khoảng cách trống bên ngoài đường viền, ngăn cách phần tử với các phần tử lân cận xung quanh.",
-            "codeSnippet": ".box {\\n  width: 300px;\\n  padding: 15px;\\n  border: 2px solid #2878C8;\\n  margin: 20px auto;\\n}"
+            "content": "Mọi phần tử HTML hiển thị trên trang web đều được xem như một chiếc hộp hình chữ nhật, gồm 4 lớp từ trong ra ngoài:\n1. Content (Nội dung): Vùng chứa văn bản hoặc hình ảnh thực tế (xác định bởi thuộc tính width và height).\n2. Padding (Vùng đệm): Khoảng cách trong suốt ngăn cách giữa Content và Border.\n3. Border (Đường viền): Đường bao quanh bọc lấy padding và content.\n4. Margin (Lề ngoài): Khoảng cách trống bên ngoài đường viền, ngăn cách phần tử với các phần tử lân cận xung quanh.",
+            "codeSnippet": ".box {\n  width: 300px;\n  padding: 15px;\n  border: 2px solid #2878C8;\n  margin: 20px auto;\n}"
           }
         ]
       }
@@ -1233,7 +1255,7 @@ export const TOPIC_LESSONS: Record<SubjectTopicId, TopicLesson> = {
     "theorySections": [
       {
         "title": "1. Các thẻ định dạng cấu trúc",
-        "content": "• <h1>-<h6>: Tiêu đề\\n• <p>: Đoạn văn\\n• <a>: Siêu liên kết\\n• <img>: Chèn ảnh"
+        "content": "• <h1>-<h6>: Tiêu đề\n• <p>: Đoạn văn\n• <a>: Siêu liên kết\n• <img>: Chèn ảnh"
       }
     ],
     "practicalTips": [
@@ -1328,19 +1350,19 @@ export const TOPIC_LESSONS: Record<SubjectTopicId, TopicLesson> = {
         "id": "sec-1",
         "number": "1.",
         "title": "Nghề Sửa chữa và bảo trì máy tính",
-        "content": "• Công việc chính: Kiểm tra, chẩn đoán sự cố phần cứng (RAM, ổ cứng, nguồn, bo mạch chủ), vệ sinh máy tính; cài đặt và cập nhật hệ điều hành, trình điều khiển (driver) và các phần mềm ứng dụng thông dụng; tối ưu hoá cấu hình hệ thống.\\n• Yêu cầu: Hiểu sâu về cấu trúc máy tính, có kĩ năng thao tác cẩn thận, tỉ mỉ và kĩ năng giao tiếp, tư vấn hỗ trợ khách hàng. Không nhất thiết phải biết lập trình phần mềm."
+        "content": "• Công việc chính: Kiểm tra, chẩn đoán sự cố phần cứng (RAM, ổ cứng, nguồn, bo mạch chủ), vệ sinh máy tính; cài đặt và cập nhật hệ điều hành, trình điều khiển (driver) và các phần mềm ứng dụng thông dụng; tối ưu hoá cấu hình hệ thống.\n• Yêu cầu: Hiểu sâu về cấu trúc máy tính, có kĩ năng thao tác cẩn thận, tỉ mỉ và kĩ năng giao tiếp, tư vấn hỗ trợ khách hàng. Không nhất thiết phải biết lập trình phần mềm."
       },
       {
         "id": "sec-2",
         "number": "2.",
         "title": "Nghề Quản trị mạng và hệ thống",
-        "content": "• Công việc chính: Thiết kế, lắp đặt, cấu hình các thiết bị mạng (Switch, Router, Firewall, Server); quản lí tài khoản người dùng, phân quyền truy cập tài nguyên; giám sát lưu lượng và hiệu năng mạng, sao lưu dữ liệu dự phòng và xử lí sự cố mạng 24/7.\\n• Yêu cầu: Nắm vững các mô hình mạng OSI, bộ giao thức TCP/IP, hệ điều hành mạng (Windows Server, Linux), kiến thức định tuyến, chuyển mạch và chứng chỉ nghề nghiệp quốc tế (CCNA, MCSA). Cần được đào tạo bài bản ở bậc đại học hoặc cao đẳng."
+        "content": "• Công việc chính: Thiết kế, lắp đặt, cấu hình các thiết bị mạng (Switch, Router, Firewall, Server); quản lí tài khoản người dùng, phân quyền truy cập tài nguyên; giám sát lưu lượng và hiệu năng mạng, sao lưu dữ liệu dự phòng và xử lí sự cố mạng 24/7.\n• Yêu cầu: Nắm vững các mô hình mạng OSI, bộ giao thức TCP/IP, hệ điều hành mạng (Windows Server, Linux), kiến thức định tuyến, chuyển mạch và chứng chỉ nghề nghiệp quốc tế (CCNA, MCSA). Cần được đào tạo bài bản ở bậc đại học hoặc cao đẳng."
       },
       {
         "id": "sec-3",
         "number": "3.",
         "title": "Nghề Bảo mật hệ thống thông tin",
-        "content": "• Tầm quan trọng: Trong kỉ nguyên chuyển đổi số, dữ liệu là tài sản quý giá nhất của tổ chức. Năm 2023 tại Việt Nam ghi nhận gần 14.000 vụ tấn công mạng vào các cơ quan, ngân hàng và doanh nghiệp.\\n• Công việc chính: Đánh giá lỗ hổng bảo mật, thiết lập tường lửa (Firewall), triển khai các hệ thống phát hiện và ngăn chặn xâm nhập (IDS/IPS), phòng chống mã độc, xử lí khủng hoảng khi bị rò rỉ dữ liệu hoặc tống tiền bằng ransomware.\\n• Nhu cầu nhân lực: Đang thiếu hụt trầm trọng với mức thu nhập hàng đầu trong ngành công nghệ thông tin."
+        "content": "• Tầm quan trọng: Trong kỉ nguyên chuyển đổi số, dữ liệu là tài sản quý giá nhất của tổ chức. Năm 2023 tại Việt Nam ghi nhận gần 14.000 vụ tấn công mạng vào các cơ quan, ngân hàng và doanh nghiệp.\n• Công việc chính: Đánh giá lỗ hổng bảo mật, thiết lập tường lửa (Firewall), triển khai các hệ thống phát hiện và ngăn chặn xâm nhập (IDS/IPS), phòng chống mã độc, xử lí khủng hoảng khi bị rò rỉ dữ liệu hoặc tống tiền bằng ransomware.\n• Nhu cầu nhân lực: Đang thiếu hụt trầm trọng với mức thu nhập hàng đầu trong ngành công nghệ thông tin."
       }
     ],
     "memoryNotes": [
@@ -1411,7 +1433,7 @@ export const TOPIC_LESSONS: Record<SubjectTopicId, TopicLesson> = {
     "theorySections": [
       {
         "title": "1. Các ngành nghề tiêu biểu",
-        "content": "• Sửa chữa bảo trì máy tính\\n• Quản trị mạng và hệ thống\\n• An toàn thông tin"
+        "content": "• Sửa chữa bảo trì máy tính\n• Quản trị mạng và hệ thống\n• An toàn thông tin"
       }
     ],
     "practicalTips": [
@@ -1506,20 +1528,20 @@ export const TOPIC_LESSONS: Record<SubjectTopicId, TopicLesson> = {
         "id": "sec-1",
         "number": "1.",
         "title": "Khái niệm CSDL và Hệ quản trị CSDL (DBMS)",
-        "content": "• Cơ sở dữ liệu (Database): Là tập hợp các dữ liệu có liên quan với nhau, được lưu trữ có cấu trúc trên bộ nhớ ngoài của máy tính nhằm đáp ứng nhu cầu khai thác thông tin của nhiều người dùng đồng thời.\\n• Hệ quản trị CSDL (DBMS - Database Management System): Là phần mềm chuyên dụng cung cấp môi trường để tạo lập, lưu trữ, cập nhật, truy xuất và bảo mật CSDL (ví dụ: Microsoft Access, MySQL, Microsoft SQL Server, Oracle, PostgreSQL)."
+        "content": "• Cơ sở dữ liệu (Database): Là tập hợp các dữ liệu có liên quan với nhau, được lưu trữ có cấu trúc trên bộ nhớ ngoài của máy tính nhằm đáp ứng nhu cầu khai thác thông tin của nhiều người dùng đồng thời.\n• Hệ quản trị CSDL (DBMS - Database Management System): Là phần mềm chuyên dụng cung cấp môi trường để tạo lập, lưu trữ, cập nhật, truy xuất và bảo mật CSDL (ví dụ: Microsoft Access, MySQL, Microsoft SQL Server, Oracle, PostgreSQL)."
       },
       {
         "id": "sec-2",
         "number": "2.",
         "title": "Mô hình CSDL quan hệ, Khoá chính và Khoá ngoại",
-        "content": "• Mô hình CSDL quan hệ (Relational Database): Dữ liệu được tổ chức dưới dạng các bảng 2 chiều (gọi là quan hệ - relation).\\n• Hàng (Row / Record / Bản ghi): Đại diện cho một đối tượng cụ thể (ví dụ: thông tin 1 học sinh).\\n• Cột (Column / Field / Thuộc tính): Đại diện cho một đặc tính của đối tượng (ví dụ: MaHS, HoTen, NgaySinh, DiemToan).\\n• Khoá chính (Primary Key): Là một hoặc nhiều trường dùng để định danh duy nhất mỗi bản ghi trong bảng. Giá trị khoá chính không được để trống (NOT NULL) và không được trùng lặp.\\n• Khoá ngoại (Foreign Key): Là trường trong bảng này đóng vai trò tham chiếu đến khoá chính của bảng khác, tạo nên mối quan hệ liên kết giữa các bảng."
+        "content": "• Mô hình CSDL quan hệ (Relational Database): Dữ liệu được tổ chức dưới dạng các bảng 2 chiều (gọi là quan hệ - relation).\n• Hàng (Row / Record / Bản ghi): Đại diện cho một đối tượng cụ thể (ví dụ: thông tin 1 học sinh).\n• Cột (Column / Field / Thuộc tính): Đại diện cho một đặc tính của đối tượng (ví dụ: MaHS, HoTen, NgaySinh, DiemToan).\n• Khoá chính (Primary Key): Là một hoặc nhiều trường dùng để định danh duy nhất mỗi bản ghi trong bảng. Giá trị khoá chính không được để trống (NOT NULL) và không được trùng lặp.\n• Khoá ngoại (Foreign Key): Là trường trong bảng này đóng vai trò tham chiếu đến khoá chính của bảng khác, tạo nên mối quan hệ liên kết giữa các bảng."
       },
       {
         "id": "sec-3",
         "number": "3.",
         "title": "Ngôn ngữ truy vấn có cấu trúc SQL",
-        "content": "SQL (Structured Query Language) là ngôn ngữ tiêu chuẩn để thao tác và truy xuất dữ liệu trong các hệ quản trị CSDL quan hệ.\\nCú pháp truy vấn tổng quát:\\nSELECT danh_sách_cột\\nFROM tên_bảng\\nWHERE điều_kiện_lọc\\nGROUP BY cột_nhóm\\nHAVING điều_kiện_nhóm\\nORDER BY cột_sắp_xếp ASC/DESC;\\n\\n• Các hàm gộp thông dụng: COUNT() đếm số bản ghi, SUM() tính tổng, AVG() tính trung bình, MAX(), MIN().",
-        "codeSnippet": "-- Đếm số học sinh có kết quả 'Đỗ'\\nSELECT count(KetQua) \\nFROM DiemTHPT \\nWHERE KetQua = 'Đỗ';\\n\\n-- Lấy danh sách điểm thi ngày trong khoảng\\nSELECT * \\nFROM Sales \\nWHERE Date BETWEEN '2025-01-01' AND '2025-12-31';"
+        "content": "SQL (Structured Query Language) là ngôn ngữ tiêu chuẩn để thao tác và truy xuất dữ liệu trong các hệ quản trị CSDL quan hệ.\nCú pháp truy vấn tổng quát:\nSELECT danh_sách_cột\nFROM tên_bảng\nWHERE điều_kiện_lọc\nGROUP BY cột_nhóm\nHAVING điều_kiện_nhóm\nORDER BY cột_sắp_xếp ASC/DESC;\n\n• Các hàm gộp thông dụng: COUNT() đếm số bản ghi, SUM() tính tổng, AVG() tính trung bình, MAX(), MIN().",
+        "codeSnippet": "-- Đếm số học sinh có kết quả 'Đỗ'\nSELECT count(KetQua) \nFROM DiemTHPT \nWHERE KetQua = 'Đỗ';\n\n-- Lấy danh sách điểm thi ngày trong khoảng\nSELECT * \nFROM Sales \nWHERE Date BETWEEN '2025-01-01' AND '2025-12-31';"
       }
     ],
     "memoryNotes": [
@@ -1690,28 +1712,28 @@ export const TOPIC_LESSONS: Record<SubjectTopicId, TopicLesson> = {
         "id": "sec-1",
         "number": "1.",
         "title": "Mảng một chiều và Mảng hai chiều trong Python",
-        "content": "• Mảng 1 chiều: Trong Python được biểu diễn bằng kiểu list, các phần tử đánh chỉ số từ 0 đến len(A)-1.\\n• Mảng 2 chiều (Ma trận): Danh sách các danh sách (list of lists). Phần tử ở hàng i, cột j truy cập qua cú pháp A[i][j].",
-        "codeSnippet": "# Khởi tạo mảng 2 chiều kích thước 3x3 chứa toàn số 0\\nmatrix = [[0 for j in range(3)] for i in range(3)]"
+        "content": "• Mảng 1 chiều: Trong Python được biểu diễn bằng kiểu list, các phần tử đánh chỉ số từ 0 đến len(A)-1.\n• Mảng 2 chiều (Ma trận): Danh sách các danh sách (list of lists). Phần tử ở hàng i, cột j truy cập qua cú pháp A[i][j].",
+        "codeSnippet": "# Khởi tạo mảng 2 chiều kích thước 3x3 chứa toàn số 0\nmatrix = [[0 for j in range(3)] for i in range(3)]"
       },
       {
         "id": "sec-2",
         "number": "2.",
         "title": "Thuật toán tìm kiếm tuần tự và Tìm kiếm nhị phân",
-        "content": "• Tìm kiếm tuần tự (Linear Search): Duyệt tuần tự từ đầu mảng đến cuối mảng cho đến khi gặp phần tử cần tìm hoặc hết mảng. Áp dụng cho mọi mảng (không cần sắp xếp). Độ phức tạp: O(n).\\n• Tìm kiếm nhị phân (Binary Search): BẮT BUỘC danh sách phải được sắp xếp trước. Mỗi bước so sánh giá trị cần tìm với phần tử ở giữa (mid). Nếu nhỏ hơn thì tìm ở nửa trái, lớn hơn tìm ở nửa phải. Độ phức tạp cực nhanh: O(log n).",
-        "codeSnippet": "def binary_search(A, x):\\n    left, right = 0, len(A) - 1\\n    while left <= right:\\n        mid = (left + right) // 2\\n        if A[mid] == x:\\n            return mid\\n        elif A[mid] < x:\\n            left = mid + 1\\n        else:\\n            right = mid - 1\\n    return -1"
+        "content": "• Tìm kiếm tuần tự (Linear Search): Duyệt tuần tự từ đầu mảng đến cuối mảng cho đến khi gặp phần tử cần tìm hoặc hết mảng. Áp dụng cho mọi mảng (không cần sắp xếp). Độ phức tạp: O(n).\n• Tìm kiếm nhị phân (Binary Search): BẮT BUỘC danh sách phải được sắp xếp trước. Mỗi bước so sánh giá trị cần tìm với phần tử ở giữa (mid). Nếu nhỏ hơn thì tìm ở nửa trái, lớn hơn tìm ở nửa phải. Độ phức tạp cực nhanh: O(log n).",
+        "codeSnippet": "def binary_search(A, x):\n    left, right = 0, len(A) - 1\n    while left <= right:\n        mid = (left + right) // 2\n        if A[mid] == x:\n            return mid\n        elif A[mid] < x:\n            left = mid + 1\n        else:\n            right = mid - 1\n    return -1"
       },
       {
         "id": "sec-3",
         "number": "3.",
         "title": "Các thuật toán sắp xếp cơ bản (Nổi bọt, Chèn, Chọn)",
-        "content": "• Sắp xếp nổi bọt (Bubble Sort): So sánh liên tục 2 phần tử kề nhau, nếu đứng sai thứ tự thì đổi chỗ. Sau mỗi lượt duyệt, phần tử lớn nhất sẽ 'nổi' về cuối mảng.\\n• Sắp xếp chọn (Selection Sort): Tìm phần tử nhỏ nhất trong đoạn chưa sắp xếp rồi đổi chỗ nó về vị trí đầu tiên của đoạn đó.\\n• Sắp xếp chèn (Insertion Sort): Lấy lần lượt từng phần tử chèn vào đúng vị trí trong đoạn đã sắp xếp phía trước.",
-        "codeSnippet": "def bubble_sort(arr):\\n    n = len(arr)\\n    for i in range(n - 1):\\n        for j in range(n - 1 - i):\\n            if arr[j] > arr[j + 1]:\\n                arr[j], arr[j + 1] = arr[j + 1], arr[j]\\n    return arr"
+        "content": "• Sắp xếp nổi bọt (Bubble Sort): So sánh liên tục 2 phần tử kề nhau, nếu đứng sai thứ tự thì đổi chỗ. Sau mỗi lượt duyệt, phần tử lớn nhất sẽ 'nổi' về cuối mảng.\n• Sắp xếp chọn (Selection Sort): Tìm phần tử nhỏ nhất trong đoạn chưa sắp xếp rồi đổi chỗ nó về vị trí đầu tiên của đoạn đó.\n• Sắp xếp chèn (Insertion Sort): Lấy lần lượt từng phần tử chèn vào đúng vị trí trong đoạn đã sắp xếp phía trước.",
+        "codeSnippet": "def bubble_sort(arr):\n    n = len(arr)\n    for i in range(n - 1):\n        for j in range(n - 1 - i):\n            if arr[j] > arr[j + 1]:\n                arr[j], arr[j + 1] = arr[j + 1], arr[j]\n    return arr"
       },
       {
         "id": "sec-4",
         "number": "4.",
         "title": "Độ phức tạp thời gian của thuật toán",
-        "content": "• O(1): Thời gian hằng số (truy cập mảng A[i]).\\n• O(log n): Rất nhanh (tìm kiếm nhị phân, chia để trị).\\n• O(n): Tuyến tính (tìm kiếm tuần tự, tìm max/min).\\n• O(n log n): Thuật toán sắp xếp tối ưu (Merge Sort, Quick Sort).\\n• O(n^2): Sắp xếp cơ bản (Bubble, Selection, Insertion Sort trong trường hợp xấu nhất)."
+        "content": "• O(1): Thời gian hằng số (truy cập mảng A[i]).\n• O(log n): Rất nhanh (tìm kiếm nhị phân, chia để trị).\n• O(n): Tuyến tính (tìm kiếm tuần tự, tìm max/min).\n• O(n log n): Thuật toán sắp xếp tối ưu (Merge Sort, Quick Sort).\n• O(n^2): Sắp xếp cơ bản (Bubble, Selection, Insertion Sort trong trường hợp xấu nhất)."
       }
     ],
     "memoryNotes": [
@@ -1784,7 +1806,7 @@ export const TOPIC_LESSONS: Record<SubjectTopicId, TopicLesson> = {
     "theorySections": [
       {
         "title": "1. Thuật toán tìm kiếm",
-        "content": "• Tuần tự: Duyệt từng phần tử O(n).\\n• Nhị phân: Chia đôi O(log n)."
+        "content": "• Tuần tự: Duyệt từng phần tử O(n).\n• Nhị phân: Chia đôi O(log n)."
       }
     ],
     "practicalTips": [
@@ -1873,13 +1895,13 @@ export const TOPIC_LESSONS: Record<SubjectTopicId, TopicLesson> = {
         "id": "sec-1",
         "number": "1.",
         "title": "Khái niệm và Phân loại Học máy (Machine Learning)",
-        "content": "Học máy là một nhánh của Trí tuệ nhân tạo, nghiên cứu các thuật toán giúp máy tính tự động học hỏi từ dữ liệu quá khứ để đưa ra dự đoán hoặc quyết định mà không cần lập trình quy tắc tường minh.\\n• Học có giám sát (Supervised Learning): Dữ liệu huấn luyện có kèm nhãn đáp án (Label). Ví dụ: Phân loại email là 'Thư rác' hoặc 'Hợp lệ'.\\n• Học không giám sát (Unsupervised Learning): Dữ liệu không có nhãn, mô hình tự tìm ra cấu trúc ẩn hoặc gom nhóm (Clustering). Ví dụ: Phân nhóm khách hàng theo hành vi mua sắm.\\n• Học tăng cường (Reinforcement Learning): Mô hình học thông qua tương tác thử - sai với môi trường để nhận phần thưởng (Reward) hoặc hình phạt. Ví dụ: Huấn luyện robot di chuyển, chơi cờ AlphaGo."
+        "content": "Học máy là một nhánh của Trí tuệ nhân tạo, nghiên cứu các thuật toán giúp máy tính tự động học hỏi từ dữ liệu quá khứ để đưa ra dự đoán hoặc quyết định mà không cần lập trình quy tắc tường minh.\n• Học có giám sát (Supervised Learning): Dữ liệu huấn luyện có kèm nhãn đáp án (Label). Ví dụ: Phân loại email là 'Thư rác' hoặc 'Hợp lệ'.\n• Học không giám sát (Unsupervised Learning): Dữ liệu không có nhãn, mô hình tự tìm ra cấu trúc ẩn hoặc gom nhóm (Clustering). Ví dụ: Phân nhóm khách hàng theo hành vi mua sắm.\n• Học tăng cường (Reinforcement Learning): Mô hình học thông qua tương tác thử - sai với môi trường để nhận phần thưởng (Reward) hoặc hình phạt. Ví dụ: Huấn luyện robot di chuyển, chơi cờ AlphaGo."
       },
       {
         "id": "sec-2",
         "number": "2.",
         "title": "Quy trình Khoa học Dữ liệu",
-        "content": "Gồm 5 bước chuẩn:\\n1. Thu thập dữ liệu: Từ cảm biến, tệp log, cơ sở dữ liệu hoặc khảo sát.\\n2. Tiền xử lí dữ liệu: Làm sạch dữ liệu, xử lí giá trị thiếu (missing values), loại bỏ dữ liệu ngoại lai và chuẩn hoá số liệu.\\n3. Khám phá dữ liệu (EDA): Trực quan hoá bằng biểu đồ để tìm ra xu hướng.\\n4. Huấn luyện mô hình: Chọn thuật toán học máy phù hợp.\\n5. Đánh giá và triển khai: Kiểm thử trên dữ liệu mới và đưa vào ứng dụng thực tế."
+        "content": "Gồm 5 bước chuẩn:\n1. Thu thập dữ liệu: Từ cảm biến, tệp log, cơ sở dữ liệu hoặc khảo sát.\n2. Tiền xử lí dữ liệu: Làm sạch dữ liệu, xử lí giá trị thiếu (missing values), loại bỏ dữ liệu ngoại lai và chuẩn hoá số liệu.\n3. Khám phá dữ liệu (EDA): Trực quan hoá bằng biểu đồ để tìm ra xu hướng.\n4. Huấn luyện mô hình: Chọn thuật toán học máy phù hợp.\n5. Đánh giá và triển khai: Kiểm thử trên dữ liệu mới và đưa vào ứng dụng thực tế."
       }
     ],
     "memoryNotes": [
@@ -2018,7 +2040,7 @@ export const TOPIC_LESSONS: Record<SubjectTopicId, TopicLesson> = {
         "id": "sec-1",
         "number": "1.",
         "title": "Quy trình thiết kế website trực quan",
-        "content": "• Bước 1: Xác định mục tiêu và đối tượng phục vụ của trang web.\\n• Bước 2: Phác thảo sơ đồ cấu trúc trang (Sitemap) gồm trang chủ và các trang thành phần.\\n• Bước 3: Thu thập và chuẩn bị tài liệu (logo, bài viết, hình ảnh độ phân giải cao, video tư liệu).\\n• Bước 4: Tạo lập giao diện bằng phần mềm tạo web (như Google Sites).\\n• Bước 5: Kiểm thử hiển thị trên các màn hình máy tính, máy tính bảng và điện thoại di động.\\n• Bước 6: Xuất bản (Publish) và chia sẻ liên kết."
+        "content": "• Bước 1: Xác định mục tiêu và đối tượng phục vụ của trang web.\n• Bước 2: Phác thảo sơ đồ cấu trúc trang (Sitemap) gồm trang chủ và các trang thành phần.\n• Bước 3: Thu thập và chuẩn bị tài liệu (logo, bài viết, hình ảnh độ phân giải cao, video tư liệu).\n• Bước 4: Tạo lập giao diện bằng phần mềm tạo web (như Google Sites).\n• Bước 5: Kiểm thử hiển thị trên các màn hình máy tính, máy tính bảng và điện thoại di động.\n• Bước 6: Xuất bản (Publish) và chia sẻ liên kết."
       },
       {
         "id": "sec-2",
@@ -2030,7 +2052,7 @@ export const TOPIC_LESSONS: Record<SubjectTopicId, TopicLesson> = {
         "id": "sec-3",
         "number": "3.",
         "title": "Nhúng đa phương tiện và Xuất bản trang web",
-        "content": "• Nhúng video: Khuyến nghị tải video lên YouTube rồi nhúng bằng mã hoặc đường link URL để tiết kiệm dung lượng lưu trữ của máy chủ web.\\n• Xuất bản: Nhấn nút Publish, đặt tên địa chỉ web (web address) hợp lệ, thiết lập quyền xem công khai (Public)."
+        "content": "• Nhúng video: Khuyến nghị tải video lên YouTube rồi nhúng bằng mã hoặc đường link URL để tiết kiệm dung lượng lưu trữ của máy chủ web.\n• Xuất bản: Nhấn nút Publish, đặt tên địa chỉ web (web address) hợp lệ, thiết lập quyền xem công khai (Public)."
       }
     ],
     "memoryNotes": [
@@ -2169,7 +2191,7 @@ export const TOPIC_LESSONS: Record<SubjectTopicId, TopicLesson> = {
         "id": "sec-1",
         "number": "1.",
         "title": "Tạo cấu trúc bảng và Thiết lập Khoá chính",
-        "content": "• Table (Bảng): Đối tượng cơ sở lưu trữ dữ liệu.\\n• Khai báo trường (Field Name), kiểu dữ liệu (Data Type) và mô tả (Description).\\n• Thiết lập Khoá chính: Chọn trường định danh duy nhất (ví dụ: MaSach, MaHS), nhấn biểu tượng chiếc chìa khoá (Primary Key)."
+        "content": "• Table (Bảng): Đối tượng cơ sở lưu trữ dữ liệu.\n• Khai báo trường (Field Name), kiểu dữ liệu (Data Type) và mô tả (Description).\n• Thiết lập Khoá chính: Chọn trường định danh duy nhất (ví dụ: MaSach, MaHS), nhấn biểu tượng chiếc chìa khoá (Primary Key)."
       },
       {
         "id": "sec-2",
@@ -2181,7 +2203,7 @@ export const TOPIC_LESSONS: Record<SubjectTopicId, TopicLesson> = {
         "id": "sec-3",
         "number": "3.",
         "title": "Tạo Mẫu hỏi truy vấn (Query) và Báo cáo (Report)",
-        "content": "• Query (Mẫu hỏi): Lọc, sắp xếp, kết xuất dữ liệu từ một hoặc nhiều bảng thoả mãn điều kiện (Criteria).\\n• Form (Biểu mẫu): Tạo giao diện thuận tiện cho người dùng nhập liệu.\\n• Report (Báo cáo): Định dạng và tổng hợp dữ liệu để in ra giấy hoặc xuất bản tệp PDF."
+        "content": "• Query (Mẫu hỏi): Lọc, sắp xếp, kết xuất dữ liệu từ một hoặc nhiều bảng thoả mãn điều kiện (Criteria).\n• Form (Biểu mẫu): Tạo giao diện thuận tiện cho người dùng nhập liệu.\n• Report (Báo cáo): Định dạng và tổng hợp dữ liệu để in ra giấy hoặc xuất bản tệp PDF."
       }
     ],
     "memoryNotes": [
@@ -2327,27 +2349,27 @@ export const TOPIC_LESSONS: Record<SubjectTopicId, TopicLesson> = {
         "id": "sec-1",
         "number": "1.",
         "title": "Kiểu dữ liệu và Các phép toán cơ bản",
-        "content": "• Các kiểu dữ liệu: int (số nguyên), float (số thực), str (chuỗi kí tự), bool (đúng/sai True/False).\\n• Phép toán số học: + (cộng), - (trừ), * (nhân), / (chia ra số thực), // (chia lấy phần nguyên), % (chia lấy phần dư), ** (luỹ thừa).\\nVí dụ: 17 // 5 = 3; 17 % 5 = 2; 2 ** 3 = 8.\\n• Hàm nhập xuất: print() in ra màn hình, input() nhận chuỗi văn bản từ bàn phím. Ép kiểu: int(input()), float(input())."
+        "content": "• Các kiểu dữ liệu: int (số nguyên), float (số thực), str (chuỗi kí tự), bool (đúng/sai True/False).\n• Phép toán số học: + (cộng), - (trừ), * (nhân), / (chia ra số thực), // (chia lấy phần nguyên), % (chia lấy phần dư), ** (luỹ thừa).\nVí dụ: 17 // 5 = 3; 17 % 5 = 2; 2 ** 3 = 8.\n• Hàm nhập xuất: print() in ra màn hình, input() nhận chuỗi văn bản từ bàn phím. Ép kiểu: int(input()), float(input())."
       },
       {
         "id": "sec-2",
         "number": "2.",
         "title": "Cấu trúc rẽ nhánh if - else",
         "content": "Python sử dụng thụt đầu dòng (indentation, thường là 4 dấu cách) để xác định khối lệnh thay cho cặp ngoặc nhọn { }.",
-        "codeSnippet": "dtb = float(input(\\\"Nhập điểm trung bình: \\\"))\\nif dtb >= 8.0:\\n    print(\\\"Học lực Giỏi\\\")\\nelif dtb >= 6.5:\\n    print(\\\"Học lực Khá\\\")\\nelse:\\n    print(\\\"Học lực Trung bình\\\")"
+        "codeSnippet": "dtb = float(input(\\\"Nhập điểm trung bình: \\\"))\nif dtb >= 8.0:\n    print(\\\"Học lực Giỏi\\\")\nelif dtb >= 6.5:\n    print(\\\"Học lực Khá\\\")\nelse:\n    print(\\\"Học lực Trung bình\\\")"
       },
       {
         "id": "sec-3",
         "number": "3.",
         "title": "Cấu trúc lặp for và while",
-        "content": "• Lệnh lặp for: for i in range(start, stop, step): Lặp biến i từ start đến stop - 1.\\n• Lệnh lặp while: while điều_kiện: Tiếp tục lặp khi điều kiện còn True.\\n• Lệnh break thoát vòng lặp ngay lập tức; lệnh continue bỏ qua lần lặp hiện tại."
+        "content": "• Lệnh lặp for: for i in range(start, stop, step): Lặp biến i từ start đến stop - 1.\n• Lệnh lặp while: while điều_kiện: Tiếp tục lặp khi điều kiện còn True.\n• Lệnh break thoát vòng lặp ngay lập tức; lệnh continue bỏ qua lần lặp hiện tại."
       },
       {
         "id": "sec-4",
         "number": "4.",
         "title": "Định nghĩa và Sử dụng Hàm (Function)",
         "content": "Hàm giúp chia nhỏ chương trình thành các khối chức năng tái sử dụng được, tránh lặp lại mã nguồn.",
-        "codeSnippet": "def tinh_tong(a, b):\\n    return a + b\\n\\nket_qua = tinh_tong(15, 25)\\nprint(ket_qua) # In ra 40"
+        "codeSnippet": "def tinh_tong(a, b):\n    return a + b\n\nket_qua = tinh_tong(15, 25)\nprint(ket_qua) # In ra 40"
       }
     ],
     "memoryNotes": [

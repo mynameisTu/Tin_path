@@ -32,7 +32,10 @@ import {
   Network,
   Database,
   Globe,
-  Binary
+  Binary,
+  Image as ImageIcon,
+  ZoomIn,
+  X
 } from 'lucide-react';
 import { SubjectTopicId } from '../../types';
 import { TOPIC_LESSONS, TopicLesson, PracticeQuizQuestion } from '../../data/topicsData';
@@ -223,6 +226,59 @@ const TopicIllustration: React.FC<{ topicId: SubjectTopicId }> = ({ topicId }) =
   return null;
 };
 
+export const formatMultiline = (text?: string): string => {
+  if (!text) return '';
+  return text.replace(/\\n/g, '\n');
+};
+
+const LessonImageViewer: React.FC<{
+  imageUrl?: string;
+  imageCaption?: string;
+  images?: { url: string; caption?: string; alt?: string }[];
+  onOpenPreview: (url: string, caption?: string) => void;
+}> = ({ imageUrl, imageCaption, images, onOpenPreview }) => {
+  const allImages = images && images.length > 0
+    ? images
+    : imageUrl
+      ? [{ url: imageUrl, caption: imageCaption }]
+      : [];
+
+  if (allImages.length === 0) return null;
+
+  return (
+    <div className={`my-4 ${allImages.length > 1 ? 'grid grid-cols-1 md:grid-cols-2 gap-4' : 'max-w-2xl mx-auto'}`}>
+      {allImages.map((img, idx) => (
+        <figure
+          key={idx}
+          className="group relative rounded-xl overflow-hidden border border-gray-200 dark:border-[#333] bg-white dark:bg-[#1A1A1A] shadow-xs hover:shadow-md transition-all duration-200"
+        >
+          <div
+            onClick={() => onOpenPreview(img.url, img.caption)}
+            className="cursor-zoom-in relative overflow-hidden bg-gray-50 dark:bg-[#151515] flex items-center justify-center min-h-[180px] p-2"
+          >
+            <img
+              src={img.url}
+              alt={img.caption || 'Hình ảnh minh họa bài học'}
+              loading="lazy"
+              className="w-full max-h-[380px] object-contain transition-transform duration-300 group-hover:scale-[1.02] rounded-lg"
+            />
+            <div className="absolute top-3 right-3 px-2 py-1 rounded-md bg-black/70 text-white opacity-0 group-hover:opacity-100 transition-opacity backdrop-blur-xs flex items-center gap-1.5 text-xs font-medium">
+              <ZoomIn className="w-3.5 h-3.5" />
+              <span>Phóng to</span>
+            </div>
+          </div>
+          {img.caption && (
+            <figcaption className="p-3 bg-gray-50/90 dark:bg-[#202020] border-t border-gray-100 dark:border-[#2C2C2C] flex items-start gap-2 text-xs sm:text-[13px] text-gray-700 dark:text-gray-300">
+              <ImageIcon className="w-4 h-4 text-[#2878C8] shrink-0 mt-0.5" />
+              <span className="font-medium italic leading-relaxed">{img.caption}</span>
+            </figcaption>
+          )}
+        </figure>
+      ))}
+    </div>
+  );
+};
+
 export const TopicLearning: React.FC<TopicLearningProps> = ({
   initialTopicId = '12D',
   completedTopics,
@@ -236,6 +292,17 @@ export const TopicLearning: React.FC<TopicLearningProps> = ({
   const [searchQuery, setSearchQuery] = useState('');
   const [gradeFilter, setGradeFilter] = useState<'all' | '12' | '11' | '10'>('all');
   const [trackFilter, setTrackFilter] = useState<'all' | 'ALL' | 'CS' | 'ICT'>('all');
+  const [previewImage, setPreviewImage] = useState<{ url: string; caption?: string } | null>(null);
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setPreviewImage(null);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
 
   // Interactive Quiz state
   const [viewMode, setViewMode] = useState<'reading' | 'quiz'>('reading');
@@ -809,8 +876,8 @@ export const TopicLearning: React.FC<TopicLearningProps> = ({
                   <div className="w-6 h-6 rounded-full bg-[#2878C8] flex items-center justify-center shrink-0 mt-0.5">
                     <BookOpen className="w-3.5 h-3.5 text-white" />
                   </div>
-                  <p className="text-[14.5px] sm:text-base text-gray-800 dark:text-gray-200 leading-relaxed">
-                    {activeTopic.summary}
+                  <p className="text-[14.5px] sm:text-base text-gray-800 dark:text-gray-200 leading-relaxed whitespace-pre-line">
+                    {formatMultiline(activeTopic.summary)}
                   </p>
                 </div>
 
@@ -863,7 +930,7 @@ export const TopicLearning: React.FC<TopicLearningProps> = ({
                       <ChevronRight className="w-4 h-4 group-open:rotate-90 transition-transform" />
                     </summary>
                     <div className="mt-2 p-4 rounded-xl border border-amber-200 dark:border-amber-900/40 bg-amber-50/40 dark:bg-amber-950/20 space-y-2">
-                      <p className="text-sm text-gray-800 dark:text-gray-200 leading-relaxed italic">"{activeTopic.warmUp.context}"</p>
+                      <p className="text-sm text-gray-800 dark:text-gray-200 leading-relaxed italic whitespace-pre-line">"{formatMultiline(activeTopic.warmUp.context)}"</p>
                       <p className="text-sm font-semibold text-amber-800 dark:text-amber-300 flex items-center gap-2 pt-0.5">
                         <HelpCircle className="w-4 h-4 shrink-0" />{activeTopic.warmUp.question}
                       </p>
@@ -882,7 +949,7 @@ export const TopicLearning: React.FC<TopicLearningProps> = ({
                     {activeTopic.keyConcepts.map((kc, i) => (
                       <div key={i} className="p-4.5 rounded-xl border border-gray-100 dark:border-[#2C2C2C] bg-gray-50/50 dark:bg-[#252525] space-y-2">
                         <h4 className="text-base sm:text-lg font-bold text-[#2878C8] dark:text-[#60A5FA]">{kc.term}</h4>
-                        <p className="text-sm sm:text-[15px] text-gray-800 dark:text-gray-200 leading-relaxed">{kc.definition}</p>
+                        <p className="text-sm sm:text-[15px] text-gray-800 dark:text-gray-200 leading-relaxed whitespace-pre-line">{formatMultiline(kc.definition)}</p>
                         {kc.example && (
                           <p className="text-xs sm:text-sm text-gray-500 italic pt-0.5">VD: {kc.example}</p>
                         )}
@@ -903,8 +970,16 @@ export const TopicLearning: React.FC<TopicLearningProps> = ({
                   </div>
 
                   <div className="text-[14.5px] sm:text-[15.5px] text-gray-800 dark:text-gray-200 leading-relaxed whitespace-pre-line space-y-3">
-                    {sec.content}
+                    {formatMultiline(sec.content)}
                   </div>
+
+                  {/* Ảnh minh hoạ phần lớn */}
+                  <LessonImageViewer
+                    imageUrl={sec.imageUrl}
+                    imageCaption={sec.imageCaption}
+                    images={sec.images}
+                    onOpenPreview={(url, caption) => setPreviewImage({ url, caption })}
+                  />
 
                   {sec.table && (
                     <div className="overflow-x-auto my-3 border border-gray-200 dark:border-[#333] rounded-xl">
@@ -951,8 +1026,16 @@ export const TopicLearning: React.FC<TopicLearningProps> = ({
                         <span>{sub.title.replace(/^[a-z]\)\s*/, '')}</span>
                       </h4>
                       <p className="text-sm sm:text-[15px] text-gray-800 dark:text-gray-200 leading-relaxed whitespace-pre-line">
-                        {sub.content}
+                        {formatMultiline(sub.content)}
                       </p>
+
+                      {/* Ảnh minh hoạ tiểu mục */}
+                      <LessonImageViewer
+                        imageUrl={sub.imageUrl}
+                        imageCaption={sub.imageCaption}
+                        images={sub.images}
+                        onOpenPreview={(url, caption) => setPreviewImage({ url, caption })}
+                      />
                       {sub.codeSnippet && (
                         <pre className="p-3.5 rounded-lg bg-[#181818] text-sky-400 font-mono text-xs overflow-x-auto border border-[#333] mt-2">
                           <code>{sub.codeSnippet}</code>
@@ -1033,7 +1116,7 @@ export const TopicLearning: React.FC<TopicLearningProps> = ({
                   {activeTopic.application?.realLife && (
                     <p className="text-sm text-gray-750 dark:text-gray-300 leading-relaxed">
                       <span className="font-bold text-gray-900 dark:text-white">Tình huống thực tế: </span>
-                      {activeTopic.application.realLife}
+                      {formatMultiline(activeTopic.application.realLife)}
                     </p>
                   )}
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5">
@@ -1276,6 +1359,44 @@ export const TopicLearning: React.FC<TopicLearningProps> = ({
           )}
         </div>
       </div>
+{/* Lightbox Modal phóng to ảnh */}
+      {previewImage && (
+        <div
+          className="fixed inset-0 z-50 bg-black/80 backdrop-blur-xs flex items-center justify-center p-3 sm:p-6"
+          onClick={() => setPreviewImage(null)}
+        >
+          <div
+            className="relative max-w-4xl max-h-[92vh] w-full bg-white dark:bg-[#1E1E1E] rounded-2xl overflow-hidden shadow-2xl flex flex-col border border-gray-700/30"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-center justify-between px-4 py-3 border-b border-gray-200 dark:border-[#333] bg-gray-50 dark:bg-[#252525]">
+              <div className="flex items-center gap-2 text-xs sm:text-sm font-semibold text-gray-800 dark:text-gray-200">
+                <ImageIcon className="w-4 h-4 text-[#2878C8]" />
+                <span className="truncate max-w-md sm:max-w-xl">{previewImage.caption || 'Xem ảnh minh hoạ chi tiết'}</span>
+              </div>
+              <button
+                onClick={() => setPreviewImage(null)}
+                className="p-1.5 rounded-lg hover:bg-gray-200 dark:hover:bg-[#333] text-gray-500 hover:text-gray-800 dark:hover:text-white transition-colors cursor-pointer"
+                title="Đóng (Esc)"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            <div className="p-3 sm:p-5 overflow-auto flex items-center justify-center bg-gray-900/5 dark:bg-black/40">
+              <img
+                src={previewImage.url}
+                alt={previewImage.caption || 'Chi tiết hình ảnh'}
+                className="max-h-[72vh] w-auto max-w-full object-contain rounded-lg shadow-sm"
+              />
+            </div>
+            {previewImage.caption && (
+              <div className="px-4 py-3 text-center text-xs sm:text-sm text-gray-600 dark:text-gray-300 bg-gray-50 dark:bg-[#252525] border-t border-gray-200 dark:border-[#333] italic">
+                {previewImage.caption}
+              </div>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 };
