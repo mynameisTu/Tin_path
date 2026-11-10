@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import {
   Trophy,
   Users,
@@ -18,6 +18,7 @@ import {
 } from 'lucide-react';
 import { UserProfile } from '../../types';
 import { QUANG_NGAI_DISTRICTS, getSchoolRankings, SchoolRankingItem } from '../../data/schoolsData';
+import { supabase, isSupabaseConfigured } from '../../services/supabaseClient';
 
 interface LeaderboardProps {
   currentUser: UserProfile;
@@ -42,7 +43,7 @@ interface RankedStudent {
 
 export const Leaderboard: React.FC<LeaderboardProps> = ({
   currentUser,
-  initialTab = 'organizations',
+  initialTab = 'individual',
   onClose,
   isModal = false,
 }) => {
@@ -50,6 +51,32 @@ export const Leaderboard: React.FC<LeaderboardProps> = ({
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedDistrict, setSelectedDistrict] = useState<string>('all');
   const [showRules, setShowRules] = useState(false);
+  const [realStudentsFromDb, setRealStudentsFromDb] = useState<any[]>([]);
+
+  // Fetch real registered users from Supabase view leaderboard_public
+  useEffect(() => {
+    let isMounted = true;
+    async function fetchRealUsers() {
+      try {
+        if (isSupabaseConfigured()) {
+          const { data, error } = await supabase
+            .from('leaderboard_public')
+            .select('id, display_name, avatar_url, school_id, school_name, district, grade, track, xp, streak_days, last_active_date')
+            .order('xp', { ascending: false });
+
+          if (!error && data && data.length > 0 && isMounted) {
+            setRealStudentsFromDb(data);
+          }
+        }
+      } catch (err) {
+        console.warn('Không thể tải danh sách học sinh thật từ Supabase:', err);
+      }
+    }
+    fetchRealUsers();
+    return () => {
+      isMounted = false;
+    };
+  }, []);
 
   // Helper for student initials
   const getInitials = (fullName: string, username: string) => {
@@ -215,26 +242,223 @@ export const Leaderboard: React.FC<LeaderboardProps> = ({
     },
   ];
 
-  // Insert current user in student list
+  // Helper to generate clean slug handle from Vietnamese names
+  const toStudentHandle = (name: string): string => {
+    if (!name) return 'hocsinh';
+    return name
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .replace(/đ/g, 'd')
+      .replace(/Đ/g, 'D')
+      .toLowerCase()
+      .trim()
+      .replace(/\s+/g, '_')
+      .replace(/[^a-z0-9_]/g, '') || 'hocsinh';
+  };
+
+  // Preset metadata for known registered real users to blend seamlessly into leaderboard
+  const REAL_STUDENT_PRESETS: Record<
+    string,
+    {
+      username: string;
+      schoolName: string;
+      baseRating: number;
+      baseScore: number;
+      baseProblems: number;
+      hasFlame?: boolean;
+      avatarUrl?: string;
+    }
+  > = {
+    'hoàng thị ngọc phương': {
+      username: 'ngoc_phuong',
+      schoolName: 'THPT Bình Sơn',
+      baseRating: 2718,
+      baseScore: 78.50,
+      baseProblems: 225,
+      hasFlame: true,
+      avatarUrl: 'https://api.dicebear.com/7.x/adventurer/svg?seed=Phuong&backgroundColor=ffdfbf',
+    },
+    'dang chi': {
+      username: 'dang_chi',
+      schoolName: 'THPT chuyên Lê Khiết',
+      baseRating: 2682,
+      baseScore: 48.20,
+      baseProblems: 112,
+      avatarUrl: 'https://api.dicebear.com/7.x/adventurer/svg?seed=Chi&backgroundColor=ffd5dc',
+    },
+    'trương khang': {
+      username: 'truong_khang',
+      schoolName: 'THPT Chu Văn An',
+      baseRating: 2668,
+      baseScore: 38.40,
+      baseProblems: 86,
+      avatarUrl: 'https://api.dicebear.com/7.x/adventurer/svg?seed=Khang&backgroundColor=c0aede',
+    },
+    'mr  bean': {
+      username: 'mr_bean',
+      schoolName: 'THPT Số 1 Đức Phổ',
+      baseRating: 2655,
+      baseScore: 31.20,
+      baseProblems: 68,
+      avatarUrl: 'https://api.dicebear.com/7.x/adventurer/svg?seed=Bean&backgroundColor=b6e3f4',
+    },
+    'mr bean': {
+      username: 'mr_bean',
+      schoolName: 'THPT Số 1 Đức Phổ',
+      baseRating: 2655,
+      baseScore: 31.20,
+      baseProblems: 68,
+      avatarUrl: 'https://api.dicebear.com/7.x/adventurer/svg?seed=Bean&backgroundColor=b6e3f4',
+    },
+    'huỳnh trương': {
+      username: 'huynh_truong',
+      schoolName: 'THPT Ba Gia',
+      baseRating: 2648,
+      baseScore: 24.60,
+      baseProblems: 54,
+      avatarUrl: 'https://api.dicebear.com/7.x/adventurer/svg?seed=Huynh&backgroundColor=d1d4f9',
+    },
+    'phan tân': {
+      username: 'phan_tan',
+      schoolName: 'THPT Số 1 Tư Nghĩa',
+      baseRating: 2638,
+      baseScore: 16.50,
+      baseProblems: 36,
+      avatarUrl: 'https://api.dicebear.com/7.x/adventurer/svg?seed=Tan&backgroundColor=c0aede',
+    },
+  };
+
+  const FALLBACK_REAL_STUDENTS = [
+    { id: 'd20596cf-fcc2-413a-8618-4a3a5f515ed3', display_name: 'Hoàng Thị Ngọc Phương', school_name: 'THPT Bình Sơn', xp: 0, streak_days: 0 },
+    { id: 'fe9709e8-0c9c-44ae-af73-bf3a7c949ddb', display_name: 'Dang Chi', school_name: 'THPT chuyên Lê Khiết', xp: 0, streak_days: 0 },
+    { id: '416f3051-e211-4d8e-aa77-71cdb75f688b', display_name: 'Trương Khang', school_name: 'THPT Chu Văn An', xp: 0, streak_days: 0 },
+    { id: '426448aa-be6b-418c-946b-967d726ebd96', display_name: 'Mr  Bean', school_name: 'THPT Số 1 Đức Phổ', xp: 0, streak_days: 0 },
+    { id: '58494786-bc84-4bb3-b7f6-c7dbb0570057', display_name: 'Huỳnh Trương', school_name: 'THPT Ba Gia', xp: 0, streak_days: 0 },
+    { id: '2897e493-5af3-44fd-90f1-46de2d5a605b', display_name: 'Phan Tân', school_name: 'THPT Số 1 Tư Nghĩa', xp: 0, streak_days: 0 },
+  ];
+
+  // Combined student list: all real logged-in users + mock virtual students
   const studentList: RankedStudent[] = useMemo(() => {
-    return [
-      ...baseStudents.slice(0, 4),
-      {
-        rank: 5,
-        username: currentUser.displayName.toLowerCase().replace(/\s+/g, '_') || 'van_an_tin12',
-        fullName: `${currentUser.displayName} (Bạn)`,
-        schoolName: currentUser.schoolName,
-        rating: 2400 + Math.round(currentUser.xp * 0.8),
-        score: Number((currentUser.xp * 0.25).toFixed(2)),
-        problemsSolved: Math.max(12, currentUser.streakDays * 3),
+    const rawList = realStudentsFromDb.length > 0 ? realStudentsFromDb : FALLBACK_REAL_STUDENTS;
+
+    const realStudentsMapped: RankedStudent[] = [];
+    let currentUserIncluded = false;
+
+    for (const row of rawList) {
+      const name = (row.display_name || '').trim();
+      if (!name) continue;
+
+      const isCurrent =
+        Boolean(currentUser.id && row.id === currentUser.id) ||
+        Boolean(currentUser.displayName && name.toLowerCase() === currentUser.displayName.trim().toLowerCase());
+
+      const presetKey = name.toLowerCase();
+      const preset = REAL_STUDENT_PRESETS[presetKey];
+
+      const xp = isCurrent ? (currentUser.xp ?? row.xp ?? 0) : (row.xp ?? 0);
+      const streak = isCurrent ? (currentUser.streakDays ?? row.streak_days ?? 0) : (row.streak_days ?? 0);
+
+      let school = row.school_name || preset?.schoolName || 'THPT Trần Quốc Tuấn';
+      if (isCurrent && currentUser.schoolName && currentUser.schoolName !== 'Chưa cập nhật trường') {
+        school = currentUser.schoolName;
+      }
+
+      let handle = preset?.username || toStudentHandle(name);
+      if (isCurrent && currentUser.username) {
+        handle = currentUser.username.trim().replace(/^@/, '').toLowerCase();
+      }
+
+      const baseRating = isCurrent ? 2675 : (preset?.baseRating || 2635);
+      const rating = baseRating + Math.round(xp * 0.8);
+
+      const baseScore = isCurrent ? 42.50 : (preset?.baseScore || 15.00);
+      const score = Number((baseScore + xp * 0.25).toFixed(2));
+
+      const baseProblems = isCurrent ? 38 : (preset?.baseProblems || 25);
+      const problemsSolved = baseProblems + Math.max(streak, Math.round(xp / 10));
+
+      const avatar = isCurrent
+        ? (currentUser.avatarUrl || 'https://api.dicebear.com/7.x/adventurer/svg?seed=Tu&backgroundColor=b6e3f4')
+        : (row.avatar_url || preset?.avatarUrl || `https://api.dicebear.com/7.x/adventurer/svg?seed=${handle}&backgroundColor=b6e3f4`);
+
+      const hasFlame = isCurrent ? streak >= 3 : (preset?.hasFlame || streak >= 3);
+
+      if (isCurrent) {
+        currentUserIncluded = true;
+      }
+
+      realStudentsMapped.push({
+        rank: 0,
+        username: handle,
+        fullName: isCurrent ? `${currentUser.displayName || name} (Bạn)` : name,
+        schoolName: school,
+        rating,
+        score,
+        problemsSolved,
+        isCurrentUser: isCurrent,
+        hasFlame,
+        avatarUrl: avatar,
+        title: isCurrent ? 'Thành viên TinPath' : (xp > 500 ? 'Tinh anh TinPath' : undefined),
+      });
+    }
+
+    // Ensure currentUser is always included even if not yet in DB view
+    if (!currentUserIncluded) {
+      const userHandle = (
+        currentUser.username?.trim().replace(/^@/, '') ||
+        toStudentHandle(currentUser.displayName) ||
+        'tu'
+      ).toLowerCase();
+      const xp = currentUser.xp ?? 0;
+      const streak = currentUser.streakDays ?? 0;
+      const userRating = 2675 + Math.round(xp * 0.8);
+      const userScore = Number((42.50 + xp * 0.25).toFixed(2));
+      const userProblems = Math.max(38, streak * 5, Math.round(xp / 10));
+
+      realStudentsMapped.push({
+        rank: 0,
+        username: userHandle,
+        fullName: `${currentUser.displayName || 'Trịnh Tú'} (Bạn)`,
+        schoolName: currentUser.schoolName || 'THPT Trần Quốc Tuấn',
+        rating: userRating,
+        score: userScore,
+        problemsSolved: userProblems,
         isCurrentUser: true,
-        hasFlame: currentUser.streakDays >= 5,
-        avatarUrl: currentUser.avatarUrl,
-        title: 'Chiến binh Tin học',
-      },
-      ...baseStudents.slice(4).map((s, idx) => ({ ...s, rank: idx + 6 })),
-    ];
-  }, [currentUser, baseStudents]);
+        hasFlame: streak >= 3,
+        avatarUrl: currentUser.avatarUrl || 'https://api.dicebear.com/7.x/adventurer/svg?seed=Tu&backgroundColor=b6e3f4',
+        title: 'Thành viên TinPath',
+      });
+    }
+
+    // Merge virtual students (baseStudents) + real students
+    const combined = [...baseStudents, ...realStudentsMapped];
+
+    // Deduplicate by username
+    const seen = new Set<string>();
+    const deduplicated: RankedStudent[] = [];
+
+    for (const student of combined) {
+      const key = student.username.toLowerCase();
+      if (!seen.has(key)) {
+        seen.add(key);
+        deduplicated.push(student);
+      }
+    }
+
+    // Sort descending by rating, then score
+    deduplicated.sort((a, b) => {
+      if (b.rating !== a.rating) {
+        return b.rating - a.rating;
+      }
+      return b.score - a.score;
+    });
+
+    // Assign clean 1-indexed ranks
+    return deduplicated.map((st, idx) => ({
+      ...st,
+      rank: idx + 1,
+    }));
+  }, [realStudentsFromDb, currentUser, baseStudents]);
 
   // Top 3 Podium Students
   const top1 = studentList[0];
@@ -259,9 +483,14 @@ export const Leaderboard: React.FC<LeaderboardProps> = ({
             <Trophy className="w-6 h-6" />
           </div>
           <div>
-            <h2 className="text-lg sm:text-xl font-bold tracking-tight text-gray-900 dark:text-white flex items-center gap-2">
-              Bảng xếp hạng & Thi đua học tập
-            </h2>
+            <div className="flex items-center gap-2 flex-wrap">
+              <h2 className="text-lg sm:text-xl font-bold tracking-tight text-gray-900 dark:text-white">
+                Bảng xếp hạng & Thi đua học tập
+              </h2>
+              <span className="text-[11px] px-2.5 py-0.5 rounded-full bg-amber-100 dark:bg-amber-950/40 text-amber-800 dark:text-amber-300 font-semibold border border-amber-300 dark:border-amber-800">
+                Dữ liệu minh họa hệ thống VNOI
+              </span>
+            </div>
             <p className="text-[13px] text-gray-600 dark:text-gray-400 mt-0.5">
               Phong trào thi đua học tập và ôn thi tốt nghiệp THPT môn Tin học tỉnh Quảng Ngãi
             </p>
@@ -693,6 +922,22 @@ export const Leaderboard: React.FC<LeaderboardProps> = ({
               Điểm được xác thực độc lập từ các bài thi thử và thử thách hàng ngày
             </p>
           </div>
+
+          {currentUser.xp === 0 && (
+            <div className="p-4 rounded-xl bg-emerald-50/80 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-900/40 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs sm:text-sm">
+              <div className="flex items-center gap-2.5">
+                <Info className="w-5 h-5 text-emerald-600 dark:text-emerald-400 shrink-0" />
+                <div>
+                  <span className="font-bold text-gray-900 dark:text-white">
+                    Hồ sơ của bạn: Đã ghi danh trên Bảng xếp hạng TinPath
+                  </span>
+                  <p className="text-gray-600 dark:text-gray-400 text-xs mt-0.5">
+                    Hãy làm thêm bài thi thử hoặc hoàn thành thử thách 10 câu mỗi ngày để tích lũy điểm XP và bứt phá thứ hạng!
+                  </p>
+                </div>
+              </div>
+            </div>
+          )}
 
           {/* Student Table */}
           <div className="bg-white dark:bg-[#1E1E1E] rounded-xl border border-gray-200 dark:border-[#333] shadow-xs overflow-hidden">

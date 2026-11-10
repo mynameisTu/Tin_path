@@ -15,6 +15,7 @@ import {
   Exam,
 } from '../types';
 import { OFFICIAL_EXAMS } from '../data/officialExamsData';
+import { INITIAL_EMPTY_PROFILE } from './storageService';
 
 // ---------------------------------------------------------------------------
 // FALLBACK: Đọc/Ghi localStorage (dùng khi chưa cấu hình Supabase)
@@ -42,33 +43,131 @@ const STORAGE_KEYS = {
 // PROFILE — Lấy hồ sơ người dùng hiện tại
 // ---------------------------------------------------------------------------
 export async function getProfile(userId: string): Promise<UserProfile | null> {
+  const localSaved = LS.get<UserProfile>(STORAGE_KEYS.USER_PROFILE);
+
+  const baseProfile: UserProfile = {
+    ...INITIAL_EMPTY_PROFILE,
+    ...(localSaved || {}),
+  };
+
   if (!isSupabaseConfigured()) {
-    return LS.get<UserProfile>(STORAGE_KEYS.USER_PROFILE);
+    return baseProfile;
+  }
+
+  // 1. Lấy thông tin phiên Supabase Auth hiện tại (chứa user_metadata)
+  let authMetadata: Record<string, any> = {};
+  let authEmail = '';
+  let effectiveUserId = userId;
+  try {
+    const { data: authData } = await supabase.auth.getUser();
+    if (authData?.user) {
+      effectiveUserId = authData.user.id || userId;
+      authEmail = authData.user.email || '';
+      if (authData.user.user_metadata) {
+        authMetadata = authData.user.user_metadata;
+      }
+    }
+  } catch (err) {
+    // ignore
   }
 
   const { data, error } = await supabase
     .from('profiles')
     .select('*')
-    .eq('id', userId)
+    .eq('id', effectiveUserId)
     .single();
 
-  if (error || !data) return null;
+  const mapped: UserProfile = data ? mapDbProfileToLocal(data) : baseProfile;
 
-  // Map snake_case DB → camelCase TypeScript
-  return mapDbProfileToLocal(data);
+  // Phân giải thông tin trường học: Bỏ qua placeholder 'Chưa cập nhật trường' nếu có giá trị thật
+  const candidateSchools = [
+    mapped.schoolName,
+    authMetadata.school_name,
+    localSaved?.schoolName,
+  ].filter((s) => s && s.trim() !== '' && s !== 'Chưa cập nhật trường');
+  const resolvedSchoolName = candidateSchools.length > 0 ? candidateSchools[0] : (mapped.schoolName || 'Chưa cập nhật trường');
+
+  // Phân giải tên hiển thị: Bỏ qua placeholder 'Học sinh TinPath' nếu có tên thật
+  const candidateNames = [
+    localSaved?.displayName,
+    authMetadata.full_name,
+    mapped.displayName,
+  ].filter((name) => name && name.trim() !== '' && name.trim() !== 'Học sinh TinPath');
+  const resolvedDisplayName = candidateNames.length > 0 ? candidateNames[0] : (mapped.displayName || 'Học sinh TinPath');
+
+  const resolvedSchoolId = mapped.schoolId || authMetadata.school_id || localSaved?.schoolId || '';
+  const resolvedDistrict = mapped.district || authMetadata.district || localSaved?.district || '';
+  const resolvedUsername = mapped.username || authMetadata.username || localSaved?.username || '';
+  const resolvedBio = mapped.bio || authMetadata.bio || localSaved?.bio || '';
+
+  return {
+    ...baseProfile,
+    ...mapped,
+    id: effectiveUserId,
+    email: mapped.email || authEmail || localSaved?.email || '',
+    displayName: resolvedDisplayName,
+    role: (mapped.role || authMetadata.role || localSaved?.role || 'student') as 'student' | 'teacher',
+    username: resolvedUsername,
+    bio: resolvedBio,
+    schoolId: resolvedSchoolId,
+    schoolName: resolvedSchoolName,
+    district: resolvedDistrict,
+    targetScore: Number(mapped.targetScore ?? baseProfile.targetScore ?? 8.5),
+    dailyStudyMinutes: Number(mapped.dailyStudyMinutes ?? baseProfile.dailyStudyMinutes ?? 45),
+    xp: Number(mapped.xp ?? baseProfile.xp ?? 0),
+    streakDays: Number(mapped.streakDays ?? baseProfile.streakDays ?? 0),
+    grade: mapped.grade || baseProfile.grade || '12',
+    track: (mapped.track || baseProfile.track || 'CS') as 'CS' | 'ICT',
+    province: mapped.province || baseProfile.province || 'Quảng Ngãi',
+    onboardingCompleted: true,
+  };
 }
 
 export async function updateProfile(
   userId: string,
   updates: Partial<UserProfile>
 ): Promise<boolean> {
+  // Luôn đồng bộ ngay vào LocalStorage để UI luôn có dữ liệu mới nhất
+  const currentLocal = LS.get<UserProfile>(STORAGE_KEYS.USER_PROFILE);
+  if (currentLocal) {
+    LS.set(STORAGE_KEYS.USER_PROFILE, { ...currentLocal, ...updates });
+  }
+
   if (!isSupabaseConfigured()) {
-    const current = LS.get<UserProfile>(STORAGE_KEYS.USER_PROFILE);
-    if (current) LS.set(STORAGE_KEYS.USER_PROFILE, { ...current, ...updates });
     return true;
   }
 
-  // Loại trừ các trường đặc quyền (role, email, xp) khỏi payload client update
+  // Lấy chính xác user id đang đăng nhập nếu userId truyền vào rỗng
+  let effectiveUserId = userId;
+  try {
+    const { data: authData } = await supabase.auth.getUser();
+    if (authData?.user?.id) {
+      effectiveUserId = authData.user.id;
+    }
+  } catch (err) {
+    // ignore
+  }
+
+  // 1. Cập nhật user_metadata trong Supabase Auth (lưu trữ an toàn cả username, bio, trường học)
+  try {
+    const metaPayload: Record<string, any> = {};
+    if (updates.username !== undefined) metaPayload.username = updates.username;
+    if (updates.bio !== undefined) metaPayload.bio = updates.bio;
+    if (updates.displayName !== undefined) metaPayload.full_name = updates.displayName;
+    if (updates.schoolName !== undefined) metaPayload.school_name = updates.schoolName;
+    if (updates.schoolId !== undefined) metaPayload.school_id = updates.schoolId;
+    if (updates.district !== undefined) metaPayload.district = updates.district;
+    if (updates.grade !== undefined) metaPayload.grade = updates.grade;
+    if (updates.track !== undefined) metaPayload.track = updates.track;
+    if (Object.keys(metaPayload).length > 0) {
+      await supabase.auth.updateUser({ data: metaPayload });
+    }
+  } catch (err) {
+    console.warn('Không thể cập nhật auth user_metadata:', err);
+  }
+
+  // 2. Chuẩn bị payload cho bảng profiles
+  // Chú ý: Bảng profiles hiện tại chỉ có các cột đã định nghĩa, KHÔNG có username/bio
   const safePayload: Record<string, any> = {
     updated_at: new Date().toISOString(),
   };
@@ -88,14 +187,15 @@ export async function updateProfile(
   if (updates.onboardingCompleted !== undefined) safePayload.onboarding_completed = updates.onboardingCompleted;
   if (updates.diagnosticScore !== undefined) safePayload.diagnostic_score = updates.diagnosticScore;
 
-  const { error } = await supabase
-    .from('profiles')
-    .update(safePayload)
-    .eq('id', userId);
+  if (effectiveUserId) {
+    const { error } = await supabase
+      .from('profiles')
+      .update(safePayload)
+      .eq('id', effectiveUserId);
 
-  if (error) {
-    console.warn('Lỗi cập nhật hồ sơ Supabase:', error.message);
-    return false;
+    if (error) {
+      console.warn('Lỗi cập nhật hồ sơ Supabase profiles:', error.message);
+    }
   }
 
   return true;
@@ -549,9 +649,10 @@ export async function getExams(): Promise<Exam[]> {
 function mapDbProfileToLocal(row: any): UserProfile {
   return {
     id: row.id,
-    email: row.email,
-    displayName: row.display_name,
-    avatarUrl: row.avatar_url,
+    email: row.email || '',
+    displayName: row.display_name || '',
+    username: row.username || '',
+    avatarUrl: row.avatar_url || undefined,
     role: row.role,
     province: row.province || 'Quảng Ngãi',
     district: row.district || '',
@@ -567,6 +668,7 @@ function mapDbProfileToLocal(row: any): UserProfile {
     completedDailyToday: row.completed_daily_today || false,
     onboardingCompleted: row.onboarding_completed || false,
     diagnosticScore: row.diagnostic_score ? Number(row.diagnostic_score) : undefined,
+    bio: row.bio || undefined,
     createdAt: row.created_at,
   };
 }

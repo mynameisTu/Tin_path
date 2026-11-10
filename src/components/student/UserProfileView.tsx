@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useRef } from 'react';
+import React, { useState, useEffect, useMemo, useRef } from 'react';
 import {
   User as UserIcon,
   Copy,
@@ -30,8 +30,9 @@ import {
   RotateCcw,
 } from 'lucide-react';
 import { UserProfile, ExamAttempt, SubjectTopicId } from '../../types';
-import { QUANG_NGAI_DISTRICTS, getSchoolsByDistrict } from '../../data/schoolsData';
+import { QUANG_NGAI_DISTRICTS, QUANG_NGAI_SCHOOLS, getSchoolsByDistrict } from '../../data/schoolsData';
 import { storageService } from '../../services/storageService';
+import { isDemoUser } from '../../data/demoData';
 
 // Curated preset avatars for TinPath (including logos in /images/avt)
 export const PRESET_AVATARS = [
@@ -338,21 +339,44 @@ export const UserProfileView: React.FC<UserProfileViewProps> = ({
   const directFileInputRef = useRef<HTMLInputElement | null>(null);
   const modalFileInputRef = useRef<HTMLInputElement | null>(null);
 
-  // Settings form local state
-  const [displayName, setDisplayName] = useState(user.displayName || 'fuongchuche');
-  const [username, setUsername] = useState(user.username || 'fuongchuche');
+  // Settings form local state — KHÔNG dùng fallback cứng để tránh ghi đè dữ liệu thật
+  const [displayName, setDisplayName] = useState(user.displayName || '');
+  // username: chỉ dùng user.username, KHÔNG tự động fallback sang email prefix
+  const [username, setUsername] = useState(user.username || '');
   const [bio, setBio] = useState(
-    user.bio || 'Học sinh lớp 12 định hướng ôn thi tốt nghiệp THPT môn Tin học GDPT 2018.'
+    user.bio || 'Học sinh định hướng ôn thi tốt nghiệp THPT môn Tin học GDPT 2018.'
   );
-  const [district, setDistrict] = useState(user.district || 'TP. Quảng Ngãi');
-  const [schoolId, setSchoolId] = useState(user.schoolId || 'qn_tran_quoc_tuan');
+  const [district, setDistrict] = useState(user.district || '');
+  // schoolId: KHÔNG có fallback cứng 'qn_tran_quoc_tuan'
+  const [schoolId, setSchoolId] = useState(user.schoolId || '');
   const [grade, setGrade] = useState(user.grade || '12');
   const [track, setTrack] = useState<'CS' | 'ICT'>(user.track || 'CS');
   const [targetScore, setTargetScore] = useState<number>(user.targetScore || 8.5);
   const [dailyMinutes, setDailyMinutes] = useState<number>(user.dailyStudyMinutes || 45);
 
-  // Schools for current district
-  const availableSchools = useMemo(() => getSchoolsByDistrict(district), [district]);
+  // Synchronize state whenever user prop updates (e.g. loaded from Supabase or changed outside)
+  // QUAN TRỌNG: Luôn sync TẤT CẢ trường, kể cả khi giá trị rỗng để tránh giữ fallback cũ
+  useEffect(() => {
+    setDisplayName(user.displayName || '');
+    // Chỉ dùng username thật, KHÔNG fallback sang email prefix
+    setUsername(user.username || '');
+    setBio(user.bio || 'Học sinh định hướng ôn thi tốt nghiệp THPT môn Tin học GDPT 2018.');
+    setDistrict(user.district || '');
+    // Luôn sync schoolId — kể cả khi rỗng để không giữ fallback 'qn_tran_quoc_tuan'
+    setSchoolId(user.schoolId || '');
+    setGrade(user.grade || '12');
+    if (user.track) setTrack(user.track);
+    if (user.targetScore) setTargetScore(user.targetScore);
+    if (user.dailyStudyMinutes) setDailyMinutes(user.dailyStudyMinutes);
+    // avatarUrl: chỉ update nếu có giá trị mới (tránh xóa ảnh đang chọn)
+    if (user.avatarUrl !== undefined) setSelectedAvatarUrl(user.avatarUrl || null);
+  }, [user]);
+
+  // Schools for current district — nếu chưa chọn huyện thì hiển thị tất cả trường
+  const availableSchools = useMemo(() => {
+    if (!district) return QUANG_NGAI_SCHOOLS;
+    return getSchoolsByDistrict(district);
+  }, [district]);
 
   // Derived user statistics
   // 1. Số đề giải được (từ examAttempts)
@@ -372,14 +396,15 @@ export const UserProfileView: React.FC<UserProfileViewProps> = ({
     const userComments = allComments.filter(
       (c) => c.userName === user.displayName || c.userName === displayName || c.userName === username
     );
-    return Math.max(userComments.length, 3); // Seed with reasonable active count
+    return userComments.length;
   }, [user.displayName, displayName, username]);
 
   // 4. Điểm tích lũy (XP)
-  const userXp = user.xp || 240;
+  const userXp = user.xp || 0;
 
   // 5. Thứ hạng
   const userRank = useMemo(() => {
+    if (userXp <= 0) return 'Chưa xếp hạng';
     if (userXp >= 800) return '#1';
     if (userXp >= 600) return '#3';
     if (userXp >= 400) return '#4';
@@ -388,8 +413,9 @@ export const UserProfileView: React.FC<UserProfileViewProps> = ({
   }, [userXp]);
 
   // Handle Copy username
+  const displayHandle = username || user.username || (user.email ? user.email.split('@')[0] : 'thanhvien');
   const handleCopyUsername = () => {
-    const textToCopy = `@${username}`;
+    const textToCopy = `@${displayHandle}`;
     navigator.clipboard.writeText(textToCopy);
     setHasCopied(true);
     setTimeout(() => setHasCopied(false), 2000);
@@ -406,21 +432,30 @@ export const UserProfileView: React.FC<UserProfileViewProps> = ({
     }
   };
 
+  // Handle School change (tự động đồng bộ huyện nếu chưa chọn)
+  const handleSchoolChange = (newSchoolId: string) => {
+    setSchoolId(newSchoolId);
+    const found = QUANG_NGAI_SCHOOLS.find((s) => s.id === newSchoolId);
+    if (found && !district) {
+      setDistrict(found.district);
+    }
+  };
+
   // Handle Save Settings
   const handleSaveSettings = (e: React.FormEvent) => {
     e.preventDefault();
-    const selectedSchool = availableSchools.find((s) => s.id === schoolId) || {
-      name: user.schoolName || 'Trường THPT Trần Quốc Tuấn',
-    };
+    const foundSchool = QUANG_NGAI_SCHOOLS.find((s) => s.id === schoolId) || availableSchools.find((s) => s.id === schoolId);
+    const resolvedSchoolName = foundSchool ? foundSchool.name : (schoolId ? schoolId : (user.schoolName || 'Chưa cập nhật trường'));
+    const resolvedDistrict = district || (foundSchool ? foundSchool.district : (user.district || ''));
 
     const updated: UserProfile = {
       ...user,
-      displayName,
-      username,
+      displayName: displayName.trim() || user.displayName || 'Người dùng',
+      username: username.trim(),
       bio,
-      district,
-      schoolId,
-      schoolName: selectedSchool.name,
+      district: resolvedDistrict,
+      schoolId: schoolId || (foundSchool ? foundSchool.id : user.schoolId),
+      schoolName: resolvedSchoolName,
       grade,
       track,
       targetScore: Number(targetScore),
@@ -512,17 +547,22 @@ export const UserProfileView: React.FC<UserProfileViewProps> = ({
       const dateStr = d.toISOString().split('T')[0];
       const dayOfWeek = (d.getDay() + 6) % 7; // Monday = 0, Sunday = 6
 
-      // Activity count: exam attempts on this day, plus study streak
+      // Activity count: exam attempts on this day, plus daily challenges
       let count = attemptDateCounts[dateStr] || 0;
+      const completedDailyMap = storageService.getDailyCompletedDates();
+      if (completedDailyMap[dateStr]) {
+        count += 1;
+      }
 
-      // Realistic activity distribution for demo:
-      // Recent days within streak have activities
-      const daysAgo = Math.floor((today.getTime() - d.getTime()) / (1000 * 60 * 60 * 24));
-      if (daysAgo < (user.streakDays || 5)) {
-        count = Math.max(count, 1 + (daysAgo % 3));
-      } else if (i % 7 === 1 || i % 13 === 0 || i % 29 === 0) {
-        // Sporadic past study sessions
-        count = Math.max(count, 1);
+      // Chỉ hiển thị hoạt động mẫu phong phú nếu là tài khoản demo hoặc demo mode
+      const isDemo = isDemoUser(user) || storageService.isDemoMode();
+      if (isDemo) {
+        const daysAgo = Math.floor((today.getTime() - d.getTime()) / (1000 * 60 * 60 * 24));
+        if (daysAgo < (user.streakDays || 5)) {
+          count = Math.max(count, 1 + (daysAgo % 3));
+        } else if (i % 7 === 1 || i % 13 === 0 || i % 29 === 0) {
+          count = Math.max(count, 1);
+        }
       }
 
       days.push({
@@ -660,7 +700,7 @@ export const UserProfileView: React.FC<UserProfileViewProps> = ({
                 {displayName}
               </h2>
               <div className="flex items-center justify-center gap-1.5 text-xs sm:text-sm text-gray-500 dark:text-gray-400">
-                <span>@{username}</span>
+                <span>@{displayHandle}</span>
                 <button
                   onClick={handleCopyUsername}
                   className="p-1 rounded hover:bg-gray-100 dark:hover:bg-[#2C2C2C] text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 transition-colors"
@@ -691,7 +731,7 @@ export const UserProfileView: React.FC<UserProfileViewProps> = ({
             <div className="p-3.5 rounded-xl bg-gray-50/80 dark:bg-[#252525] border border-gray-200/70 dark:border-[#333] text-center space-y-1">
               <span className="text-sm font-bold text-gray-900 dark:text-white flex items-center justify-center gap-2">
                 <SchoolIcon className="w-4 h-4 text-[#2878C8] shrink-0" />
-                {user.schoolName || 'Trường THPT Trần Quốc Tuấn'}
+                {user.schoolName || 'Chưa cập nhật trường'}
               </span>
               <span className="text-xs text-gray-500 block">
                 {user.district || 'TP. Quảng Ngãi'} • Tỉnh Quảng Ngãi
@@ -1044,7 +1084,7 @@ export const UserProfileView: React.FC<UserProfileViewProps> = ({
                         required
                         value={username}
                         onChange={(e) => setUsername(e.target.value)}
-                        placeholder="fuongchuche"
+                        placeholder="VD: trinhtu2026"
                         className="w-full pl-8 pr-3.5 py-2.5 rounded-xl border border-gray-300 dark:border-[#444] bg-white dark:bg-[#252525] text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#2878C8] text-sm"
                       />
                     </div>
@@ -1076,6 +1116,7 @@ export const UserProfileView: React.FC<UserProfileViewProps> = ({
                       onChange={(e) => handleDistrictChange(e.target.value)}
                       className="w-full px-3.5 py-2.5 rounded-xl border border-gray-300 dark:border-[#444] bg-white dark:bg-[#252525] text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#2878C8] text-sm"
                     >
+                      <option value="">-- Chọn huyện / thành phố --</option>
                       {QUANG_NGAI_DISTRICTS.map((dist) => (
                         <option key={dist} value={dist}>
                           {dist}
@@ -1090,12 +1131,13 @@ export const UserProfileView: React.FC<UserProfileViewProps> = ({
                     </label>
                     <select
                       value={schoolId}
-                      onChange={(e) => setSchoolId(e.target.value)}
+                      onChange={(e) => handleSchoolChange(e.target.value)}
                       className="w-full px-3.5 py-2.5 rounded-xl border border-gray-300 dark:border-[#444] bg-white dark:bg-[#252525] text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#2878C8] text-sm"
                     >
+                      <option value="">-- Chọn trường THPT --</option>
                       {availableSchools.map((s) => (
                         <option key={s.id} value={s.id}>
-                          {s.name}
+                          {s.name}{!district ? ` (${s.district})` : ''}
                         </option>
                       ))}
                     </select>

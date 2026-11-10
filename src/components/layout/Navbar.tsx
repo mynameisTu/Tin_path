@@ -288,12 +288,12 @@ export const Navbar: React.FC<NavbarProps> = ({
                     }}
                     className="w-full text-left px-4 py-3 hover:bg-white/5 transition-colors block"
                   >
-                    <p className="font-bold text-white text-[13.5px] truncate hover:text-[#38BDF8]">{user.displayName}</p>
-                    <p className="text-gray-400 text-[11px] truncate">@{user.username || 'fuongchuche'}</p>
+                    <p className="font-bold text-white text-[13.5px] truncate hover:text-[#38BDF8]">{user.displayName || 'Người dùng'}</p>
+                    <p className="text-gray-400 text-[11px] truncate">@{user.username || (user.email ? user.email.split('@')[0] : 'thanhvien')}</p>
                     <div className="mt-2 flex items-center justify-between text-[11px] text-gray-300">
-                      <span>{user.schoolName}</span>
+                      <span className="truncate max-w-[150px]">{user.schoolName || 'Chưa cập nhật trường'}</span>
                       <span className="px-1.5 py-0.5 rounded bg-[#2878C8] text-white uppercase text-[10px] font-semibold">
-                        Lớp {user.grade}
+                        Lớp {user.grade || '12'}
                       </span>
                     </div>
                   </button>

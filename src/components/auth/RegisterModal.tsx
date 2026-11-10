@@ -20,7 +20,8 @@ import {
   Sparkles,
 } from 'lucide-react';
 import { UserProfile, UserRole } from '../../types';
-import { storageService } from '../../services/storageService';
+import { storageService, INITIAL_EMPTY_PROFILE } from '../../services/storageService';
+import { DEMO_STUDENT_PROFILE, DEMO_TEACHER_PROFILE } from '../../data/demoData';
 import { signUpWithEmail, signInWithEmail, signInWithGoogle } from '../../services/supabaseAuthService';
 import { isSupabaseConfigured } from '../../services/supabaseClient';
 
@@ -271,6 +272,13 @@ export const RegisterModal: React.FC<RegisterModalProps> = ({
         setIsLoading(false);
         return;
       }
+      const demoProfile = roleToUse === 'teacher' ? DEMO_TEACHER_PROFILE : DEMO_STUDENT_PROFILE;
+      storageService.setDemoMode(true);
+      storageService.saveUserProfile(demoProfile);
+      setIsLoading(false);
+      setStep('success');
+      setTimeout(() => { onLoginSuccess(demoProfile); onClose(); }, 1200);
+      return;
     } else if (!isDemo && !customRole) {
       const saved = storageService.getUserProfile();
       if (!saved.email || saved.email.toLowerCase() !== emailToUse?.toLowerCase()) {
@@ -281,25 +289,15 @@ export const RegisterModal: React.FC<RegisterModalProps> = ({
     }
 
     const existingUser = storageService.getUserProfile();
-    let displayName = existingUser.displayName;
-    let schoolName = existingUser.schoolName || 'THPT Chuyên Lê Khiết';
-
-    if (roleToUse === 'teacher') {
-      displayName = 'Thầy Nguyễn Trọng Bình';
-      schoolName = 'THPT Chuyên Lê Khiết';
-    } else if (!displayName || displayName === 'Học sinh') {
-      displayName = 'Nguyễn Văn An';
-      schoolName = 'THPT Chuyên Lê Khiết';
-    }
-
     const loginUser: UserProfile = {
       ...existingUser,
       role: roleToUse as UserRole,
-      email: emailToUse || (roleToUse === 'teacher' ? 'giaovien@tinpath.edu.vn' : 'hocsinh@tinpath.edu.vn'),
-      displayName,
-      schoolName,
+      email: emailToUse || existingUser.email,
+      displayName: existingUser.displayName || 'Người dùng TinPath',
+      schoolName: existingUser.schoolName || 'Chưa cập nhật trường',
       onboardingCompleted: true,
     };
+    storageService.setDemoMode(false);
     storageService.saveUserProfile(loginUser);
     setIsLoading(false);
     setStep('success');
@@ -307,15 +305,17 @@ export const RegisterModal: React.FC<RegisterModalProps> = ({
   };
 
   const buildUserProfile = (authId?: string): UserProfile => {
-    const existing = storageService.getUserProfile();
     return {
-      ...existing,
+      ...INITIAL_EMPTY_PROFILE,
       id: authId || `user_${Date.now()}`,
       email: form.email,
       displayName: `${form.firstName} ${form.lastName}`.trim(),
       role: form.role as UserRole,
-      schoolName: form.school,
+      schoolName: form.school || 'THPT Chuyên Lê Khiết',
       grade: (form.grade as '10' | '11' | '12') || '12',
+      xp: 0,
+      streakDays: 0,
+      diagnosticScore: undefined,
       onboardingCompleted: true,
       createdAt: new Date().toISOString(),
     };

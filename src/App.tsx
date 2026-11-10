@@ -156,19 +156,49 @@ export default function App() {
 
           if (authUser) {
             // Đã có phiên đăng nhập Supabase hợp lệ từ trước
+            const saved = storageService.getUserProfile();
             let profile = await getProfile(authUser.id);
             if (!profile) {
-              const saved = storageService.getUserProfile();
+              // Bảo toàn displayName đã được cập nhật trước đó (không reset về email prefix)
+              const preservedDisplayName = saved.displayName && saved.displayName !== 'Học sinh TinPath'
+                ? saved.displayName
+                : (authUser.displayName || '');
               profile = {
                 ...saved,
                 id: authUser.id,
                 email: authUser.email,
-                displayName: authUser.displayName || authUser.email.split('@')[0],
+                displayName: preservedDisplayName,
                 avatarUrl: authUser.avatarUrl || saved.avatarUrl,
                 role: saved.role || 'student',
                 onboardingCompleted: true,
               };
               await updateProfile(authUser.id, profile).catch(console.warn);
+            } else {
+              // Phân giải trường học: không để placeholder 'Chưa cập nhật trường' ghi đè trường thật đã lưu
+              const candidateSchools = [
+                profile.schoolName,
+                saved.schoolName,
+              ].filter((s) => s && s.trim() !== '' && s !== 'Chưa cập nhật trường');
+              const preservedSchoolName = candidateSchools.length > 0 ? candidateSchools[0] : (profile.schoolName || 'Chưa cập nhật trường');
+
+              // Phân giải tên hiển thị: không để placeholder 'Học sinh TinPath' ghi đè tên thật đã lưu
+              const candidateNames = [
+                profile.displayName,
+                saved.displayName,
+                authUser.displayName,
+              ].filter((n) => n && n.trim() !== '' && n.trim() !== 'Học sinh TinPath');
+              const preservedDisplayName = candidateNames.length > 0 ? candidateNames[0] : (profile.displayName || 'Học sinh TinPath');
+
+              profile = {
+                ...saved,
+                ...profile,
+                displayName: preservedDisplayName,
+                username: profile.username || saved.username || '',
+                bio: profile.bio || saved.bio || '',
+                schoolId: profile.schoolId || saved.schoolId || '',
+                schoolName: preservedSchoolName,
+                district: profile.district || saved.district || '',
+              };
             }
             storageService.setDemoMode(false);
             storageService.saveUserProfile(profile);
@@ -219,17 +249,47 @@ export default function App() {
       const cleanup = onAuthStateChange(async (authUser) => {
         if (!isMounted) return;
         if (authUser) {
+          const saved = storageService.getUserProfile();
           let profile = await getProfile(authUser.id);
           if (!profile) {
-            const saved = storageService.getUserProfile();
+            // Bảo toàn displayName đã được cập nhật trước đó (không reset về email prefix)
+            const preservedDisplayName = saved.displayName && saved.displayName !== 'Học sinh TinPath'
+              ? saved.displayName
+              : (authUser.displayName || '');
             profile = {
               ...saved,
               id: authUser.id,
               email: authUser.email,
-              displayName: authUser.displayName || authUser.email.split('@')[0],
+              displayName: preservedDisplayName,
               avatarUrl: authUser.avatarUrl || saved.avatarUrl,
               role: saved.role || 'student',
               onboardingCompleted: true,
+            };
+          } else {
+            // Phân giải trường học: không để placeholder 'Chưa cập nhật trường' ghi đè trường thật đã lưu
+            const candidateSchools = [
+              profile.schoolName,
+              saved.schoolName,
+            ].filter((s) => s && s.trim() !== '' && s !== 'Chưa cập nhật trường');
+            const preservedSchoolName = candidateSchools.length > 0 ? candidateSchools[0] : (profile.schoolName || 'Chưa cập nhật trường');
+
+            // Phân giải tên hiển thị: không để placeholder 'Học sinh TinPath' ghi đè tên thật đã lưu
+            const candidateNames = [
+              profile.displayName,
+              saved.displayName,
+              authUser.displayName,
+            ].filter((n) => n && n.trim() !== '' && n.trim() !== 'Học sinh TinPath');
+            const preservedDisplayName = candidateNames.length > 0 ? candidateNames[0] : (profile.displayName || 'Học sinh TinPath');
+
+            profile = {
+              ...saved,
+              ...profile,
+              displayName: preservedDisplayName,
+              username: profile.username || saved.username || '',
+              bio: profile.bio || saved.bio || '',
+              schoolId: profile.schoolId || saved.schoolId || '',
+              schoolName: preservedSchoolName,
+              district: profile.district || saved.district || '',
             };
           }
           storageService.setDemoMode(false);
@@ -596,10 +656,10 @@ export default function App() {
             onExitDemo={handleLogout}
           />
 
-      {/* Main View Area: Tràn rộng sang 2 bên trái phải, dịch xuống cho cân xứng với top navbar */}
-      <main className="flex-1 w-full mx-auto px-3 sm:px-5 md:px-6 lg:px-8 xl:px-8 2xl:px-10 pt-5 sm:pt-6 md:pt-8 pb-14 sm:pb-16">
+      {/* Main View Area: Tràn rộng sang 2 bên trái phải, đồng bộ mép với navbar */}
+      <main className="flex-1 w-full mx-auto px-3 sm:px-4 md:px-6 lg:px-6 xl:px-8 pt-4 sm:pt-6 pb-14 sm:pb-16">
         {/* STUDENT VIEWS */}
-        {user.role === 'student' && (
+        {(user.role === 'student' || !user.role) && (
           <>
             {currentTab === 'home' && (
               <StudentDashboard
@@ -658,7 +718,7 @@ export default function App() {
                 user={user}
                 examAttempts={examAttempts}
                 completedTopics={completedTopics}
-                onUpdateUser={setUser}
+                onUpdateUser={handleSaveProfile}
                 onNavigateTab={setCurrentTab}
               />
             )}
@@ -673,6 +733,7 @@ export default function App() {
         {user.role === 'teacher' && (
           <TeacherDashboard
             currentTab={currentTab}
+            user={user}
             classrooms={classrooms}
             assignments={assignments}
             onAddClassroom={(cls) => {

@@ -491,13 +491,11 @@ export const storageService = {
     // 2. Tích hợp từ Exam Attempts
     for (const attempt of attempts) {
       if (attempt.answers) {
-        // Exam attempts provide aggregate scores, but we can distribute proportionally or check breakdown
-        if (Array.isArray(attempt.part2Breakdown)) {
-          // If 12B or 11F was in exam
-          stats['12B'].answered += 4;
-          stats['12B'].correct += Math.round(attempt.part1Score > 4 ? 3 : 2);
-          stats['11F'].answered += 4;
-          stats['11F'].correct += Math.round(attempt.totalScore > 7 ? 3 : 2);
+        // Nếu bài thi có thông tin chuyên đề cụ thể (như bài quiz chuyên đề)
+        const topicId = (attempt as any).topicId as SubjectTopicId | undefined;
+        if (topicId && stats[topicId]) {
+          stats[topicId].answered += (attempt.answers ? Object.keys(attempt.answers).length : 10);
+          stats[topicId].correct += (attempt.correctPart1Count || Math.round(attempt.totalScore));
         }
       }
     }

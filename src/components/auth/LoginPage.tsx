@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import { ArrowLeft, GraduationCap, BookOpen, ArrowRight, Eye, EyeOff, Loader2 } from 'lucide-react';
 import { UserProfile, UserRole } from '../../types';
-import { storageService } from '../../services/storageService';
+import { storageService, INITIAL_EMPTY_PROFILE } from '../../services/storageService';
+import { DEMO_STUDENT_PROFILE, DEMO_TEACHER_PROFILE } from '../../data/demoData';
 import { signInWithEmail } from '../../services/supabaseAuthService';
+import { getProfile } from '../../services/supabaseDbService';
 import { isSupabaseConfigured } from '../../services/supabaseClient';
 
 interface LoginPageProps {
@@ -59,19 +61,11 @@ export const LoginPage: React.FC<LoginPageProps> = ({
 
       setIsLoading(true);
       await new Promise((r) => setTimeout(r, 450));
-      const existingUser = storageService.getUserProfile();
-      const loginRole: UserRole = isDemoTeacher ? 'teacher' : 'student';
-      const loginUser: UserProfile = {
-        ...existingUser,
-        role: loginRole,
-        email: cleanEmail,
-        displayName: isDemoTeacher ? 'Thầy Nguyễn Trọng Bình' : 'Nguyễn Văn An',
-        schoolName: 'THPT Chuyên Lê Khiết',
-        onboardingCompleted: true,
-      };
-      storageService.saveUserProfile(loginUser);
+      const demoProfile = isDemoTeacher ? DEMO_TEACHER_PROFILE : DEMO_STUDENT_PROFILE;
+      storageService.setDemoMode(true);
+      storageService.saveUserProfile(demoProfile);
       setIsLoading(false);
-      onLoginSuccess(loginUser);
+      onLoginSuccess(demoProfile);
       return;
     }
 
@@ -94,12 +88,14 @@ export const LoginPage: React.FC<LoginPageProps> = ({
           return;
         }
 
-        const existingUser = storageService.getUserProfile();
-        const loginUser: UserProfile = {
-          ...existingUser,
+        storageService.setDemoMode(false);
+        const remoteProfile = await getProfile(authUser.id);
+        const loginUser: UserProfile = remoteProfile || {
+          ...INITIAL_EMPTY_PROFILE,
           id: authUser.id,
           email: authUser.email,
-          displayName: authUser.displayName || existingUser.displayName,
+          // KHÔNG dùng email.split('@')[0] làm displayName — để rỗng để người dùng tự cập nhật
+          displayName: authUser.displayName || '',
           avatarUrl: authUser.avatarUrl,
           role,
           onboardingCompleted: true,

@@ -96,7 +96,8 @@ export async function signInWithEmail(
     user: {
       id: data.user.id,
       email: data.user.email || '',
-      displayName: data.user.user_metadata?.full_name || email.split('@')[0],
+      // KHÔNG fallback sang email prefix — để App.tsx quyết định dùng profile đã lưu
+      displayName: data.user.user_metadata?.full_name || '',
       avatarUrl: data.user.user_metadata?.avatar_url,
     },
     error: null,

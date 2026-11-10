@@ -152,6 +152,38 @@ async function runTests() {
     && dbServiceCode.includes('return OFFICIAL_EXAMS');
   assert(emptyQuestionsHandling, 'Khi bảng questions rỗng hoặc lỗi, tự động fallback an toàn');
 
+  // Test 10: Chuẩn hóa dữ liệu người dùng mới & Tách biệt Demo Data
+  console.log('\n--- Nhóm 8: Kiểm thử Chuẩn hóa Dữ liệu Người dùng & Demo Data ---');
+  const storageServicePath = path.resolve(process.cwd(), 'src/services/storageService.ts');
+  const storageCode = fs.readFileSync(storageServicePath, 'utf8');
+
+  const emptyProfileClean = storageCode.includes('xp: 0')
+    && storageCode.includes('streakDays: 0')
+    && storageCode.includes('INITIAL_EMPTY_PROFILE');
+  assert(emptyProfileClean, 'INITIAL_EMPTY_PROFILE khởi tạo với 0 XP và 0 streak, không mang dữ liệu mẫu');
+
+  const emptyClassroomsClean = storageCode.includes('export const INITIAL_CLASSROOMS: Classroom[] = [];');
+  assert(emptyClassroomsClean, 'INITIAL_CLASSROOMS mặc định là mảng rỗng, không chứa lớp học mẫu');
+
+  const emptyAssignmentsClean = storageCode.includes('export const INITIAL_ASSIGNMENTS: Assignment[] = [];');
+  assert(emptyAssignmentsClean, 'INITIAL_ASSIGNMENTS mặc định là mảng rỗng, không chứa bài tập mẫu');
+
+  const emptyTransactionsClean = storageCode.includes('getXPTransactions(): XPTransaction[]')
+    && !storageCode.includes('xp_init_1');
+  assert(emptyTransactionsClean, 'getXPTransactions trả về mảng rỗng cho tài khoản mới (đã loại bỏ giao dịch mẫu xp_init_1)');
+
+  const demoDataPath = path.resolve(process.cwd(), 'src/data/demoData.ts');
+  const demoDataExists = fs.existsSync(demoDataPath);
+  assert(demoDataExists, 'File demoData.ts tách riêng dữ liệu trải nghiệm và hàm isDemoUser');
+
+  if (demoDataExists) {
+    const demoCode = fs.readFileSync(demoDataPath, 'utf8');
+    const hasDemoCheck = demoCode.includes('isDemoUser')
+      && demoCode.includes('DEMO_STUDENT_EMAIL')
+      && demoCode.includes('DEMO_TEACHER_EMAIL');
+    assert(hasDemoCheck, 'demoData.ts định nghĩa đầy đủ demo credentials và helper isDemoUser');
+  }
+
   console.log('\n============================================================');
   console.log(`KẾT QUẢ KIỂM THỬ: ${passCount} PASSED, ${failCount} FAILED`);
   console.log('============================================================\n');

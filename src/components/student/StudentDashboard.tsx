@@ -137,15 +137,23 @@ export const StudentDashboard: React.FC<StudentDashboardProps> = ({
       onClick: () => onTakeExam('de_so_1'),
     });
   }
-  suggestions.push({
-    text: 'Bạn nên ôn tập thêm chủ đề 12B (Kết nối mạng và giao thức TCP/IP) để củng cố điểm số phần trắc nghiệm đúng/sai.',
-    actionText: 'Học bài',
-    onClick: () => onContinueTopic('12B'),
-  });
+  if (examAttempts.length > 0) {
+    suggestions.push({
+      text: 'Bạn nên ôn tập thêm chủ đề 12B (Kết nối mạng và giao thức TCP/IP) để củng cố điểm số phần trắc nghiệm đúng/sai.',
+      actionText: 'Học bài',
+      onClick: () => onContinueTopic('12B'),
+    });
+  } else {
+    suggestions.push({
+      text: 'Làm bài thi thử chuẩn GDPT 2018 đầu tiên để hệ thống phân tích năng lực và mở khóa lộ trình học.',
+      actionText: 'Làm bài thi thử',
+      onClick: () => onTakeExam('de_so_1'),
+    });
+  }
 
   // Calculate completion percentage towards target
   const targetXP = 1000;
-  const progressPercent = Math.min(Math.round((user.xp / targetXP) * 100), 100);
+  const progressPercent = Math.min(Math.round(((user.xp || 0) / targetXP) * 100), 100);
 
   const displayedNewsArticles = useMemo(() => {
     if (selectedNewsId === 'all') return OFFICIAL_NEWS_ARTICLES;
@@ -183,7 +191,7 @@ export const StudentDashboard: React.FC<StudentDashboardProps> = ({
             <div>
               <span className="text-[13.5px] sm:text-sm text-gray-500 dark:text-gray-400 block font-medium">Mục tiêu điểm</span>
               <div className="text-xl font-bold text-[#1d4ed8] dark:text-[#3b82f6] tabular-nums mt-0.5">
-                {user.targetScore.toFixed(1)} <span className="text-gray-400 dark:text-gray-500 font-normal text-sm">/ 10</span>
+                {(user.targetScore ?? 8.5).toFixed(1)} <span className="text-gray-400 dark:text-gray-500 font-normal text-sm">/ 10</span>
               </div>
             </div>
 
@@ -191,7 +199,7 @@ export const StudentDashboard: React.FC<StudentDashboardProps> = ({
               <span className="text-[13.5px] sm:text-sm text-gray-500 dark:text-gray-400 block font-medium">Điểm XP</span>
               <div className="text-xl font-bold text-amber-500 tabular-nums flex items-center gap-1.5 mt-0.5">
                 <Bookmark className="w-[18px] h-[18px] text-amber-500" />
-                <span>{user.xp}</span>
+                <span>{user.xp ?? 0}</span>
               </div>
             </div>
 
@@ -555,6 +563,31 @@ export const StudentDashboard: React.FC<StudentDashboardProps> = ({
               </button>
             </div>
 
+            {/* Empty State Banner khi chưa có bài thi nào */}
+            {examAttempts.length === 0 && (
+              <div className="p-4 rounded-lg bg-linear-to-r from-blue-50 to-indigo-50 dark:from-blue-950/40 dark:to-indigo-950/30 border border-blue-200 dark:border-blue-900/50 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs sm:text-sm">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-xl bg-blue-600/10 dark:bg-blue-500/20 text-[#2878C8] flex items-center justify-center shrink-0">
+                    <Sparkles className="w-5 h-5 text-[#2878C8]" />
+                  </div>
+                  <div>
+                    <h4 className="font-bold text-gray-900 dark:text-white text-sm">
+                      Bắt đầu hành trình ôn thi tốt nghiệp THPT Tin học 2026!
+                    </h4>
+                    <p className="text-gray-600 dark:text-gray-400 text-xs mt-0.5">
+                      Bạn chưa có kết quả thi nào. Hãy hoàn thành đề thi thử hoặc thử thách 10 câu để ghi nhận điểm số và kích hoạt gợi ý AI.
+                    </p>
+                  </div>
+                </div>
+                <button
+                  onClick={() => onTakeExam('de_so_1')}
+                  className="px-4 py-2 rounded bg-[#2878C8] hover:bg-[#2068B0] text-white text-xs font-bold shrink-0 transition-colors shadow-2xs"
+                >
+                  Làm đề thi thử ngay
+                </button>
+              </div>
+            )}
+
             {/* Chủ đề đang học */}
             <div className="p-3.5 sm:p-4 rounded-lg bg-blue-50/70 dark:bg-blue-950/20 border border-blue-100 dark:border-blue-900/40">
               <div className="flex items-center justify-between">
@@ -721,7 +754,10 @@ export const StudentDashboard: React.FC<StudentDashboardProps> = ({
           <div className="bg-white dark:bg-[#1E1E1E] rounded-lg border border-gray-200 dark:border-[#333] shadow-xs overflow-hidden">
             {/* Header Dark VNOI Style */}
             <div className="bg-[#181818] dark:bg-[#181818] text-white px-3.5 py-2.5 flex items-center justify-between text-[13px] font-bold">
-              <span className="tracking-wide uppercase font-bold">TOP THÀNH VIÊN</span>
+              <div className="flex items-center gap-1.5">
+                <span className="tracking-wide uppercase font-bold">TOP THÀNH VIÊN</span>
+                <span className="text-[10px] text-gray-400 font-normal lowercase">(minh họa VNOI)</span>
+              </div>
               <Trophy className="w-4 h-4 text-[#FFC928]" />
             </div>
 
@@ -779,7 +815,10 @@ export const StudentDashboard: React.FC<StudentDashboardProps> = ({
           {/* 2. TOP ĐÓNG GÓP (Chuẩn bảng VNOI trong ảnh tham khảo) */}
           <div className="bg-white dark:bg-[#1E1E1E] rounded-lg border border-gray-200 dark:border-[#333] shadow-xs overflow-hidden">
             <div className="bg-[#181818] dark:bg-[#181818] text-white px-3.5 py-2.5 flex items-center justify-between text-[13px] font-bold">
-              <span className="tracking-wide uppercase font-bold">Top đóng góp</span>
+              <div className="flex items-center gap-1.5">
+                <span className="tracking-wide uppercase font-bold">Top đóng góp</span>
+                <span className="text-[10px] text-gray-400 font-normal lowercase">(minh họa VNOI)</span>
+              </div>
               <Trophy className="w-4 h-4 text-[#FFC928]" />
             </div>
 
