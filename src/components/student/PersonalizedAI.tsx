@@ -1498,29 +1498,29 @@ export const PersonalizedAI: React.FC<PersonalizedAIProps> = ({
           <div className="space-y-4">
             <div className="bg-white dark:bg-[#1A1A1A] rounded-2xl border border-gray-200 dark:border-[#2C2C2C] p-5 shadow-sm space-y-4">
               <div className="flex items-center gap-2 pb-3 border-b border-gray-100 dark:border-[#262626]">
-                <Sparkles className="w-4 h-4 text-amber-500" />
-                <h4 className="font-black text-gray-900 dark:text-white text-sm uppercase tracking-wide">
+                <Sparkles className="w-4.5 h-4.5 text-amber-500" />
+                <h4 className="font-black text-black dark:text-white text-sm uppercase tracking-wide">
                   Câu hỏi ôn tập gợi ý
                 </h4>
               </div>
 
-              <div className="space-y-2.5">
+              <div className="space-y-3">
                 {SUGGESTED_QUESTIONS.map((item, idx) => (
                   <button
                     key={idx}
                     type="button"
                     onClick={() => handleSendMessage(item.question)}
-                    className="w-full p-3 rounded-xl border border-gray-200 dark:border-[#333] hover:border-[#2878C8] dark:hover:border-blue-500 bg-gray-50/70 dark:bg-[#202020] text-left transition-all group"
+                    className="w-full p-3.5 rounded-xl border border-gray-200 dark:border-[#333] hover:border-[#2878C8] dark:hover:border-blue-500 bg-gray-50/70 dark:bg-[#202020] text-left transition-all group"
                   >
-                    <div className="flex items-center justify-between gap-2">
-                      <span className="font-bold text-xs text-gray-900 dark:text-white group-hover:text-[#2878C8]">
+                    <div className="flex items-start justify-between gap-2">
+                      <span className="font-bold text-sm text-black dark:text-white group-hover:text-[#2878C8] leading-snug">
                         {item.title}
                       </span>
-                      <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-blue-100 dark:bg-blue-950 text-[#2878C8]">
+                      <span className="px-2 py-0.5 rounded text-[11px] font-bold bg-blue-100 dark:bg-blue-950 text-[#2878C8] shrink-0 mt-0.5">
                         {item.topic}
                       </span>
                     </div>
-                    <p className="text-xs text-gray-500 dark:text-gray-400 mt-1 line-clamp-2 leading-relaxed">
+                    <p className="text-sm text-black dark:text-gray-300 mt-1.5 line-clamp-2 leading-relaxed font-normal">
                       {item.question}
                     </p>
                   </button>
@@ -1536,8 +1536,8 @@ export const PersonalizedAI: React.FC<PersonalizedAIProps> = ({
                   Lộ trình ôn thi của bạn
                 </h4>
               </div>
-              <p className="text-sm text-gray-600 dark:text-gray-300 leading-relaxed">
-                Mục tiêu hiện tại: <strong className="text-gray-900 dark:text-white">{user.targetScore || 8.5} điểm</strong> ({user.dailyStudyMinutes || 45} phút/ngày).
+              <p className="text-sm text-black dark:text-gray-200 leading-relaxed">
+                Mục tiêu hiện tại: <strong className="text-black dark:text-white">{user.targetScore || 8.5} điểm</strong> ({user.dailyStudyMinutes || 45} phút/ngày).
               </p>
               <div className="pt-1 flex flex-col gap-2.5">
                 <button
