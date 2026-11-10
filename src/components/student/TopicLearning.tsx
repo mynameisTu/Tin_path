@@ -1201,14 +1201,14 @@ export const TopicLearning: React.FC<TopicLearningProps> = ({
           </div>
 
           {/* Lesson Header Banner */}
-          <div className="bg-white dark:bg-[#1E1E1E] rounded-2xl border border-gray-200 dark:border-[#333] p-5 sm:p-6 shadow-xs space-y-4">
+          <div className="bg-white dark:bg-[#1E1E1E] rounded-2xl border border-gray-200 dark:border-[#333] p-4 sm:p-5 shadow-xs space-y-3">
             <div className="flex items-center gap-2 flex-wrap">
-              <span className="px-3 py-1 rounded-lg bg-blue-50 text-[#2878C8] dark:bg-blue-950/60 dark:text-[#60A5FA] font-bold text-xs sm:text-sm">
+              <span className="px-2.5 py-0.5 rounded-lg bg-blue-50 text-[#2878C8] dark:bg-blue-950/60 dark:text-[#60A5FA] font-bold text-xs">
                 {activeTopic.code}
               </span>
-              <span className="text-xs sm:text-sm text-gray-500 font-semibold">Khối Lớp {activeTopic.grade}</span>
+              <span className="text-xs text-black dark:text-gray-200 font-semibold">Khối Lớp {activeTopic.grade}</span>
               <span className="text-gray-300 dark:text-gray-600">·</span>
-              <span className="text-xs sm:text-sm text-gray-600 dark:text-gray-300">{activeTopic.examWeight}</span>
+              <span className="text-xs text-black dark:text-gray-200 font-medium">{activeTopic.examWeight}</span>
               {activeTopic.track && activeTopic.track !== 'ALL' && (
                 <span className="px-2 py-0.5 rounded text-[11px] font-bold bg-amber-50 text-amber-800 dark:bg-amber-950 dark:text-amber-300 border border-amber-200">
                   Định hướng {activeTopic.track}
@@ -1216,14 +1216,14 @@ export const TopicLearning: React.FC<TopicLearningProps> = ({
               )}
             </div>
 
-            <h1 className="text-xl sm:text-2xl lg:text-3xl font-black text-gray-900 dark:text-white leading-tight">
+            <h1 className="text-xl sm:text-2xl lg:text-[28px] font-black text-black dark:text-white leading-tight">
               {activeTopic.title}
             </h1>
 
-            {/* Harmonized Summary info box */}
-            <div className="p-4 sm:p-4.5 rounded-xl bg-blue-50/60 dark:bg-blue-950/25 border border-blue-100 dark:border-blue-900/40 flex items-start gap-3 shadow-2xs">
-              <BookOpen className="w-4.5 h-4.5 text-[#2878C8] shrink-0 mt-0.5" />
-              <p className="text-sm sm:text-[15px] text-black dark:text-gray-100 font-normal leading-[1.75]">
+            {/* Summary info box */}
+            <div className="p-3.5 rounded-xl bg-blue-50/60 dark:bg-blue-950/25 border border-blue-100 dark:border-blue-900/40 flex items-start gap-2.5">
+              <BookOpen className="w-4 h-4 text-[#2878C8] shrink-0 mt-0.5" />
+              <p className="text-sm sm:text-[15px] text-black dark:text-gray-100 font-normal leading-[1.7]">
                 {formatMultiline(activeTopic.summary)}
               </p>
             </div>
@@ -1284,20 +1284,20 @@ export const TopicLearning: React.FC<TopicLearningProps> = ({
 
           {/* SUB-TAB 1: LÝ THUYẾT TRỌNG TÂM */}
           {lessonSubTab === 'theory' && (
-            <div className="space-y-6 sm:space-y-7">
+            <div className="space-y-4">
               {/* Visual Diagram Roadmap for Theory */}
               <TopicIllustration topicId={activeTopic.id} />
 
               {activeTopic.mainSections?.map((sec) => (
                 <section
                   key={sec.id}
-                  className="bg-white dark:bg-[#1E1E1E] rounded-2xl border border-gray-200/90 dark:border-[#333] p-6 sm:p-8 shadow-xs space-y-5"
+                  className="bg-white dark:bg-[#1E1E1E] rounded-2xl border border-gray-200/90 dark:border-[#333] p-5 sm:p-6 shadow-xs space-y-4"
                 >
-                  <div className="border-b border-gray-100 dark:border-[#2C2C2C] pb-4 flex items-center gap-3">
-                    <span className="w-8 h-8 rounded-xl bg-blue-50 text-[#2878C8] dark:bg-blue-950/60 font-black text-sm flex items-center justify-center shrink-0 shadow-2xs">
+                  <div className="border-b border-gray-100 dark:border-[#2C2C2C] pb-3 flex items-center gap-2.5">
+                    <span className="w-7 h-7 rounded-lg bg-[#2878C8] text-white font-black text-xs flex items-center justify-center shrink-0">
                       {sec.number}
                     </span>
-                    <h2 className="text-lg sm:text-xl font-black text-gray-950 dark:text-white tracking-tight">
+                    <h2 className="text-base sm:text-lg font-black text-black dark:text-white tracking-tight">
                       {sec.title.replace(/^[0-9]+\.\s*/, '')}
                     </h2>
                   </div>
@@ -1314,12 +1314,12 @@ export const TopicLearning: React.FC<TopicLearningProps> = ({
                   />
 
                   {sec.table && (
-                    <div className="overflow-x-auto my-4 border border-gray-200 dark:border-[#333] rounded-xl shadow-2xs">
+                    <div className="overflow-x-auto border border-gray-200 dark:border-[#333] rounded-xl shadow-2xs">
                       <table className="w-full text-left text-sm sm:text-[15px]">
-                        <thead className="bg-blue-50/90 dark:bg-blue-950/50 text-gray-900 dark:text-white border-b border-gray-200 dark:border-[#333]">
+                        <thead className="bg-blue-50/90 dark:bg-blue-950/50 text-black dark:text-white border-b border-gray-200 dark:border-[#333]">
                           <tr>
                             {sec.table.headers.map((h, idx) => (
-                              <th key={idx} className="p-3.5 font-bold">
+                              <th key={idx} className="p-3 font-bold">
                                 {h}
                               </th>
                             ))}
@@ -1329,7 +1329,7 @@ export const TopicLearning: React.FC<TopicLearningProps> = ({
                           {sec.table.rows.map((row, rIdx) => (
                             <tr key={rIdx} className="hover:bg-gray-50/50 dark:hover:bg-[#252525]">
                               {row.map((cell, cIdx) => (
-                                <td key={cIdx} className="p-3.5 text-black dark:text-gray-100 font-normal leading-relaxed">
+                                <td key={cIdx} className="p-3 text-black dark:text-gray-100 font-normal leading-relaxed">
                                   {cell}
                                 </td>
                               ))}
@@ -1341,21 +1341,21 @@ export const TopicLearning: React.FC<TopicLearningProps> = ({
                   )}
 
                   {sec.codeSnippet && (
-                    <pre className="p-4 rounded-xl bg-[#1E1E1E] text-sky-400 font-mono text-xs sm:text-sm overflow-x-auto border border-[#333] leading-relaxed my-2">
+                    <pre className="p-4 rounded-xl bg-[#1E1E1E] text-sky-400 font-mono text-xs sm:text-sm overflow-x-auto border border-[#333] leading-relaxed">
                       <code>{sec.codeSnippet}</code>
                     </pre>
                   )}
 
                   {/* Subsections a, b */}
                   {sec.subSections && sec.subSections.length > 0 && (
-                    <div className="space-y-4 pt-3">
+                    <div className="space-y-3 pt-1">
                       {sec.subSections.map((sub) => (
                         <div
                           key={sub.id}
-                          className="p-5 sm:p-6 rounded-2xl border border-gray-200/80 dark:border-[#333] bg-gray-50/50 dark:bg-[#202020] space-y-3.5"
+                          className="p-4 sm:p-5 rounded-xl border border-gray-200/80 dark:border-[#333] bg-gray-50/60 dark:bg-[#202020] space-y-3"
                         >
-                          <h3 className="text-base sm:text-lg font-bold text-gray-950 dark:text-white flex items-baseline gap-2.5">
-                            <span className="px-2 py-0.5 rounded-md bg-blue-100/70 text-[#2878C8] dark:bg-blue-950/80 dark:text-[#60A5FA] font-black text-xs">
+                          <h3 className="text-sm sm:text-base font-bold text-black dark:text-white flex items-center gap-2">
+                            <span className="px-2 py-0.5 rounded-md bg-[#2878C8] text-white font-black text-xs shrink-0">
                               {sub.letter}
                             </span>
                             <span>{sub.title.replace(/^[a-z]\)\s*/, '')}</span>
@@ -1371,7 +1371,7 @@ export const TopicLearning: React.FC<TopicLearningProps> = ({
                           />
 
                           {sub.codeSnippet && (
-                            <pre className="p-3.5 rounded-lg bg-[#181818] text-sky-400 font-mono text-xs overflow-x-auto border border-[#333] mt-2">
+                            <pre className="p-3.5 rounded-lg bg-[#181818] text-sky-400 font-mono text-xs overflow-x-auto border border-[#333]">
                               <code>{sub.codeSnippet}</code>
                             </pre>
                           )}
