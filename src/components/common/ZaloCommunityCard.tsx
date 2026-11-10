@@ -1,5 +1,9 @@
 import React, { useState } from 'react';
-import { QrCode, ExternalLink, Users, Sparkles, X, CheckCircle, ShieldCheck } from 'lucide-react';
+import { ExternalLink, X, Copy, CheckCircle } from 'lucide-react';
+
+const ZALO_GROUP_LINK = 'https://zalo.me/g/rc9dareytfp58ogjn6zy';
+// Zalo QR image - generated from the actual group link
+const ZALO_QR_URL = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(ZALO_GROUP_LINK)}&bgcolor=ffffff&color=000000&margin=10&format=png`;
 
 interface ZaloCommunityCardProps {
   compact?: boolean;
@@ -7,6 +11,14 @@ interface ZaloCommunityCardProps {
 
 export const ZaloCommunityCard: React.FC<ZaloCommunityCardProps> = ({ compact = false }) => {
   const [isZoomOpen, setIsZoomOpen] = useState(false);
+  const [copied, setCopied] = useState(false);
+
+  const handleCopyLink = () => {
+    navigator.clipboard.writeText(ZALO_GROUP_LINK).then(() => {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    });
+  };
 
   return (
     <>
@@ -34,126 +46,49 @@ export const ZaloCommunityCard: React.FC<ZaloCommunityCardProps> = ({ compact = 
             Nơi thầy cô & thủ khoa hỗ trợ giải đáp câu hỏi trắc nghiệm, bài tập SQL, Python 24/7.
           </p>
 
-          {/* Mock QR Code Visual */}
+          {/* Real QR Code Image */}
           <div
             onClick={() => setIsZoomOpen(true)}
             className="p-2.5 bg-white rounded-lg border-2 border-dashed border-blue-300 dark:border-blue-700/60 shadow-xs cursor-pointer hover:border-[#0068FF] transition-all group relative"
             title="Nhấn để phóng to mã QR"
           >
-            {/* SVG Mock QR Code */}
-            <svg
-              className="w-32 h-32 text-gray-900 transition-transform group-hover:scale-105"
-              viewBox="0 0 100 100"
-              fill="currentColor"
-            >
-              {/* Corner position markers (Top Left, Top Right, Bottom Left) */}
-              {/* Top Left */}
-              <rect x="5" y="5" width="26" height="26" fill="#111827" rx="3" />
-              <rect x="9" y="9" width="18" height="18" fill="white" rx="2" />
-              <rect x="13" y="13" width="10" height="10" fill="#0068FF" rx="1.5" />
-
-              {/* Top Right */}
-              <rect x="69" y="5" width="26" height="26" fill="#111827" rx="3" />
-              <rect x="73" y="9" width="18" height="18" fill="white" rx="2" />
-              <rect x="77" y="13" width="10" height="10" fill="#0068FF" rx="1.5" />
-
-              {/* Bottom Left */}
-              <rect x="5" y="69" width="26" height="26" fill="#111827" rx="3" />
-              <rect x="9" y="73" width="18" height="18" fill="white" rx="2" />
-              <rect x="13" y="77" width="10" height="10" fill="#0068FF" rx="1.5" />
-
-              {/* Timing Pattern Lines */}
-              <rect x="34" y="8" width="4" height="4" fill="#111827" />
-              <rect x="42" y="8" width="4" height="4" fill="#111827" />
-              <rect x="50" y="8" width="4" height="4" fill="#111827" />
-              <rect x="58" y="8" width="4" height="4" fill="#111827" />
-
-              <rect x="8" y="34" width="4" height="4" fill="#111827" />
-              <rect x="8" y="42" width="4" height="4" fill="#111827" />
-              <rect x="8" y="50" width="4" height="4" fill="#111827" />
-              <rect x="8" y="58" width="4" height="4" fill="#111827" />
-
-              {/* Data Blocks Grid */}
-              <rect x="34" y="16" width="4" height="4" fill="#111827" />
-              <rect x="42" y="16" width="4" height="4" fill="#111827" />
-              <rect x="54" y="16" width="4" height="4" fill="#111827" />
-              <rect x="34" y="24" width="4" height="4" fill="#111827" />
-              <rect x="46" y="24" width="4" height="4" fill="#111827" />
-              <rect x="58" y="24" width="4" height="4" fill="#111827" />
-
-              <rect x="16" y="34" width="4" height="4" fill="#111827" />
-              <rect x="24" y="34" width="4" height="4" fill="#111827" />
-              <rect x="36" y="34" width="4" height="4" fill="#111827" />
-              <rect x="44" y="34" width="4" height="4" fill="#111827" />
-              <rect x="56" y="34" width="4" height="4" fill="#111827" />
-              <rect x="68" y="34" width="4" height="4" fill="#111827" />
-              <rect x="80" y="34" width="4" height="4" fill="#111827" />
-              <rect x="88" y="34" width="4" height="4" fill="#111827" />
-
-              <rect x="16" y="42" width="4" height="4" fill="#111827" />
-              <rect x="28" y="42" width="4" height="4" fill="#111827" />
-              <rect x="64" y="42" width="4" height="4" fill="#111827" />
-              <rect x="76" y="42" width="4" height="4" fill="#111827" />
-              <rect x="84" y="42" width="4" height="4" fill="#111827" />
-
-              <rect x="16" y="50" width="4" height="4" fill="#111827" />
-              <rect x="24" y="50" width="4" height="4" fill="#111827" />
-              <rect x="68" y="50" width="4" height="4" fill="#111827" />
-              <rect x="80" y="50" width="4" height="4" fill="#111827" />
-
-              <rect x="16" y="58" width="4" height="4" fill="#111827" />
-              <rect x="28" y="58" width="4" height="4" fill="#111827" />
-              <rect x="64" y="58" width="4" height="4" fill="#111827" />
-              <rect x="72" y="58" width="4" height="4" fill="#111827" />
-              <rect x="88" y="58" width="4" height="4" fill="#111827" />
-
-              {/* Bottom Right Data Clusters */}
-              <rect x="36" y="68" width="4" height="4" fill="#111827" />
-              <rect x="44" y="68" width="4" height="4" fill="#111827" />
-              <rect x="56" y="68" width="4" height="4" fill="#111827" />
-              <rect x="68" y="68" width="4" height="4" fill="#111827" />
-              <rect x="80" y="68" width="4" height="4" fill="#111827" />
-
-              <rect x="36" y="76" width="4" height="4" fill="#111827" />
-              <rect x="48" y="76" width="4" height="4" fill="#111827" />
-              <rect x="60" y="76" width="4" height="4" fill="#111827" />
-              <rect x="72" y="76" width="4" height="4" fill="#111827" />
-              <rect x="84" y="76" width="4" height="4" fill="#111827" />
-
-              <rect x="40" y="84" width="4" height="4" fill="#111827" />
-              <rect x="52" y="84" width="4" height="4" fill="#111827" />
-              <rect x="64" y="84" width="4" height="4" fill="#111827" />
-              <rect x="76" y="84" width="4" height="4" fill="#111827" />
-              <rect x="88" y="84" width="4" height="4" fill="#111827" />
-
-              {/* Center Logo Placeholder (Zalo Badge) */}
-              <rect x="36" y="36" width="28" height="28" fill="white" rx="4" stroke="#0068FF" strokeWidth="2" />
-              <rect x="40" y="40" width="20" height="20" fill="#0068FF" rx="3" />
-              <text
-                x="50"
-                y="54"
-                textAnchor="middle"
-                fontSize="12"
-                fontWeight="900"
-                fill="white"
-                fontFamily="sans-serif"
-              >
-                Z
-              </text>
-            </svg>
-
+            <img
+              src={ZALO_QR_URL}
+              alt="QR Code nhóm Zalo KHKT TinPath"
+              className="w-32 h-32 object-contain transition-transform group-hover:scale-105 rounded"
+              loading="lazy"
+            />
             <span className="absolute bottom-1 right-1 text-[10px] px-1.5 py-0.5 bg-blue-50 text-blue-700 font-medium rounded">
               🔍 Phóng to
             </span>
           </div>
 
-          <div className="w-full pt-1 space-y-1.5">
+          {/* Link display */}
+          <div className="w-full flex items-center gap-1.5 px-3 py-2 rounded-lg bg-blue-950 border border-blue-700/60">
+            <span className="text-xs text-blue-300 font-mono flex-1 truncate text-left">
+              zalo.me/g/rc9dareytfp58ogjn6zy
+            </span>
             <button
-              onClick={() => setIsZoomOpen(true)}
+              onClick={handleCopyLink}
+              className="shrink-0 p-1 rounded text-blue-400 hover:text-white transition-colors"
+              title="Sao chép link"
+            >
+              {copied
+                ? <CheckCircle className="w-3.5 h-3.5 text-emerald-400" />
+                : <Copy className="w-3.5 h-3.5" />
+              }
+            </button>
+          </div>
+
+          <div className="w-full pt-1 space-y-1.5">
+            <a
+              href={ZALO_GROUP_LINK}
+              target="_blank"
+              rel="noopener noreferrer"
               className="w-full py-2 px-3 rounded-lg bg-[#0068FF] hover:bg-[#0052cc] text-white font-bold text-sm flex items-center justify-center gap-2 transition-colors shadow-xs"
             >
               <ExternalLink className="w-4 h-4" /> Tham gia nhóm Zalo
-            </button>
+            </a>
             <span className="text-xs text-gray-500 dark:text-gray-400 block">
               Mở ứng dụng Zalo trên điện thoại & quét mã
             </span>
@@ -163,95 +98,82 @@ export const ZaloCommunityCard: React.FC<ZaloCommunityCardProps> = ({ compact = 
 
       {/* Enlarged QR Modal */}
       {isZoomOpen && (
-        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
-          <div className="bg-white dark:bg-[#1E1E1E] rounded-xl max-w-sm w-full p-5 border border-gray-200 dark:border-[#333] shadow-2xl space-y-4 text-center">
-            <div className="flex items-center justify-between pb-2 border-b border-gray-100 dark:border-[#2C2C2C]">
+        <div
+          className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4"
+          onClick={() => setIsZoomOpen(false)}
+        >
+          <div
+            className="bg-white dark:bg-[#1E1E1E] rounded-2xl max-w-xs w-full p-6 border border-gray-200 dark:border-[#333] shadow-2xl space-y-4 text-center"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-center justify-between pb-3 border-b border-gray-100 dark:border-[#2C2C2C]">
               <div className="flex items-center gap-2">
-                <span className="w-6 h-6 rounded bg-[#0068FF] text-white font-bold flex items-center justify-center text-xs">
+                <span className="w-7 h-7 rounded-lg bg-[#0068FF] text-white font-black flex items-center justify-center text-sm">
                   Z
                 </span>
                 <span className="font-bold text-sm text-gray-900 dark:text-white">
-                  Mã QR Nhóm Zalo TinPath
+                  Nhóm Zalo KHKT – TinPath
                 </span>
               </div>
               <button
                 onClick={() => setIsZoomOpen(false)}
-                className="p-1 text-gray-400 hover:text-gray-700 dark:hover:text-white rounded"
+                className="p-1.5 text-gray-400 hover:text-gray-700 dark:hover:text-white rounded-lg hover:bg-gray-100 dark:hover:bg-[#333] transition-colors"
               >
                 <X className="w-5 h-5" />
               </button>
             </div>
 
-            <p className="text-xs text-gray-600 dark:text-gray-300">
+            <p className="text-xs text-gray-600 dark:text-gray-300 leading-relaxed">
               Quét mã bằng camera hoặc tính năng <strong>Quét QR</strong> trên ứng dụng Zalo để tham gia nhóm:
             </p>
 
-            <div className="p-4 bg-white rounded-xl border border-gray-200 inline-block shadow-md">
-              <svg className="w-48 h-48 text-gray-900" viewBox="0 0 100 100" fill="currentColor">
-                <rect x="5" y="5" width="26" height="26" fill="#111827" rx="3" />
-                <rect x="9" y="9" width="18" height="18" fill="white" rx="2" />
-                <rect x="13" y="13" width="10" height="10" fill="#0068FF" rx="1.5" />
-
-                <rect x="69" y="5" width="26" height="26" fill="#111827" rx="3" />
-                <rect x="73" y="9" width="18" height="18" fill="white" rx="2" />
-                <rect x="77" y="13" width="10" height="10" fill="#0068FF" rx="1.5" />
-
-                <rect x="5" y="69" width="26" height="26" fill="#111827" rx="3" />
-                <rect x="9" y="73" width="18" height="18" fill="white" rx="2" />
-                <rect x="13" y="77" width="10" height="10" fill="#0068FF" rx="1.5" />
-
-                <rect x="34" y="8" width="4" height="4" fill="#111827" />
-                <rect x="42" y="8" width="4" height="4" fill="#111827" />
-                <rect x="50" y="8" width="4" height="4" fill="#111827" />
-                <rect x="58" y="8" width="4" height="4" fill="#111827" />
-
-                <rect x="8" y="34" width="4" height="4" fill="#111827" />
-                <rect x="8" y="42" width="4" height="4" fill="#111827" />
-                <rect x="8" y="50" width="4" height="4" fill="#111827" />
-                <rect x="8" y="58" width="4" height="4" fill="#111827" />
-
-                <rect x="16" y="34" width="4" height="4" fill="#111827" />
-                <rect x="24" y="34" width="4" height="4" fill="#111827" />
-                <rect x="36" y="34" width="4" height="4" fill="#111827" />
-                <rect x="44" y="34" width="4" height="4" fill="#111827" />
-                <rect x="56" y="34" width="4" height="4" fill="#111827" />
-                <rect x="68" y="34" width="4" height="4" fill="#111827" />
-                <rect x="80" y="34" width="4" height="4" fill="#111827" />
-
-                <rect x="36" y="68" width="4" height="4" fill="#111827" />
-                <rect x="44" y="68" width="4" height="4" fill="#111827" />
-                <rect x="56" y="68" width="4" height="4" fill="#111827" />
-                <rect x="68" y="68" width="4" height="4" fill="#111827" />
-
-                <rect x="36" y="36" width="28" height="28" fill="white" rx="4" stroke="#0068FF" strokeWidth="2" />
-                <rect x="40" y="40" width="20" height="20" fill="#0068FF" rx="3" />
-                <text
-                  x="50"
-                  y="54"
-                  textAnchor="middle"
-                  fontSize="12"
-                  fontWeight="900"
-                  fill="white"
-                  fontFamily="sans-serif"
-                >
-                  Z
-                </text>
-              </svg>
+            {/* Large QR Code */}
+            <div className="p-4 bg-white rounded-xl border-2 border-blue-200 inline-block shadow-md mx-auto">
+              <img
+                src={`https://api.qrserver.com/v1/create-qr-code/?size=240x240&data=${encodeURIComponent(ZALO_GROUP_LINK)}&bgcolor=ffffff&color=000000&margin=12&format=png`}
+                alt="QR Code Zalo KHKT TinPath"
+                className="w-52 h-52 object-contain rounded"
+              />
             </div>
 
-            <div className="text-[11px] text-gray-500 space-y-1">
-              <p className="font-semibold text-gray-700 dark:text-gray-300">
-                Nhóm Zalo: Ôn Thi Tốt Nghiệp THPT Tin Học Quảng Ngãi
+            {/* Group info */}
+            <div className="bg-gray-50 dark:bg-[#252525] rounded-xl p-3 space-y-1.5 text-left">
+              <p className="text-xs font-bold text-gray-900 dark:text-white">
+                Cộng đồng Ôn thi Tin học GDPT 2018 Quảng Ngãi
               </p>
-              <p>Mã nhóm: zalo.me/g/tinpath_quangngai</p>
+              <div className="flex items-center gap-2 text-xs text-gray-500 dark:text-gray-400">
+                <span className="font-mono bg-blue-50 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300 px-2 py-0.5 rounded text-[11px]">
+                  zalo.me/g/rc9dareytfp58ogjn6zy
+                </span>
+                <button
+                  onClick={handleCopyLink}
+                  className="shrink-0 p-1 rounded text-gray-400 hover:text-blue-600 transition-colors"
+                  title="Sao chép link"
+                >
+                  {copied
+                    ? <CheckCircle className="w-3.5 h-3.5 text-emerald-500" />
+                    : <Copy className="w-3.5 h-3.5" />
+                  }
+                </button>
+              </div>
             </div>
 
-            <button
-              onClick={() => setIsZoomOpen(false)}
-              className="w-full py-2 rounded-lg bg-gray-100 hover:bg-gray-200 dark:bg-[#2C2C2C] text-gray-800 dark:text-gray-200 text-xs font-bold transition-colors"
-            >
-              Đóng
-            </button>
+            <div className="flex gap-2">
+              <a
+                href={ZALO_GROUP_LINK}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex-1 py-2.5 rounded-xl bg-[#0068FF] hover:bg-[#0052cc] text-white text-sm font-bold flex items-center justify-center gap-2 transition-colors shadow-xs"
+              >
+                <ExternalLink className="w-4 h-4" /> Mở Zalo
+              </a>
+              <button
+                onClick={() => setIsZoomOpen(false)}
+                className="flex-1 py-2.5 rounded-xl bg-gray-100 hover:bg-gray-200 dark:bg-[#2C2C2C] dark:hover:bg-[#383838] text-gray-700 dark:text-gray-300 text-sm font-bold transition-colors"
+              >
+                Đóng
+              </button>
+            </div>
           </div>
         </div>
       )}
