@@ -86,7 +86,6 @@ export async function generateHighThinkingExplanation(params: {
   userQuestion: string;
   studentContext?: string;
 }) {
-  const ai = getGeminiClient();
   const systemInstruction = `Bạn là Trợ lý Gia sư AI Tin học cao cấp chuyên trách chương trình Tin học THPT 2018 của nền tảng TinPath (Việt Nam).
 Mục tiêu của bạn: Giải thích cặn kẽ, sư phạm, chuẩn xác theo sách giáo khoa và chương trình GDPT 2018 của Bộ Giáo dục & Đào tạo.
 Phong cách trả lời:
@@ -101,6 +100,7 @@ Câu hỏi / Thắc mắc của học sinh:
 ${params.userQuestion}`;
 
   try {
+    const ai = getGeminiClient();
     const response = await withRetry(() => ai.models.generateContent({
       model: 'gemini-3.5-flash-lite',
       contents: prompt,
@@ -161,8 +161,8 @@ export async function searchGroundedQuery(query: string) {
  * Used for fast response tasks: instant hints during exams, quick flashcard summary
  */
 export async function generateFastHint(questionContent: string, currentOptions: string) {
-  const ai = getGeminiClient();
   try {
+    const ai = getGeminiClient();
     const response = await withRetry(() => ai.models.generateContent({
       model: 'gemini-3.5-flash-lite',
       contents: `Hãy gợi ý một manh mối tư duy ngắn gọn (dưới 60 từ) để giúp học sinh giải câu trắc nghiệm Tin học THPT sau mà KHÔNG tiết lộ trực tiếp đáp án A/B/C/D:\nCâu hỏi: ${questionContent}\nCác lựa chọn:\n${currentOptions}`,
@@ -215,6 +215,7 @@ Yêu cầu trả về dạng JSON phân tích chi tiết gồm:
    - focusQuestionType: dạng câu hỏi trọng tâm (Lý thuyết, Đọc code, Bài tập SQL, Đề thi thử)`;
 
   try {
+    const ai = getGeminiClient();
     const response = await withRetry(() => ai.models.generateContent({
       model: 'gemini-3.5-flash-lite',
       contents: prompt,
@@ -294,6 +295,7 @@ Hãy xuất ra định dạng JSON chuẩn (RFC 8259) với cấu trúc:
 }`;
 
   try {
+    const ai = getGeminiClient();
     const response = await withRetry(() => ai.models.generateContent({
       model: 'gemini-3.5-flash-lite',
       contents: prompt,
@@ -469,8 +471,6 @@ export async function generateRagTutorResponse(params: {
   studentContext?: string;
   sgkContext: string; // Các đoạn tài liệu SGK liên quan từ Supabase pgvector
 }) {
-  const ai = getGeminiClient();
-
   const hasContext = params.sgkContext && params.sgkContext.trim().length > 0;
 
   const systemInstruction = `Bạn là Gia sư AI Tin học chuyên trách chương trình GDPT 2018 của nền tảng TinPath (Việt Nam).
@@ -489,6 +489,7 @@ Câu hỏi học sinh:
 ${params.userQuestion}`;
 
   try {
+    const ai = getGeminiClient();
     const response = await withRetry(() => ai.models.generateContent({
       model: 'gemini-3.5-flash-lite',
       contents: prompt,
