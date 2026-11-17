@@ -928,14 +928,41 @@ export const PersonalizedAI: React.FC<PersonalizedAIProps> = ({
         }
       }
     } catch (err: any) {
-      console.warn('AI call error, activating smart local tutor fallback:', err);
-      const fallbackText = getTutorSmartFallback(question, user.displayName);
+      console.warn('AI call error:', err);
+      // Thử fallback lần cuối với direct API call
+      try {
+        const fallbackRes = await fetch('/api/gemini/thinking', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            topicTitle: 'Ôn thi Tin học THPT GDPT 2018',
+            userQuestion: question,
+            studentContext: `Học sinh lớp ${user.grade}, định hướng ${user.track}`,
+          }),
+          signal: AbortSignal.timeout(25000), // 25 giây timeout
+        });
+        if (fallbackRes.ok) {
+          const fallbackData = await fallbackRes.json();
+          setChatMessages((prev) => [
+            ...prev,
+            {
+              sender: 'ai',
+              text: fallbackData.text || 'Không có phản hồi.',
+              model: 'Gemini AI Tutor',
+            },
+          ]);
+          return;
+        }
+      } catch {
+        // Nếu cả fallback cũng fail
+      }
+      // Hiển thị thông báo lỗi rõ ràng thay vì fake response
       setChatMessages((prev) => [
         ...prev,
         {
           sender: 'ai',
-          text: fallbackText,
-          model: 'TinPath AI Tutor (Nội dung chuẩn GDPT 2018)',
+          text: `⚠️ **Hiện tại AI đang quá tải, vui lòng thử lại sau 1-2 phút.**\n\nTrong khi chờ, bạn có thể:\n- 📌 Nhấn vào một trong các **câu hỏi gợi ý** bên phải\n- 🔄 Nhấn **Gửi lại** câu hỏi sau vài giây\n- 📚 Xem **lộ trình học tập** hoặc **làm bài chẩn đoán năng lực**`,
+          model: 'TinPath AI',
         },
       ]);
     } finally {

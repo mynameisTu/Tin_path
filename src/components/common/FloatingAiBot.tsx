@@ -172,7 +172,8 @@ Dựa theo chương trình Tin học GDPT 2018 (SGK Kết nối tri thức & Cá
           modelUsed = res.modelUsed || 'Google Search Grounding';
           sources = res.searchSources;
         } catch {
-          botResponseText = getFallbackAnswer(query);
+          botResponseText = '⚠️ **AI đang bận, vui lòng thử lại sau vài giây.**';
+          modelUsed = 'TinPath AI';
         }
       } else if (tutorMode === 'thinking') {
         try {
@@ -184,7 +185,8 @@ Dựa theo chương trình Tin học GDPT 2018 (SGK Kết nối tri thức & Cá
           botResponseText = res.text;
           modelUsed = res.modelUsed || 'Gemini 2.5 Flash Thinking';
         } catch {
-          botResponseText = getFallbackAnswer(query);
+          botResponseText = '⚠️ **AI đang bận, vui lòng thử lại sau vài giây.**';
+          modelUsed = 'TinPath AI';
         }
       } else {
         // Default: SGK RAG Tutor
@@ -199,7 +201,8 @@ Dựa theo chương trình Tin học GDPT 2018 (SGK Kết nối tri thức & Cá
           modelUsed = res.modelUsed || 'Gemini Flash + RAG SGK GDPT 2018';
           ragSources = res.sourceChunks;
         } catch {
-          botResponseText = getFallbackAnswer(query);
+          botResponseText = '⚠️ **AI đang bận, vui lòng thử lại sau vài giây.**';
+          modelUsed = 'TinPath AI';
         }
       }
 
@@ -219,15 +222,14 @@ Dựa theo chương trình Tin học GDPT 2018 (SGK Kết nối tri thức & Cá
         },
       ]);
     } catch {
-      const fallbackText = getFallbackAnswer(query);
       setMessages((prev) => [
         ...prev,
         {
           id: `bot_fb_${Date.now()}`,
           sender: 'bot',
-          text: fallbackText,
+          text: `⚠️ **Hiện tại AI đang quá tải.** Vui lòng thử lại sau 1-2 phút.\n\nBạn có thể thử lại câu hỏi bằng cách nhấn **Gửi** lần nữa!`,
           timestamp: new Date().toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' }),
-          model: 'TinPath AI Tutor Knowledge Base',
+          model: 'TinPath AI',
         },
       ]);
     } finally {
