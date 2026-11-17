@@ -1,4 +1,11 @@
 import { GoogleGenAI, ThinkingLevel } from '@google/genai';
+import {
+  isGroqAvailable,
+  askGroqTutor,
+  askGroqFastHint,
+  askGroqStudyPlan,
+  askGroqDiagnosticAnalysis,
+} from './groqFallback.ts';
 
 // ============================================================
 // 🔄 Retry Helper — Exponential Backoff for 503/429 errors
@@ -66,21 +73,28 @@ ${params.studentContext ? `Bối cảnh học sinh: ${params.studentContext}` : 
 Câu hỏi / Thắc mắc của học sinh:
 ${params.userQuestion}`;
 
-  const response = await withRetry(() => ai.models.generateContent({
-    model: 'gemini-3.5-flash-lite',
-    contents: prompt,
-    config: {
-      systemInstruction,
-      thinkingConfig: {
-        thinkingLevel: ThinkingLevel.HIGH,
+  try {
+    const response = await withRetry(() => ai.models.generateContent({
+      model: 'gemini-3.5-flash-lite',
+      contents: prompt,
+      config: {
+        systemInstruction,
+        thinkingConfig: {
+          thinkingLevel: ThinkingLevel.HIGH,
+        },
       },
-    },
-  }));
-
-  return {
-    text: response.text || 'Không có phản hồi từ mô hình.',
-    modelUsed: 'Gemini 3.5 Flash-Lite (Thinking Level: HIGH)',
-  };
+    }));
+    return {
+      text: response.text || 'Không có phản hồi từ mô hình.',
+      modelUsed: 'Gemini 3.5 Flash-Lite (Thinking Level: HIGH)',
+    };
+  } catch (err: any) {
+    if (isGroqAvailable()) {
+      console.warn('[Gemini] Switching to Groq fallback for tutor...');
+      return askGroqTutor(params);
+    }
+    throw err;
+  }
 }
 
 /**
@@ -121,18 +135,22 @@ export async function searchGroundedQuery(query: string) {
  */
 export async function generateFastHint(questionContent: string, currentOptions: string) {
   const ai = getGeminiClient();
-  const response = await withRetry(() => ai.models.generateContent({
-    model: 'gemini-3.5-flash-lite',
-    contents: `Hãy gợi ý một manh mối tư duy ngắn gọn (dưới 60 từ) để giúp học sinh giải câu trắc nghiệm Tin học THPT sau mà KHÔNG tiết lộ trực tiếp đáp án A/B/C/D:\nCâu hỏi: ${questionContent}\nCác lựa chọn:\n${currentOptions}`,
-    config: {
-      systemInstruction: 'Bạn là trợ lý gợi ý nhanh trong phòng thi Tin học. Đưa ra gợi ý tư duy ngắn, súc tích, không đưa thẳng đáp án.',
-    },
-  }));
-
-  return {
-    hint: response.text || '',
-    modelUsed: 'gemini-3.1-flash-lite',
-  };
+  try {
+    const response = await withRetry(() => ai.models.generateContent({
+      model: 'gemini-3.5-flash-lite',
+      contents: `Hãy gợi ý một manh mối tư duy ngắn gọn (dưới 60 từ) để giúp học sinh giải câu trắc nghiệm Tin học THPT sau mà KHÔNG tiết lộ trực tiếp đáp án A/B/C/D:\nCâu hỏi: ${questionContent}\nCác lựa chọn:\n${currentOptions}`,
+      config: {
+        systemInstruction: 'Bạn là trợ lý gợi ý nhanh trong phòng thi Tin học. Đưa ra gợi ý tư duy ngắn, súc tích, không đưa thẳng đáp án.',
+      },
+    }));
+    return { hint: response.text || '', modelUsed: 'gemini-3.5-flash-lite' };
+  } catch (err: any) {
+    if (isGroqAvailable()) {
+      console.warn('[Gemini] Switching to Groq fallback for fast hint...');
+      return askGroqFastHint(questionContent, currentOptions);
+    }
+    throw err;
+  }
 }
 
 /**
@@ -169,19 +187,23 @@ Yêu cầu trả về dạng JSON phân tích chi tiết gồm:
    - minutes: thời gian ước tính (phút)
    - focusQuestionType: dạng câu hỏi trọng tâm (Lý thuyết, Đọc code, Bài tập SQL, Đề thi thử)`;
 
-  const response = await withRetry(() => ai.models.generateContent({
-    model: 'gemini-3.5-flash-lite',
-    contents: prompt,
-    config: {
-      responseMimeType: 'application/json',
-      systemInstruction: 'Bạn là chuyên gia cố vấn học tập môn Tin học THPT. Luôn trả về định dạng JSON hợp lệ.',
-    },
-  }));
-
-  return {
-    rawJson: response.text || '{}',
-    modelUsed: 'gemini-3.5-flash-lite',
-  };
+  try {
+    const response = await withRetry(() => ai.models.generateContent({
+      model: 'gemini-3.5-flash-lite',
+      contents: prompt,
+      config: {
+        responseMimeType: 'application/json',
+        systemInstruction: 'Bạn là chuyên gia cố vấn học tập môn Tin học THPT. Luôn trả về định dạng JSON hợp lệ.',
+      },
+    }));
+    return { rawJson: response.text || '{}', modelUsed: 'gemini-3.5-flash-lite' };
+  } catch (err: any) {
+    if (isGroqAvailable()) {
+      console.warn('[Gemini] Switching to Groq fallback for study plan...');
+      return askGroqStudyPlan(prompt);
+    }
+    throw err;
+  }
 }
 
 /**
@@ -244,19 +266,23 @@ Hãy xuất ra định dạng JSON chuẩn (RFC 8259) với cấu trúc:
   "recommendedWeakTopics": ["Mã chủ đề yếu nhất cần ưu tiên học trước, ví dụ: 12B, 11F"]
 }`;
 
-  const response = await withRetry(() => ai.models.generateContent({
-    model: 'gemini-3.5-flash-lite',
-    contents: prompt,
-    config: {
-      responseMimeType: 'application/json',
-      systemInstruction: 'Bạn là chuyên gia sư phạm và khảo thí môn Tin học THPT. Luôn trả về JSON hợp lệ.',
-    },
-  }));
-
-  return {
-    rawJson: response.text || '{}',
-    modelUsed: 'gemini-3.5-flash-lite',
-  };
+  try {
+    const response = await withRetry(() => ai.models.generateContent({
+      model: 'gemini-3.5-flash-lite',
+      contents: prompt,
+      config: {
+        responseMimeType: 'application/json',
+        systemInstruction: 'Bạn là chuyên gia sư phạm và khảo thí môn Tin học THPT. Luôn trả về JSON hợp lệ.',
+      },
+    }));
+    return { rawJson: response.text || '{}', modelUsed: 'gemini-3.5-flash-lite' };
+  } catch (err: any) {
+    if (isGroqAvailable()) {
+      console.warn('[Gemini] Switching to Groq fallback for diagnostic analysis...');
+      return askGroqDiagnosticAnalysis(prompt);
+    }
+    throw err;
+  }
 }
 
 /**
@@ -435,20 +461,30 @@ ${params.studentContext ? `Bối cảnh học sinh: ${params.studentContext}` : 
 Câu hỏi học sinh:
 ${params.userQuestion}`;
 
-  const response = await withRetry(() => ai.models.generateContent({
-    model: 'gemini-3.5-flash-lite',
-    contents: prompt,
-    config: {
-      systemInstruction,
-    },
-  }));
-
-  return {
-    text: response.text || 'Không có phản hồi từ mô hình.',
-    modelUsed: hasContext
-      ? 'Gemini Flash + RAG (SGK Tin học 12 GDPT 2018)'
-      : 'Gemini Flash (không có tài liệu RAG)',
-  };
+  try {
+    const response = await withRetry(() => ai.models.generateContent({
+      model: 'gemini-3.5-flash-lite',
+      contents: prompt,
+      config: { systemInstruction },
+    }));
+    return {
+      text: response.text || 'Không có phản hồi từ mô hình.',
+      modelUsed: hasContext
+        ? 'Gemini Flash + RAG (SGK Tin học 12 GDPT 2018)'
+        : 'Gemini Flash (không có tài liệu RAG)',
+    };
+  } catch (err: any) {
+    if (isGroqAvailable()) {
+      console.warn('[Gemini] Switching to Groq fallback for RAG tutor...');
+      return askGroqTutor({
+        topicTitle: params.topicTitle,
+        userQuestion: params.userQuestion,
+        studentContext: params.studentContext,
+        sgkContext: params.sgkContext,
+      });
+    }
+    throw err;
+  }
 }
 
 /**
