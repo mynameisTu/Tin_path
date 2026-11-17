@@ -1,5 +1,32 @@
 import { GoogleGenAI, ThinkingLevel } from '@google/genai';
 
+// ============================================================
+// 🔄 Retry Helper — Exponential Backoff for 503/429 errors
+// ============================================================
+async function withRetry<T>(
+  fn: () => Promise<T>,
+  maxRetries = 3,
+  baseDelayMs = 1500
+): Promise<T> {
+  let lastError: any;
+  for (let attempt = 0; attempt <= maxRetries; attempt++) {
+    try {
+      return await fn();
+    } catch (err: any) {
+      lastError = err;
+      const status = err?.status ?? err?.httpError?.status ?? 0;
+      const isRetryable = status === 503 || status === 429 || status === 500;
+      if (!isRetryable || attempt === maxRetries) {
+        throw err;
+      }
+      const delay = baseDelayMs * Math.pow(2, attempt) + Math.random() * 500;
+      console.warn(`[Gemini] attempt ${attempt + 1} failed (${status}), retrying in ${Math.round(delay)}ms...`);
+      await new Promise(res => setTimeout(res, delay));
+    }
+  }
+  throw lastError;
+}
+
 // Initialize the GoogleGenAI instance with server-side environment key and required telemetry header
 export const getGeminiClient = () => {
   const apiKey = (process.env.GEMINI_API_KEY || process.env.VITE_GEMINI_API_KEY)?.trim();
@@ -39,7 +66,7 @@ ${params.studentContext ? `Bối cảnh học sinh: ${params.studentContext}` : 
 Câu hỏi / Thắc mắc của học sinh:
 ${params.userQuestion}`;
 
-  const response = await ai.models.generateContent({
+  const response = await withRetry(() => ai.models.generateContent({
     model: 'gemini-3.5-flash-lite',
     contents: prompt,
     config: {
@@ -48,7 +75,7 @@ ${params.userQuestion}`;
         thinkingLevel: ThinkingLevel.HIGH,
       },
     },
-  });
+  }));
 
   return {
     text: response.text || 'Không có phản hồi từ mô hình.',
@@ -62,14 +89,14 @@ ${params.userQuestion}`;
  */
 export async function searchGroundedQuery(query: string) {
   const ai = getGeminiClient();
-  const response = await ai.models.generateContent({
+  const response = await withRetry(() => ai.models.generateContent({
     model: 'gemini-3.5-flash-lite',
     contents: `Cung cấp thông tin chính xác, cập nhật nhất về kỳ thi tốt nghiệp THPT và môn Tin học GDPT 2018 theo truy vấn sau:\n${query}`,
     config: {
       tools: [{ googleSearch: {} }],
       systemInstruction: 'Bạn là chuyên viên tra cứu thông tin kỳ thi tốt nghiệp THPT môn Tin học. Trả lời cô đọng, khách quan, trích dẫn nguồn tìm kiếm Google nếu có.',
     },
-  });
+  }));
 
   const searchSources: string[] = [];
   const groundingChunks = (response.candidates?.[0] as any)?.groundingMetadata?.groundingChunks;
@@ -94,13 +121,13 @@ export async function searchGroundedQuery(query: string) {
  */
 export async function generateFastHint(questionContent: string, currentOptions: string) {
   const ai = getGeminiClient();
-  const response = await ai.models.generateContent({
+  const response = await withRetry(() => ai.models.generateContent({
     model: 'gemini-3.5-flash-lite',
     contents: `Hãy gợi ý một manh mối tư duy ngắn gọn (dưới 60 từ) để giúp học sinh giải câu trắc nghiệm Tin học THPT sau mà KHÔNG tiết lộ trực tiếp đáp án A/B/C/D:\nCâu hỏi: ${questionContent}\nCác lựa chọn:\n${currentOptions}`,
     config: {
       systemInstruction: 'Bạn là trợ lý gợi ý nhanh trong phòng thi Tin học. Đưa ra gợi ý tư duy ngắn, súc tích, không đưa thẳng đáp án.',
     },
-  });
+  }));
 
   return {
     hint: response.text || '',
@@ -142,14 +169,14 @@ Yêu cầu trả về dạng JSON phân tích chi tiết gồm:
    - minutes: thời gian ước tính (phút)
    - focusQuestionType: dạng câu hỏi trọng tâm (Lý thuyết, Đọc code, Bài tập SQL, Đề thi thử)`;
 
-  const response = await ai.models.generateContent({
+  const response = await withRetry(() => ai.models.generateContent({
     model: 'gemini-3.5-flash-lite',
     contents: prompt,
     config: {
       responseMimeType: 'application/json',
       systemInstruction: 'Bạn là chuyên gia cố vấn học tập môn Tin học THPT. Luôn trả về định dạng JSON hợp lệ.',
     },
-  });
+  }));
 
   return {
     rawJson: response.text || '{}',
@@ -217,14 +244,14 @@ Hãy xuất ra định dạng JSON chuẩn (RFC 8259) với cấu trúc:
   "recommendedWeakTopics": ["Mã chủ đề yếu nhất cần ưu tiên học trước, ví dụ: 12B, 11F"]
 }`;
 
-  const response = await ai.models.generateContent({
+  const response = await withRetry(() => ai.models.generateContent({
     model: 'gemini-3.5-flash-lite',
     contents: prompt,
     config: {
       responseMimeType: 'application/json',
       systemInstruction: 'Bạn là chuyên gia sư phạm và khảo thí môn Tin học THPT. Luôn trả về JSON hợp lệ.',
     },
-  });
+  }));
 
   return {
     rawJson: response.text || '{}',
@@ -339,7 +366,7 @@ export async function analyzeVideoContent(params: {
     text: `Phân tích video bài giảng / mô phỏng Tin học sau: ${params.userPrompt}\nTrích xuất các ý chính, khái niệm khoa học máy tính được giải thích và tóm tắt kiến thức ôn tập.`,
   };
 
-  const response = await ai.models.generateContent({
+  const response = await withRetry(() => ai.models.generateContent({
     model: 'gemini-3.5-flash-lite',
     contents: {
       parts: [videoPart, textPart],
@@ -347,7 +374,7 @@ export async function analyzeVideoContent(params: {
     config: {
       systemInstruction: 'Bạn là chuyên gia phân tích video học liệu Tin học THPT GDPT 2018.',
     },
-  });
+  }));
 
   return {
     analysis: response.text || '',
@@ -362,14 +389,14 @@ export async function analyzeVideoContent(params: {
 export async function generateEmbedding(text: string): Promise<number[]> {
   const ai = getGeminiClient();
 
-  const response = await ai.models.embedContent({
+  const response = await withRetry(() => ai.models.embedContent({
     model: 'gemini-embedding-001',
     contents: text,
     config: {
       taskType: 'RETRIEVAL_QUERY',
       outputDimensionality: 768,
     },
-  });
+  }));
 
   const embedding = response.embeddings?.[0]?.values;
   if (!embedding || embedding.length === 0) {
@@ -408,13 +435,13 @@ ${params.studentContext ? `Bối cảnh học sinh: ${params.studentContext}` : 
 Câu hỏi học sinh:
 ${params.userQuestion}`;
 
-  const response = await ai.models.generateContent({
+  const response = await withRetry(() => ai.models.generateContent({
     model: 'gemini-3.5-flash-lite',
     contents: prompt,
     config: {
       systemInstruction,
     },
-  });
+  }));
 
   return {
     text: response.text || 'Không có phản hồi từ mô hình.',
@@ -496,14 +523,14 @@ Chỉ trả về DUY NHẤT một chuỗi JSON hợp lệ (không kèm giải th
   ]
 }`;
 
-  const response = await ai.models.generateContent({
+  const response = await withRetry(() => ai.models.generateContent({
     model: 'gemini-3.5-flash-lite',
     contents: prompt,
     config: {
       systemInstruction: 'Bạn là chuyên gia biên soạn đề thi Tin học THPT 2018. Luôn trả về định dạng JSON thuần túy.',
       responseMimeType: 'application/json',
     },
-  });
+  }));
 
   const rawText = response.text || '{}';
   let parsed: any;
