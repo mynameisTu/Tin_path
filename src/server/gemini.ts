@@ -40,7 +40,7 @@ Câu hỏi / Thắc mắc của học sinh:
 ${params.userQuestion}`;
 
   const response = await ai.models.generateContent({
-    model: 'gemini-4-argon',
+    model: 'gemini-3.5-flash-lite',
     contents: prompt,
     config: {
       systemInstruction,
@@ -52,7 +52,7 @@ ${params.userQuestion}`;
 
   return {
     text: response.text || 'Không có phản hồi từ mô hình.',
-    modelUsed: 'gemini-4-argon (Thinking Level: HIGH)',
+    modelUsed: 'Gemini 3.5 Flash-Lite (Thinking Level: HIGH)',
   };
 }
 
@@ -143,7 +143,7 @@ Yêu cầu trả về dạng JSON phân tích chi tiết gồm:
    - focusQuestionType: dạng câu hỏi trọng tâm (Lý thuyết, Đọc code, Bài tập SQL, Đề thi thử)`;
 
   const response = await ai.models.generateContent({
-    model: 'gemini-3.8-flash',
+    model: 'gemini-3.5-flash-lite',
     contents: prompt,
     config: {
       responseMimeType: 'application/json',
@@ -153,7 +153,7 @@ Yêu cầu trả về dạng JSON phân tích chi tiết gồm:
 
   return {
     rawJson: response.text || '{}',
-    modelUsed: 'gemini-3.8-flash',
+    modelUsed: 'gemini-3.5-flash-lite',
   };
 }
 
@@ -218,7 +218,7 @@ Hãy xuất ra định dạng JSON chuẩn (RFC 8259) với cấu trúc:
 }`;
 
   const response = await ai.models.generateContent({
-    model: 'gemini-3.8-flash',
+    model: 'gemini-3.5-flash-lite',
     contents: prompt,
     config: {
       responseMimeType: 'application/json',
@@ -228,7 +228,7 @@ Hãy xuất ra định dạng JSON chuẩn (RFC 8259) với cấu trúc:
 
   return {
     rawJson: response.text || '{}',
-    modelUsed: 'gemini-3.8-flash',
+    modelUsed: 'gemini-3.5-flash-lite',
   };
 }
 
@@ -340,18 +340,18 @@ export async function analyzeVideoContent(params: {
   };
 
   const response = await ai.models.generateContent({
-    model: 'gemini-4-argon',
+    model: 'gemini-3.5-flash-lite',
     contents: {
       parts: [videoPart, textPart],
     },
     config: {
-      systemInstruction: 'Bạn là chuyên gia phân tích video học liệu Tin học THPT GDPT 2018 bằng mô hình Gemini 4 Argon.',
+      systemInstruction: 'Bạn là chuyên gia phân tích video học liệu Tin học THPT GDPT 2018.',
     },
   });
 
   return {
     analysis: response.text || '',
-    modelUsed: 'gemini-4-argon (Multimodal Video Analysis)',
+    modelUsed: 'gemini-3.5-flash-lite (Multimodal Video Analysis)',
   };
 }
 
