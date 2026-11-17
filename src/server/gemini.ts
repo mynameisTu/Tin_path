@@ -8,7 +8,25 @@ import {
 } from './groqFallback.ts';
 
 // ============================================================
-// 🔄 Retry Helper — Exponential Backoff for 503/429 errors
+// 🔄 Multi-Key Manager & Rotation
+// ============================================================
+function getGeminiApiKeys(): string[] {
+  const raw = (process.env.GEMINI_API_KEYS || process.env.GEMINI_API_KEY || process.env.VITE_GEMINI_API_KEY || '').trim();
+  return raw.split(',').map(k => k.trim()).filter(Boolean);
+}
+
+let currentKeyIndex = 0;
+
+export function rotateGeminiKey(): void {
+  const keys = getGeminiApiKeys();
+  if (keys.length > 1) {
+    currentKeyIndex = (currentKeyIndex + 1) % keys.length;
+    console.warn(`[Gemini] Rotated to API key index #${currentKeyIndex + 1}/${keys.length}`);
+  }
+}
+
+// ============================================================
+// 🔄 Retry Helper — Exponential Backoff & Key Rotation for 503/429
 // ============================================================
 async function withRetry<T>(
   fn: () => Promise<T>,
@@ -26,26 +44,35 @@ async function withRetry<T>(
       if (!isRetryable || attempt === maxRetries) {
         throw err;
       }
+      rotateGeminiKey();
       const delay = baseDelayMs * Math.pow(2, attempt) + Math.random() * 500;
-      console.warn(`[Gemini] attempt ${attempt + 1} failed (${status}), retrying in ${Math.round(delay)}ms...`);
+      console.warn(`[Gemini] attempt ${attempt + 1} failed (${status}), retrying in ${Math.round(delay)}ms with key #${currentKeyIndex + 1}...`);
       await new Promise(res => setTimeout(res, delay));
     }
   }
   throw lastError;
 }
 
-// Initialize the GoogleGenAI instance with server-side environment key and required telemetry header
-export const getGeminiClient = () => {
-  const apiKey = (process.env.GEMINI_API_KEY || process.env.VITE_GEMINI_API_KEY)?.trim();
-  if (!apiKey) {
+// Initialize GoogleGenAI client with dynamic active key (supports multi-key rotation)
+export const getGeminiClient = (): GoogleGenAI => {
+  const keys = getGeminiApiKeys();
+  if (keys.length === 0) {
     throw new Error('GEMINI_API_KEY environment variable is not set');
   }
-  return new GoogleGenAI({
-    apiKey,
-    httpOptions: {
-      headers: {
-        'User-Agent': 'aistudio-build',
-      },
+
+  return new Proxy({} as GoogleGenAI, {
+    get(_target, prop) {
+      const activeKey = keys[currentKeyIndex % keys.length];
+      const realClient = new GoogleGenAI({
+        apiKey: activeKey,
+        httpOptions: {
+          headers: {
+            'User-Agent': 'aistudio-build',
+          },
+        },
+      });
+      const value = (realClient as any)[prop];
+      return typeof value === 'function' ? value.bind(realClient) : value;
     },
   });
 };
