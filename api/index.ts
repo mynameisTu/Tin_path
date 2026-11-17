@@ -3,10 +3,30 @@ import { handleApiRoute } from '../src/server/apiRouter.ts';
 
 export default async function handler(req: IncomingMessage, res: ServerResponse) {
   try {
-    // Extract actual request path (handles Vercel rewrite or direct path)
-    const originalUrl = (req.headers['x-matched-path'] as string) || req.url || '';
-    if (originalUrl && originalUrl.startsWith('/api/') && req.url !== originalUrl) {
-      req.url = originalUrl;
+    // Extract actual request path (handles Vercel rewrite query, headers, or direct path)
+    const host = req.headers.host || 'localhost';
+    const parsed = new URL(req.url || '', `http://${host}`);
+    const endpointParam = parsed.searchParams.get('endpoint') || parsed.searchParams.get('path');
+
+    if (endpointParam) {
+      req.url = endpointParam.startsWith('/') ? `/api${endpointParam}` : `/api/${endpointParam}`;
+    } else {
+      const routeMatches = req.headers['x-now-route-matches'] as string;
+      if (routeMatches) {
+        const match = routeMatches.match(/1=([^&]+)/);
+        if (match) {
+          const sub = decodeURIComponent(match[1]);
+          req.url = sub.startsWith('/') ? `/api${sub}` : `/api/${sub}`;
+        }
+      } else {
+        const forwarded = (req.headers['x-forwarded-uri'] as string)
+          || (req.headers['x-invoke-path'] as string)
+          || (req.headers['x-original-url'] as string)
+          || (req.headers['x-matched-path'] as string);
+        if (forwarded && forwarded.startsWith('/api/')) {
+          req.url = forwarded;
+        }
+      }
     }
 
     const handled = await handleApiRoute(req, res);

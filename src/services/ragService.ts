@@ -47,24 +47,29 @@ async function searchSGKContext(
   threshold = 0.60,
   maxResults = 4
 ): Promise<KnowledgeChunk[]> {
-  if (!isSupabaseConfigured()) return [];
+  try {
+    if (!isSupabaseConfigured()) return [];
 
-  const { data, error } = await supabase.rpc('match_knowledge_chunks', {
-    query_embedding: queryEmbedding,
-    match_threshold: threshold,
-    match_count: maxResults,
-  });
+    const { data, error } = await supabase.rpc('match_knowledge_chunks', {
+      query_embedding: queryEmbedding,
+      match_threshold: threshold,
+      match_count: maxResults,
+    });
 
-  if (error || !data) return [];
+    if (error || !data) return [];
 
-  return data.map((row: any) => ({
-    id: row.id,
-    topicId: row.topic_id,
-    bookSource: row.book_source,
-    chunkTitle: row.chunk_title,
-    content: row.content,
-    similarity: row.similarity,
-  }));
+    return data.map((row: any) => ({
+      id: row.id,
+      topicId: row.topic_id,
+      bookSource: row.book_source,
+      chunkTitle: row.chunk_title,
+      content: row.content,
+      similarity: row.similarity,
+    }));
+  } catch (err) {
+    console.warn('Lỗi truy vấn pgvector RAG, tiếp tục gọi Gemini không kèm context:', err);
+    return [];
+  }
 }
 
 // ---------------------------------------------------------------------------

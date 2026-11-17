@@ -2,7 +2,7 @@ import { GoogleGenAI, ThinkingLevel } from '@google/genai';
 
 // Initialize the GoogleGenAI instance with server-side environment key and required telemetry header
 export const getGeminiClient = () => {
-  const apiKey = process.env.GEMINI_API_KEY;
+  const apiKey = (process.env.GEMINI_API_KEY || process.env.VITE_GEMINI_API_KEY)?.trim();
   if (!apiKey) {
     throw new Error('GEMINI_API_KEY environment variable is not set');
   }

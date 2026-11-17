@@ -927,19 +927,99 @@ export const PersonalizedAI: React.FC<PersonalizedAIProps> = ({
           ]);
         }
       }
-    } catch {
+    } catch (err: any) {
+      console.warn('AI call error, activating smart local tutor fallback:', err);
+      const fallbackText = getTutorSmartFallback(question, user.displayName);
       setChatMessages((prev) => [
         ...prev,
         {
           sender: 'ai',
-          text: 'Xin lỗi bạn, kết nối tới Trợ lý AI tạm thời bị gián đoạn. Bạn vui lòng thử lại sau ít giây nhé!',
-          model: 'TinPath AI Assistant',
+          text: fallbackText,
+          model: 'TinPath AI Tutor (Nội dung chuẩn GDPT 2018)',
         },
       ]);
     } finally {
       setIsAskingAi(false);
     }
   };
+
+  function getTutorSmartFallback(qText: string, studentName?: string): string {
+    const q = qText.toLowerCase().trim();
+
+    if (q.includes('chào') || q.includes('hello') || q.includes('hi') || q === 'alo' || q === '?') {
+      return `Chào ${studentName || 'bạn'}! 👋 Mình là **Gia sư AI Tin học TinPath**.
+
+Rất vui được đồng hành cùng bạn ôn luyện môn Tin học THPT theo chương trình **GDPT 2018** (Lớp 10, 11 và 12). 
+
+Bạn đang muốn củng cố kiến thức về phần nào:
+- 🐍 **Lập trình Python:** Cú pháp, kiểu dữ liệu danh sách/từ điển, hàm, xử lý tệp, thuật toán tìm kiếm và sắp xếp.
+- 🗄️ **Cơ sở dữ liệu & SQL:** Thiết kế CSDL quan hệ, khóa chính/khóa ngoại, các câu lệnh SELECT, WHERE, GROUP BY, HAVING.
+- 🌐 **Mạng máy tính & Internet:** Giao thức TCP/IP, địa chỉ IP/MAC, phân biệt Switch và Router.
+- 💡 **Kỹ năng giải bài thi tốt nghiệp:** Bẫy trắc nghiệm 4 lựa chọn (Phần 1) và trắc nghiệm Đúng/Sai lũy tiến (Phần 2).
+
+Hãy đặt câu hỏi hoặc gửi câu hỏi trắc nghiệm bạn đang thắc mắc nhé! 🚀`;
+    }
+
+    if (q.includes('switch') && q.includes('router')) {
+      return `### 🌐 Phân biệt Switch và Router (Tin học 12 - GDPT 2018):
+- **Switch (Bộ chuyển mạch):**
+  - Làm việc ở **Tầng 2 (Data Link - Tầng liên kết dữ liệu)**.
+  - Sử dụng **Địa chỉ MAC** vật lý để chuyển tiếp các khung dữ liệu (frames).
+  - Hoạt động trong phạm vi **một mạng nội bộ (LAN)** duy nhất.
+- **Router (Bộ định tuyến):**
+  - Làm việc ở **Tầng 3 (Network - Tầng mạng)**.
+  - Sử dụng **Địa chỉ IP** logic để định tuyến các gói tin (packets).
+  - Kết nối **hai hay nhiều mạng độc lập** với nhau (ví dụ: kết nối LAN trường học ra Internet).
+
+> **💡 Mẹo trắc nghiệm:** Khi đề hỏi *"thiết bị kết nối các máy tính trong cùng một phòng máy LAN"* ➡️ Chọn **Switch**. Khi hỏi *"thiết bị tìm đường đi tối ưu giữa các mạng khác nhau"* ➡️ Chọn **Router**.`;
+    }
+
+    if (q.includes('where') && q.includes('having')) {
+      return `### 🗄️ Phân biệt WHERE và HAVING trong SQL:
+1. **Mệnh đề WHERE:**
+   - Dùng để lọc **từng bản ghi (dòng đơn lẻ)** trước khi thực hiện nhóm dữ liệu.
+   - **KHÔNG ĐƯỢC** sử dụng các hàm gộp (hàm tổng hợp) như \`COUNT()\`, \`SUM()\`, \`AVG()\`, \`MAX()\`, \`MIN()\`.
+2. **Mệnh đề HAVING:**
+   - Dùng để lọc **kết quả của các nhóm** sau khi đã gom nhóm bằng \`GROUP BY\`.
+   - **ĐƯỢC PHÉP** sử dụng các hàm tổng hợp để đặt điều kiện (ví dụ: \`HAVING COUNT(*) > 5\`).
+
+> **💡 Ví dụ:** 
+\`\`\`sql
+SELECT Lop, COUNT(*) AS SiSo
+FROM HOCSINH
+WHERE DiemToan >= 8.0     -- Lọc học sinh giỏi toán trước
+GROUP BY Lop
+HAVING COUNT(*) >= 10;    -- Lọc các nhóm lớp có từ 10 bạn giỏi toán trở lên
+\`\`\``;
+    }
+
+    if (q.includes('nhị phân') || q.includes('binary search')) {
+      return `### 🔍 Thuật toán Tìm kiếm Nhị phân (Binary Search):
+1. **Điều kiện tiên quyết:** Dãy số/danh sách **BẮT BUỘC ĐÃ ĐƯỢC SẮP XẾP** theo thứ tự tăng dần hoặc giảm dần.
+2. **Ý tưởng:** Ở mỗi bước, so sánh phần tử cần tìm với phần tử ở giữa danh sách:
+   - Nếu bằng ➡️ Tìm thấy.
+   - Nếu nhỏ hơn ➡️ Thu hẹp phạm vi tìm kiếm sang nửa bên trái.
+   - Nếu lớn hơn ➡️ Thu hẹp phạm vi tìm kiếm sang nửa bên phải.
+3. **Độ phức tạp thời gian:** Trong trường hợp xấu nhất là **$O(\\log_2 n)$**, nhanh hơn rất nhiều so với Tìm kiếm tuần tự ($O(n)$).`;
+    }
+
+    if (q.includes('ai') || q.includes('trí tuệ nhân tạo') || q.includes('ani') || q.includes('agi')) {
+      return `### 🤖 Phân loại Trí tuệ Nhân tạo (Tin học 12 - Chủ đề A):
+1. **Trí tuệ nhân tạo hẹp (ANI - Artificial Narrow Intelligence):**
+   - Được huấn luyện để thực hiện xuất sắc **một nhiệm vụ duy nhất** (ví dụ: AlphaGo đánh cờ, FaceID nhận diện khuôn mặt, chatbot trả lời tự động).
+   - *Tất cả các hệ thống AI đang tồn tại hiện nay đều là AI hẹp!*
+2. **Trí tuệ nhân tạo tổng quát (AGI - Artificial General Intelligence):**
+   - Có năng lực học hỏi, nhận thức và tư duy toàn diện như bộ não con người trong mọi hoàn cảnh.
+   - Hiện vẫn đang trong giai đoạn nghiên cứu khoa học, chưa tồn tại trên thực tế.`;
+    }
+
+    return `### 📘 Phân tích câu hỏi: "${qText}"
+Dựa theo chương trình Tin học GDPT 2018 (SGK Kết nối tri thức & Cánh diều):
+
+1. **Khái niệm trọng tâm:** Kiến thức này gắn liền với chuẩn đầu ra năng lực của Bộ GD&ĐT. Bạn cần nắm chắc các định nghĩa nhận biết và từ khóa kỹ thuật trước khi làm bài tập vận dụng.
+2. **Nguyên lý hoạt động:** Chú ý liên hệ giữa lý thuyết và các tình huống ứng dụng thực tế trên máy tính (hệ điều hành, mạng máy tính, hệ quản trị CSDL MySQL hoặc cú pháp ngôn ngữ lập trình Python).
+3. **Lời khuyên ôn luyện:** Bạn có thể chọn các câu hỏi gợi ý bên phải hoặc gửi một câu hỏi trắc nghiệm cụ thể để mình hướng dẫn giải chi tiết nhé!`;
+  }
 
   // Clear chat history
   const handleClearChat = () => {
