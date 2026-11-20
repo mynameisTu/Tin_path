@@ -75,7 +75,7 @@ export async function getProfile(userId: string): Promise<UserProfile | null> {
     .from('profiles')
     .select('*')
     .eq('id', effectiveUserId)
-    .single();
+    .maybeSingle();
 
   const mapped: UserProfile = data ? mapDbProfileToLocal(data) : baseProfile;
 

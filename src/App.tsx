@@ -1,22 +1,24 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Suspense } from 'react';
 import { Loader2 } from 'lucide-react';
 import { Navbar } from './components/layout/Navbar';
 import { Footer } from './components/layout/Footer';
 import { StudentDashboard } from './components/student/StudentDashboard';
-import { TopicLearning } from './components/student/TopicLearning';
-import { ExamPractice } from './components/student/ExamPractice';
-import { ExamTakingModal } from './components/student/ExamTakingModal';
-import { PersonalizedAI } from './components/student/PersonalizedAI';
-import { Leaderboard } from './components/student/Leaderboard';
-import { UserProfileView } from './components/student/UserProfileView';
-import { TeacherDashboard } from './components/teacher/TeacherDashboard';
-import { GoogleToolsHub } from './components/google/GoogleToolsHub';
-import { CodeStudioHub } from './components/code_studio/CodeStudioHub';
 import { AuthModal } from './components/auth/AuthModal';
 import { RegisterModal } from './components/auth/RegisterModal';
 import { LoginPage } from './components/auth/LoginPage';
 import { LandingPage } from './components/landing/LandingPage';
 import { FloatingAiBot } from './components/common/FloatingAiBot';
+
+// Code splitting các tab nặng để tối ưu tốc độ tải trang ban đầu
+const TopicLearning = React.lazy(() => import('./components/student/TopicLearning').then(m => ({ default: m.TopicLearning })));
+const ExamPractice = React.lazy(() => import('./components/student/ExamPractice').then(m => ({ default: m.ExamPractice })));
+const ExamTakingModal = React.lazy(() => import('./components/student/ExamTakingModal').then(m => ({ default: m.ExamTakingModal })));
+const PersonalizedAI = React.lazy(() => import('./components/student/PersonalizedAI').then(m => ({ default: m.PersonalizedAI })));
+const Leaderboard = React.lazy(() => import('./components/student/Leaderboard').then(m => ({ default: m.Leaderboard })));
+const UserProfileView = React.lazy(() => import('./components/student/UserProfileView').then(m => ({ default: m.UserProfileView })));
+const TeacherDashboard = React.lazy(() => import('./components/teacher/TeacherDashboard').then(m => ({ default: m.TeacherDashboard })));
+const GoogleToolsHub = React.lazy(() => import('./components/google/GoogleToolsHub').then(m => ({ default: m.GoogleToolsHub })));
+const CodeStudioHub = React.lazy(() => import('./components/code_studio/CodeStudioHub').then(m => ({ default: m.CodeStudioHub })));
 
 import {
   UserProfile,
@@ -658,8 +660,16 @@ export default function App() {
 
       {/* Main View Area: Tràn rộng sang 2 bên trái phải, đồng bộ mép với navbar */}
       <main className="flex-1 w-full mx-auto px-3 sm:px-4 md:px-6 lg:px-6 xl:px-8 pt-4 sm:pt-6 pb-14 sm:pb-16">
-        {/* STUDENT VIEWS */}
-        {(user.role === 'student' || !user.role) && (
+        <Suspense
+          fallback={
+            <div className="flex flex-col items-center justify-center py-24 text-gray-500">
+              <Loader2 className="w-8 h-8 animate-spin text-blue-600 mb-3" />
+              <span className="text-sm font-medium">Đang tải phân hệ...</span>
+            </div>
+          }
+        >
+          {/* STUDENT VIEWS */}
+          {(user.role === 'student' || !user.role) && (
           <>
             {currentTab === 'home' && (
               <StudentDashboard
@@ -752,6 +762,7 @@ export default function App() {
             }}
           />
         )}
+        </Suspense>
       </main>
 
       <Footer
@@ -763,18 +774,20 @@ export default function App() {
 
       {/* 1. Exam Taking Workspace */}
       {activeExam && (
-        <ExamTakingModal
-          isOpen={Boolean(activeExam)}
-          onClose={() => {
-            setActiveExam(null);
-            setIsExamPracticeMode(false);
-          }}
-          exam={activeExam}
-          track={user.track}
-          onSubmitAttempt={handleSubmitAttempt}
-          userId={user.id}
-          isPracticeMode={isExamPracticeMode}
-        />
+        <Suspense fallback={null}>
+          <ExamTakingModal
+            isOpen={Boolean(activeExam)}
+            onClose={() => {
+              setActiveExam(null);
+              setIsExamPracticeMode(false);
+            }}
+            exam={activeExam}
+            track={user.track}
+            onSubmitAttempt={handleSubmitAttempt}
+            userId={user.id}
+            isPracticeMode={isExamPracticeMode}
+          />
+        </Suspense>
       )}
 
       {/* 2. Profile & Quảng Ngãi School Selection Modal */}
@@ -789,13 +802,17 @@ export default function App() {
       />
 
       {/* 3. Google Ecosystem Hub Modal */}
-      <GoogleToolsHub
-        isOpen={isGoogleHubOpen}
-        onClose={() => setIsGoogleHubOpen(false)}
-        user={user}
-        isLoggedIn={isGoogleLoggedIn}
-        onGoogleSignIn={handleGoogleSignIn}
-      />
+      {isGoogleHubOpen && (
+        <Suspense fallback={null}>
+          <GoogleToolsHub
+            isOpen={isGoogleHubOpen}
+            onClose={() => setIsGoogleHubOpen(false)}
+            user={user}
+            isLoggedIn={isGoogleLoggedIn}
+            onGoogleSignIn={handleGoogleSignIn}
+          />
+        </Suspense>
+      )}
 
       {/* 4. Privacy & Terms Modal */}
       {isPrivacyOpen && (

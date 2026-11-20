@@ -117,6 +117,8 @@ export const Navbar: React.FC<NavbarProps> = ({
               <img
                 src="/images/logo/tinpath_logo.png"
                 alt="TinPath Logo"
+                width={40}
+                height={40}
                 className="w-[36px] h-[36px] sm:w-[40px] sm:h-[40px] object-contain drop-shadow-sm shrink-0"
               />
 

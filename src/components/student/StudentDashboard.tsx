@@ -174,7 +174,7 @@ export const StudentDashboard: React.FC<StudentDashboardProps> = ({
               >
                 Xin chào, {user.displayName}
               </button>
-              <span className="text-[12px] px-2 py-0.5 rounded bg-blue-100 text-[#2878C8] dark:bg-blue-900/40 dark:text-blue-300 font-semibold">
+              <span className="text-[12px] px-2 py-0.5 rounded bg-blue-100 text-[#165696] dark:bg-blue-900/40 dark:text-blue-300 font-bold">
                 {user.schoolName}
               </span>
             </div>
@@ -191,7 +191,7 @@ export const StudentDashboard: React.FC<StudentDashboardProps> = ({
             <div>
               <span className="text-[13.5px] sm:text-sm text-gray-500 dark:text-gray-400 block font-medium">Mục tiêu điểm</span>
               <div className="text-xl font-bold text-[#1d4ed8] dark:text-[#3b82f6] tabular-nums mt-0.5">
-                {(user.targetScore ?? 8.5).toFixed(1)} <span className="text-gray-400 dark:text-gray-500 font-normal text-sm">/ 10</span>
+                {(user.targetScore ?? 8.5).toFixed(1)} <span className="text-gray-600 dark:text-gray-400 font-normal text-sm">/ 10</span>
               </div>
             </div>
 
@@ -214,7 +214,7 @@ export const StudentDashboard: React.FC<StudentDashboardProps> = ({
 
             <div>
               <span className="text-[13.5px] sm:text-sm text-gray-500 dark:text-gray-400 block font-medium">Tiến độ mục tiêu</span>
-              <div className="text-xl font-bold text-[#059669] dark:text-[#10b981] tabular-nums mt-0.5">
+              <div className="text-xl font-bold text-[#047857] dark:text-[#10b981] tabular-nums mt-0.5">
                 {progressPercent}%
               </div>
             </div>
@@ -591,7 +591,7 @@ export const StudentDashboard: React.FC<StudentDashboardProps> = ({
             {/* Chủ đề đang học */}
             <div className="p-3.5 sm:p-4 rounded-lg bg-blue-50/70 dark:bg-blue-950/20 border border-blue-100 dark:border-blue-900/40">
               <div className="flex items-center justify-between">
-                <span className="text-[12px] text-[#2878C8] font-bold">
+                <span className="text-[12px] text-[#165696] dark:text-blue-300 font-bold">
                   {continueTopic.code} · Lớp {continueTopic.grade}
                 </span>
                 <span className="text-[11.5px] text-gray-500 dark:text-gray-400 font-medium">
@@ -699,7 +699,7 @@ export const StudentDashboard: React.FC<StudentDashboardProps> = ({
                     <span className="font-bold text-gray-900 dark:text-white text-[13px] truncate block mt-0.5">
                       {lastAttempt.examTitle}
                     </span>
-                    <span className="text-[12px] text-[#2878C8] font-bold">
+                    <span className="text-[12px] text-[#165696] dark:text-blue-400 font-bold">
                       Điểm: {lastAttempt.totalScore.toFixed(2)}đ
                     </span>
                   </div>
@@ -735,7 +735,7 @@ export const StudentDashboard: React.FC<StudentDashboardProps> = ({
                   <div className="mt-2.5 pt-2 border-t border-gray-200/50 dark:border-[#333] flex justify-end">
                     <button
                       onClick={item.onClick}
-                      className="text-[12px] text-[#2878C8] hover:text-[#2068B0] font-bold flex items-center gap-1"
+                      className="text-[12px] text-[#165696] hover:text-[#103e6e] dark:text-blue-400 dark:hover:text-blue-300 font-bold flex items-center gap-1"
                     >
                       {item.actionText} <ArrowRight className="w-3 h-3" />
                     </button>
@@ -887,7 +887,7 @@ export const StudentDashboard: React.FC<StudentDashboardProps> = ({
                 className="p-2.5 hover:bg-blue-50/50 dark:hover:bg-[#252525] transition-colors cursor-pointer group"
               >
                 <p className="text-[12.5px] leading-snug">
-                  <span className="font-bold text-emerald-600 dark:text-emerald-400 group-hover:underline">
+                  <span className="font-bold text-emerald-700 dark:text-emerald-400 group-hover:underline">
                     vancongloc1234
                   </span>{' '}
                   <span className="text-gray-500">→</span>{' '}
@@ -945,7 +945,7 @@ export const StudentDashboard: React.FC<StudentDashboardProps> = ({
             </div>
 
             <div className="px-3.5 py-2 bg-gray-50 dark:bg-[#252525] border-t border-gray-100 dark:border-[#2C2C2C] flex items-center justify-between text-[11.5px] font-semibold">
-              <span className="text-gray-400 font-normal">Cập nhật trực tiếp</span>
+              <span className="text-gray-600 dark:text-gray-400 font-medium">Cập nhật trực tiếp</span>
               <button
                 onClick={() =>
                   setCommentModalExam({
