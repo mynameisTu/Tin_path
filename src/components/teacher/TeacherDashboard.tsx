@@ -127,16 +127,16 @@ export const TeacherDashboard: React.FC<TeacherDashboardProps> = ({
             </p>
           </div>
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 sm:gap-3 flex-wrap sm:flex-nowrap">
             <button
               onClick={() => setShowCreateClass(true)}
-              className="px-4 py-2 rounded-lg bg-[#2878C8] text-white text-sm font-semibold hover:bg-[#2068B0] transition-colors flex items-center gap-1.5 shadow-xs"
+              className="px-3.5 sm:px-4 py-2 rounded-lg bg-[#2878C8] text-white text-xs sm:text-sm font-semibold hover:bg-[#2068B0] transition-colors flex items-center gap-1.5 shadow-xs shrink-0"
             >
               <Plus className="w-4 h-4" /> Tạo lớp học mới
             </button>
             <button
               onClick={() => setShowCreateAssign(true)}
-              className="px-4 py-2 rounded-lg bg-[#202020] dark:bg-white text-white dark:text-[#202020] text-sm font-semibold hover:opacity-90 transition-opacity flex items-center gap-1.5 shadow-xs"
+              className="px-3.5 sm:px-4 py-2 rounded-lg bg-[#202020] dark:bg-white text-white dark:text-[#202020] text-xs sm:text-sm font-semibold hover:opacity-90 transition-opacity flex items-center gap-1.5 shadow-xs shrink-0"
             >
               <FileText className="w-4 h-4" /> Giao bài tập
             </button>
@@ -144,7 +144,7 @@ export const TeacherDashboard: React.FC<TeacherDashboardProps> = ({
         </div>
 
         {/* Section Navigation Tabs */}
-        <div className="mt-5 pt-4 border-t border-gray-100 dark:border-[#2C2C2C] flex flex-wrap gap-2 text-sm">
+        <div className="mt-5 pt-4 border-t border-gray-100 dark:border-[#2C2C2C] flex overflow-x-auto scrollbar-none flex-nowrap sm:flex-wrap gap-2 text-sm pb-1">
           {[
             { id: 'overview', label: '1. Tổng quan' },
             { id: 'classes', label: '2. Lớp học' },
@@ -156,7 +156,7 @@ export const TeacherDashboard: React.FC<TeacherDashboardProps> = ({
             <button
               key={sec.id}
               onClick={() => setActiveSection(sec.id as any)}
-              className={`px-4 py-2 rounded-lg transition-colors font-semibold ${
+              className={`px-3.5 sm:px-4 py-2 rounded-lg transition-colors font-semibold whitespace-nowrap shrink-0 text-xs sm:text-sm ${
                 activeSection === sec.id
                   ? 'bg-blue-50 text-[#2878C8] font-bold dark:bg-blue-950 dark:text-blue-300 shadow-xs'
                   : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'

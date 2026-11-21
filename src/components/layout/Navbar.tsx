@@ -98,8 +98,8 @@ export const Navbar: React.FC<NavbarProps> = ({
 
   return (
     <>
-      <header className="sticky top-0 z-40 w-full bg-[#212529] text-white border-b border-[#2d3238] shadow-sm select-none h-[54px]">
-        <div className="w-full h-full mx-auto px-3 sm:px-4 md:px-6 flex items-center justify-between">
+      <header className="sticky top-0 z-40 w-full bg-[#212529] text-white border-b border-[#2d3238] shadow-sm select-none h-auto lg:h-[54px]">
+        <div className="w-full h-[50px] sm:h-[54px] mx-auto px-3 sm:px-4 md:px-6 flex items-center justify-between">
           {/* LEFT ZONE: VNOI Exact Geometric Logo & Online Judge Branding */}
           <div className="flex items-center gap-1 sm:gap-2 h-full shrink-0">
             <button
@@ -376,17 +376,17 @@ export const Navbar: React.FC<NavbarProps> = ({
         </div>
 
         {/* Mobile secondary tab strip */}
-        <div className="lg:hidden flex overflow-x-auto border-t border-[#2D3238] bg-[#1E2226] px-2 py-1 gap-1 text-xs">
+        <div className="lg:hidden flex overflow-x-auto border-t border-[#2D3238] bg-[#1E2226] px-2.5 py-1.5 gap-1.5 text-xs scrollbar-none [scrollbar-width:none] [-ms-overflow-style:none]">
           {navLinks.map((item, idx) => {
             const isActive = currentTab === item.id;
             return (
               <button
                 key={`mob-${item.id}-${idx}`}
                 onClick={() => onSelectTab(item.id)}
-                className={`px-3 py-1 rounded whitespace-nowrap text-[12px] font-semibold uppercase ${
+                className={`px-3 py-1.5 rounded min-h-[34px] flex items-center whitespace-nowrap text-[12px] font-semibold uppercase active:scale-95 transition-all ${
                   isActive
-                    ? 'bg-[#2878C8] text-white font-bold'
-                    : 'text-gray-300 hover:text-white'
+                    ? 'bg-[#2878C8] text-white font-bold shadow-xs'
+                    : 'text-gray-300 hover:text-white hover:bg-white/5'
                 }`}
               >
                 {item.label}
@@ -395,10 +395,10 @@ export const Navbar: React.FC<NavbarProps> = ({
           })}
           <button
             onClick={() => onSelectTab('code_studio')}
-            className={`px-3 py-1 rounded whitespace-nowrap text-[12px] font-semibold uppercase flex items-center gap-1 ${
+            className={`px-3 py-1.5 rounded min-h-[34px] whitespace-nowrap text-[12px] font-semibold uppercase flex items-center gap-1 active:scale-95 transition-all ${
               currentTab === 'code_studio'
-                ? 'bg-emerald-600 text-white font-bold'
-                : 'text-emerald-400 hover:text-white'
+                ? 'bg-emerald-600 text-white font-bold shadow-xs'
+                : 'text-emerald-400 hover:text-white hover:bg-white/5'
             }`}
           >
             <Code2 className="w-3.5 h-3.5 text-emerald-400" /> Code Online

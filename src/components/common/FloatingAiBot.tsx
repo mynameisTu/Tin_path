@@ -266,7 +266,7 @@ Dựa theo chương trình Tin học GDPT 2018 (SGK Kết nối tri thức & Cá
               setIsMinimized(false);
             }
           }}
-          className="fixed bottom-5 right-5 z-50 flex items-center gap-2.5 px-3.5 py-2 sm:px-4 sm:py-2.5 bg-white dark:bg-[#1E1E1E] text-gray-800 dark:text-gray-100 border-2 border-emerald-500/40 hover:border-emerald-500 rounded-full shadow-xl hover:shadow-2xl transition-all duration-300 group cursor-pointer active:scale-95 select-none"
+          className="fixed bottom-3 right-3 sm:bottom-5 sm:right-5 z-50 flex items-center gap-2.5 px-3.5 py-2 sm:px-4 sm:py-2.5 bg-white dark:bg-[#1E1E1E] text-gray-800 dark:text-gray-100 border-2 border-emerald-500/40 hover:border-emerald-500 rounded-full shadow-xl hover:shadow-2xl transition-all duration-300 group cursor-pointer active:scale-95 select-none"
           title="Mở Bot Tin Học TQT - Trợ lý Gia sư AI"
         >
           {/* Bot icon circle badge with soft mint background */}
@@ -290,10 +290,10 @@ Dựa theo chương trình Tin học GDPT 2018 (SGK Kết nối tri thức & Cá
       {/* 2. EXPANDED / MINIMIZED FLOATING CHAT WINDOW */}
       {isOpen && (
         <div
-          className={`fixed bottom-5 right-5 z-50 bg-white dark:bg-[#1A1A1A] border border-gray-200 dark:border-[#333] rounded-2xl shadow-2xl overflow-hidden transition-all duration-300 flex flex-col ${
+          className={`fixed bottom-3 right-3 sm:bottom-5 sm:right-5 z-50 bg-white dark:bg-[#1A1A1A] border border-gray-200 dark:border-[#333] rounded-2xl shadow-2xl overflow-hidden transition-all duration-300 flex flex-col ${
             isMinimized
-              ? 'w-72 h-14'
-              : 'w-[94vw] sm:w-[440px] md:w-[480px] h-[600px] max-h-[85vh]'
+              ? 'w-[calc(100vw-24px)] sm:w-72 h-14'
+              : 'w-[calc(100vw-24px)] sm:w-[440px] md:w-[480px] h-[540px] sm:h-[600px] max-h-[85vh]'
           }`}
         >
           {/* Header */}

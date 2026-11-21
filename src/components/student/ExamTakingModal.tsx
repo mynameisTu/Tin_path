@@ -17,6 +17,7 @@ import {
   Shield,
   Edit3,
   FileQuestion,
+  LayoutGrid,
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import {
@@ -67,6 +68,7 @@ export const ExamTakingModal: React.FC<ExamTakingModalProps> = ({
   const [completedAttempt, setCompletedAttempt] = useState<ExamAttempt | null>(null);
   const [showConfirmSubmit, setShowConfirmSubmit] = useState(false);
   const [isCommentModalOpen, setIsCommentModalOpen] = useState(false);
+  const [isMobilePaletteOpen, setIsMobilePaletteOpen] = useState(false);
   const currentUser = storageService.getUserProfile();
 
   // Reset states whenever modal opens or exam changes
@@ -558,8 +560,8 @@ export const ExamTakingModal: React.FC<ExamTakingModalProps> = ({
       )}
 
       {/* Top Exam Action Bar */}
-      <div className="bg-[#202020] text-white px-4 py-3 border-b border-[#333] flex items-center justify-between shrink-0 shadow-md">
-        <div className="flex items-center gap-3">
+      <div className="bg-[#202020] text-white px-3 sm:px-4 py-2 sm:py-3 border-b border-[#333] flex items-center justify-between shrink-0 shadow-md gap-2">
+        <div className="flex items-center gap-2 sm:gap-3 min-w-0">
           <button
             onClick={() => {
               if (!isSubmitted) {
@@ -570,48 +572,61 @@ export const ExamTakingModal: React.FC<ExamTakingModalProps> = ({
                 handleCloseExam();
               }
             }}
-            className="p-1 rounded text-gray-400 hover:text-white hover:bg-[#333] transition-colors"
+            className="p-1.5 rounded-lg text-gray-400 hover:text-white hover:bg-[#333] transition-colors shrink-0"
+            title="Thoát bài thi"
           >
             <X className="w-5 h-5" />
           </button>
-          <div className="flex-1 min-w-0 pr-4">
-            <h3 className="font-bold text-base sm:text-lg truncate">{getExamDisplayCode(exam)}</h3>
-            <span className="text-xs text-gray-400">
-              Định hướng: <strong>{track === 'CS' ? 'Khoa học máy tính' : 'Tin học ứng dụng'}</strong> · {allQuestions.length} câu hỏi
+          <div className="min-w-0 pr-1">
+            <h3 className="font-bold text-sm sm:text-base lg:text-lg truncate">{getExamDisplayCode(exam)}</h3>
+            <span className="text-[11px] sm:text-xs text-gray-400 truncate block">
+              {track === 'CS' ? 'KHMT' : 'THUD'} · {allQuestions.length} câu hỏi
             </span>
           </div>
         </div>
 
-        {/* Countdown Timer */}
-        <div className="flex items-center gap-4">
+        {/* Action Controls & Countdown Timer */}
+        <div className="flex items-center gap-2 sm:gap-3 shrink-0">
+          {/* Mobile Question Palette Toggle */}
+          <button
+            onClick={() => setIsMobilePaletteOpen(true)}
+            className="lg:hidden flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-[#2A2A2A] hover:bg-[#333] text-gray-200 border border-[#444] text-xs font-semibold active:scale-95 transition-transform"
+            title="Mở bảng câu hỏi"
+          >
+            <LayoutGrid className="w-4 h-4 text-[#38BDF8]" />
+            <span className="tabular-nums">
+              {currentQuestionIndex + 1}/{allQuestions.length}
+            </span>
+          </button>
+
           {!isSubmitted ? (
             <>
               <div
-                className={`flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-sm font-bold ${
+                className={`flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3.5 py-1.5 rounded-lg text-xs sm:text-sm font-bold ${
                   secondsRemaining < 300
                     ? 'bg-red-950/80 text-red-400 border border-red-800 animate-pulse'
                     : 'bg-[#2A2A2A] text-amber-400 border border-[#444]'
                 }`}
               >
-                <Clock className="w-4 h-4" />
-                <span className="tabular-nums text-sm font-bold">{formatTime(secondsRemaining)}</span>
+                <Clock className="w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0" />
+                <span className="tabular-nums text-xs sm:text-sm font-bold">{formatTime(secondsRemaining)}</span>
               </div>
 
               <button
                 onClick={() => setShowConfirmSubmit(true)}
-                className="px-5 py-2 rounded-lg bg-[#22A06B] text-white text-sm font-bold hover:bg-[#1B8055] transition-colors shadow"
+                className="px-3 sm:px-5 py-1.5 sm:py-2 rounded-lg bg-[#22A06B] text-white text-xs sm:text-sm font-bold hover:bg-[#1B8055] transition-colors shadow shrink-0 active:scale-95"
               >
                 Nộp bài
               </button>
             </>
           ) : (
-            <div className="flex items-center gap-3">
-              <span className="text-sm px-3.5 py-1.5 rounded-lg bg-[#22A06B] text-white font-bold tabular-nums">
-                Đã nộp bài · {completedAttempt?.totalScore.toFixed(2)} / 10 điểm
+            <div className="flex items-center gap-2 sm:gap-3">
+              <span className="text-xs sm:text-sm px-2.5 sm:px-3.5 py-1.5 rounded-lg bg-[#22A06B] text-white font-bold tabular-nums">
+                {completedAttempt?.totalScore.toFixed(2)} / 10đ
               </span>
               <button
                 onClick={handleCloseExam}
-                className="px-4 py-1.5 rounded-lg bg-[#2878C8] text-white text-sm font-bold hover:bg-[#2068B0]"
+                className="px-3 sm:px-4 py-1.5 rounded-lg bg-[#2878C8] text-white text-xs sm:text-sm font-bold hover:bg-[#2068B0] active:scale-95"
               >
                 Đóng
               </button>
@@ -850,8 +865,8 @@ export const ExamTakingModal: React.FC<ExamTakingModalProps> = ({
           </div>
         </div>
 
-        {/* Right Side: Question Navigation Palette (VNOI Style) */}
-        <div className="w-72 border-l border-gray-200 dark:border-[#333] bg-white dark:bg-[#1E1E1E] p-5 flex flex-col justify-between shrink-0 overflow-y-auto">
+        {/* Right Side: Question Navigation Palette (VNOI Style - Desktop lg+) */}
+        <div className="hidden lg:flex lg:w-72 border-l border-gray-200 dark:border-[#333] bg-white dark:bg-[#1E1E1E] p-5 flex-col justify-between shrink-0 overflow-y-auto">
           <div>
             <h4 className="text-sm font-bold text-gray-900 dark:text-white uppercase tracking-wider mb-3">
               Bảng câu hỏi ({allQuestions.length})
@@ -949,6 +964,120 @@ export const ExamTakingModal: React.FC<ExamTakingModalProps> = ({
           </div>
         </div>
       </div>
+
+      {/* Mobile Question Palette Modal / Drawer */}
+      {isMobilePaletteOpen && (
+        <div className="lg:hidden fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex flex-col justify-end">
+          <div 
+            className="w-full max-h-[82vh] bg-white dark:bg-[#1E1E1E] rounded-t-2xl border-t border-gray-200 dark:border-[#333] p-5 flex flex-col overflow-hidden shadow-2xl animate-in slide-in-from-bottom duration-200"
+          >
+            {/* Header */}
+            <div className="flex items-center justify-between pb-3 border-b border-gray-200 dark:border-[#333] shrink-0">
+              <div className="flex items-center gap-2">
+                <LayoutGrid className="w-5 h-5 text-[#2878C8]" />
+                <h4 className="text-base font-bold text-gray-900 dark:text-white">
+                  Bảng câu hỏi ({allQuestions.length} câu)
+                </h4>
+              </div>
+              <button
+                onClick={() => setIsMobilePaletteOpen(false)}
+                className="p-1.5 rounded-lg text-gray-400 hover:text-white hover:bg-gray-100 dark:hover:bg-[#2A2A2A] transition-colors"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* Scrollable Palette grid */}
+            <div className="overflow-y-auto py-4 space-y-4 flex-1">
+              {/* Part 1 */}
+              <div>
+                <span className="text-xs font-semibold text-gray-500 block mb-2">
+                  Phần I: 24 câu (0.25đ/câu)
+                </span>
+                <div className="grid grid-cols-6 sm:grid-cols-8 gap-2">
+                  {exam.part1Questions.map((q, idx) => {
+                    const isAnswered = Boolean(answers[q.id]?.selectedOption);
+                    const isFlagged = Boolean(flaggedQuestions[q.id]);
+                    const isCurrent = currentQuestionIndex === idx;
+
+                    let bg = 'bg-gray-100 dark:bg-[#2A2A2A] text-gray-700 dark:text-gray-300';
+                    if (isAnswered) bg = 'bg-blue-100 text-[#2878C8] font-bold dark:bg-blue-950 dark:text-blue-300';
+                    if (isFlagged) bg = 'bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-300';
+                    if (isCurrent) bg = 'bg-[#2878C8] text-white font-bold ring-2 ring-[#2878C8]/40';
+
+                    return (
+                      <button
+                        key={`mob-p1-${q.id}`}
+                        onClick={() => {
+                          setCurrentQuestionIndex(idx);
+                          setIsMobilePaletteOpen(false);
+                        }}
+                        className={`h-9 rounded-lg text-sm font-semibold tabular-nums flex items-center justify-center active:scale-95 transition-all ${bg}`}
+                      >
+                        {idx + 1}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* Part 2 */}
+              <div>
+                <span className="text-xs font-semibold text-gray-500 block mb-2">
+                  Phần II: 4 câu đúng/sai (1.0đ/câu)
+                </span>
+                <div className="grid grid-cols-4 sm:grid-cols-6 gap-2">
+                  {part2Filtered.map((q, idx) => {
+                    const globalIdx = exam.part1Questions.length + idx;
+                    const selections = answers[q.id]?.trueFalseSelections || {};
+                    const answeredCount = Object.keys(selections).length;
+                    const isCurrent = currentQuestionIndex === globalIdx;
+
+                    let bg = 'bg-gray-100 dark:bg-[#2A2A2A] text-gray-700 dark:text-gray-300';
+                    if (answeredCount > 0) bg = 'bg-blue-100 text-[#2878C8] font-bold dark:bg-blue-950 dark:text-blue-300';
+                    if (isCurrent) bg = 'bg-[#2878C8] text-white font-bold ring-2 ring-[#2878C8]/40';
+
+                    return (
+                      <button
+                        key={`mob-p2-${q.id}`}
+                        onClick={() => {
+                          setCurrentQuestionIndex(globalIdx);
+                          setIsMobilePaletteOpen(false);
+                        }}
+                        className={`h-9 rounded-lg text-sm font-semibold tabular-nums flex items-center justify-center active:scale-95 transition-all ${bg}`}
+                      >
+                        {idx + 1}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            </div>
+
+            {/* Footer submit */}
+            <div className="pt-3 border-t border-gray-200 dark:border-[#333] shrink-0">
+              {!isSubmitted ? (
+                <button
+                  onClick={() => {
+                    setIsMobilePaletteOpen(false);
+                    setShowConfirmSubmit(true);
+                  }}
+                  className="w-full py-3 rounded-xl bg-[#22A06B] text-white text-sm font-bold active:scale-[0.98] transition-transform"
+                >
+                  Nộp bài & Chấm điểm
+                </button>
+              ) : (
+                <button
+                  onClick={() => setIsMobilePaletteOpen(false)}
+                  className="w-full py-2.5 rounded-xl bg-gray-200 dark:bg-[#333] text-gray-800 dark:text-white text-sm font-bold"
+                >
+                  Đóng bảng câu hỏi
+                </button>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Confirmation Modal */}
       {showConfirmSubmit && (

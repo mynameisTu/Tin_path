@@ -217,53 +217,53 @@ export const ExamPractice: React.FC<ExamPracticeProps> = ({
             </p>
           </div>
 
-          <div className="flex items-center gap-1.5 bg-gray-100 dark:bg-[#252525] p-1.5 rounded-lg flex-wrap">
+          <div className="grid grid-cols-2 sm:flex sm:items-center gap-1.5 bg-gray-100 dark:bg-[#252525] p-1.5 rounded-lg w-full sm:w-auto">
             <button
               onClick={() => setActiveTab('exams')}
-              className={`px-3.5 py-2 rounded-md text-xs sm:text-sm font-semibold transition-colors flex items-center gap-2 ${
+              className={`px-3 py-2 rounded-md text-xs sm:text-sm font-semibold transition-colors flex items-center justify-center sm:justify-start gap-1.5 sm:gap-2 ${
                 activeTab === 'exams'
-                  ? 'bg-white dark:bg-[#333] text-gray-900 dark:text-white shadow-xs'
+                  ? 'bg-white dark:bg-[#333] text-gray-900 dark:text-white shadow-xs font-bold'
                   : 'text-gray-600 dark:text-gray-400 hover:text-gray-900'
               }`}
             >
-              <BookOpen className="w-4 h-4 text-[#22A06B]" />
-              Ngân hàng đề thi
+              <BookOpen className="w-4 h-4 text-[#22A06B] shrink-0" />
+              <span className="truncate">Đề thi</span>
             </button>
 
             <button
               onClick={() => setActiveTab('submissions')}
-              className={`px-3.5 py-2 rounded-md text-xs sm:text-sm font-semibold transition-colors flex items-center gap-2 ${
+              className={`px-3 py-2 rounded-md text-xs sm:text-sm font-semibold transition-colors flex items-center justify-center sm:justify-start gap-1.5 sm:gap-2 ${
                 activeTab === 'submissions'
-                  ? 'bg-white dark:bg-[#333] text-gray-900 dark:text-white shadow-xs'
+                  ? 'bg-white dark:bg-[#333] text-gray-900 dark:text-white shadow-xs font-bold'
                   : 'text-gray-600 dark:text-gray-400 hover:text-gray-900'
               }`}
             >
-              <History className="w-4 h-4 text-[#2878C8]" />
-              Các bài nộp {examAttempts.length > 0 && `(${examAttempts.length})`}
+              <History className="w-4 h-4 text-[#2878C8] shrink-0" />
+              <span className="truncate">Bài nộp {examAttempts.length > 0 && `(${examAttempts.length})`}</span>
             </button>
 
             <button
               onClick={() => setActiveTab('daily')}
-              className={`px-3.5 py-2 rounded-md text-xs sm:text-sm font-semibold transition-colors flex items-center gap-2 ${
+              className={`px-3 py-2 rounded-md text-xs sm:text-sm font-semibold transition-colors flex items-center justify-center sm:justify-start gap-1.5 sm:gap-2 ${
                 activeTab === 'daily'
-                  ? 'bg-white dark:bg-[#333] text-gray-900 dark:text-white shadow-xs'
+                  ? 'bg-white dark:bg-[#333] text-gray-900 dark:text-white shadow-xs font-bold'
                   : 'text-gray-600 dark:text-gray-400 hover:text-gray-900'
               }`}
             >
-              <Flame className="w-4 h-4 text-[#FFC928]" />
-              Thử thách hằng ngày
+              <Flame className="w-4 h-4 text-[#FFC928] shrink-0" />
+              <span className="truncate">Thử thách</span>
             </button>
 
             <button
               onClick={() => setActiveTab('topic')}
-              className={`px-3.5 py-2 rounded-md text-xs sm:text-sm font-semibold transition-colors flex items-center gap-2 ${
+              className={`px-3 py-2 rounded-md text-xs sm:text-sm font-semibold transition-colors flex items-center justify-center sm:justify-start gap-1.5 sm:gap-2 ${
                 activeTab === 'topic'
-                  ? 'bg-white dark:bg-[#333] text-gray-900 dark:text-white shadow-xs'
+                  ? 'bg-white dark:bg-[#333] text-gray-900 dark:text-white shadow-xs font-bold'
                   : 'text-gray-600 dark:text-gray-400 hover:text-gray-900'
               }`}
             >
-              <Layers className="w-4 h-4 text-[#2878C8]" />
-              Luyện theo chủ đề
+              <Layers className="w-4 h-4 text-[#2878C8] shrink-0" />
+              <span className="truncate">Theo chủ đề</span>
             </button>
           </div>
         </div>
@@ -417,17 +417,17 @@ export const ExamPractice: React.FC<ExamPracticeProps> = ({
       {activeTab === 'exams' && (
         <div className="space-y-5">
           {/* Exam Filter strip */}
-          <div className="flex items-center justify-between text-sm text-gray-600 dark:text-gray-400 px-1 font-medium">
-            <span>DANH SÁCH ĐỀ THI ({filteredExams.length} đề chuẩn Bộ GD&ĐT)</span>
-            <div className="flex items-center gap-2">
-              <span className="text-xs text-gray-500 font-semibold">Lọc độ khó:</span>
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 text-xs sm:text-sm text-gray-600 dark:text-gray-400 px-1 font-medium">
+            <span className="font-bold tracking-tight">DANH SÁCH ĐỀ THI ({filteredExams.length} đề chuẩn Bộ GD&ĐT)</span>
+            <div className="flex items-center gap-1.5 overflow-x-auto scrollbar-none py-0.5">
+              <span className="text-xs text-gray-500 font-semibold shrink-0">Lọc độ khó:</span>
               {(['all', 'Thi thử tốt nghiệp', 'Cơ bản', 'Nâng cao'] as const).map((lvl) => (
                 <button
                   key={lvl}
                   onClick={() => setDifficultyFilter(lvl)}
-                  className={`px-3 py-1 rounded-md text-xs sm:text-sm transition-colors ${
+                  className={`px-2.5 sm:px-3 py-1 rounded-md text-xs sm:text-sm transition-colors whitespace-nowrap ${
                     difficultyFilter === lvl
-                      ? 'bg-[#2878C8] text-white font-bold'
+                      ? 'bg-[#2878C8] text-white font-bold shadow-xs'
                       : 'hover:bg-gray-200 dark:hover:bg-[#333]'
                   }`}
                 >

@@ -1471,15 +1471,15 @@ Dựa theo chương trình Tin học GDPT 2018 (SGK Kết nối tri thức & Cá
       {activeTab === 'tutor' && (
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Main Chat Area (2 columns on large screen) */}
-          <div className="lg:col-span-2 bg-white dark:bg-[#1A1A1A] rounded-2xl border border-gray-200 dark:border-[#2C2C2C] shadow-sm flex flex-col h-[680px]">
+          <div className="lg:col-span-2 bg-white dark:bg-[#1A1A1A] rounded-2xl border border-gray-200 dark:border-[#2C2C2C] shadow-sm flex flex-col h-[520px] sm:h-[600px] lg:h-[680px]">
             {/* Chat Header */}
-            <div className="p-4 sm:p-5 border-b border-gray-100 dark:border-[#2C2C2C] flex items-center justify-between gap-3">
+            <div className="p-3.5 sm:p-5 border-b border-gray-100 dark:border-[#2C2C2C] flex flex-col sm:flex-row sm:items-center justify-between gap-3">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-blue-100 dark:bg-blue-950/80 text-[#2878C8] flex items-center justify-center shrink-0">
+                <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-blue-100 dark:bg-blue-950/80 text-[#2878C8] flex items-center justify-center shrink-0">
                   <Bot className="w-5 h-5" />
                 </div>
                 <div>
-                  <h3 className="font-black text-gray-900 dark:text-white text-base">
+                  <h3 className="font-black text-gray-900 dark:text-white text-sm sm:text-base">
                     Gia sư Tin học GDPT 2018
                   </h3>
                   <div className="flex items-center gap-2 text-xs text-gray-500">
@@ -1490,12 +1490,12 @@ Dựa theo chương trình Tin học GDPT 2018 (SGK Kết nối tri thức & Cá
               </div>
 
               {/* Mode switch & clear chat */}
-              <div className="flex items-center gap-2">
+              <div className="flex items-center justify-between sm:justify-end gap-2 w-full sm:w-auto">
                 <div className="p-1 rounded-xl bg-gray-100 dark:bg-[#252525] flex items-center gap-1">
                   <button
                     type="button"
                     onClick={() => setTutorMode('rag')}
-                    className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
+                    className={`px-2.5 sm:px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
                       tutorMode === 'rag'
                         ? 'bg-white dark:bg-[#333] text-[#2878C8] shadow-xs'
                         : 'text-gray-600 dark:text-gray-400 hover:text-gray-900'
@@ -1507,7 +1507,7 @@ Dựa theo chương trình Tin học GDPT 2018 (SGK Kết nối tri thức & Cá
                   <button
                     type="button"
                     onClick={() => setTutorMode('thinking')}
-                    className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
+                    className={`px-2.5 sm:px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
                       tutorMode === 'thinking'
                         ? 'bg-white dark:bg-[#333] text-indigo-600 shadow-xs'
                         : 'text-gray-600 dark:text-gray-400 hover:text-gray-900'
