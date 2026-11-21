@@ -245,3 +245,31 @@
 .animate-float-4 {
   animation: float-badge-4 5.2s ease-in-out infinite 0.3s;
 }
+
+/* ==========================================================================
+   KaTeX Math & Fraction Line Visibility
+   Tailwind's preflight resets border-width: 0 and border-style, causing
+   KaTeX fraction lines (.frac-line), overlines, and underlines to be hidden.
+   This guarantees visible fraction lines with currentColor across all screens.
+   ========================================================================== */
+.katex,
+.katex * {
+  border-color: currentColor;
+}
+
+.katex .mfrac .frac-line,
+.katex .katex-hline,
+.katex .katex-overline .overline-line,
+.katex .katex-underline .underline-line {
+  display: inline-block !important;
+  width: 100% !important;
+  border-bottom-style: solid !important;
+  border-bottom-color: currentColor !important;
+  border-bottom-width: max(1.25px, 0.05em) !important;
+  min-height: 1.25px !important;
+  box-sizing: content-box !important;
+}
+
+.katex .mfrac > span > span {
+  text-align: center !important;
+}
