@@ -754,10 +754,7 @@ export const StudentDashboard: React.FC<StudentDashboardProps> = ({
           <div className="bg-white dark:bg-[#1E1E1E] rounded-lg border border-gray-200 dark:border-[#333] shadow-xs overflow-hidden">
             {/* Header Dark VNOI Style */}
             <div className="bg-[#181818] dark:bg-[#181818] text-white px-3.5 py-2.5 flex items-center justify-between text-[13px] font-bold">
-              <div className="flex items-center gap-1.5">
-                <span className="tracking-wide uppercase font-bold">TOP THÀNH VIÊN</span>
-                <span className="text-[10px] text-gray-400 font-normal lowercase">(minh họa VNOI)</span>
-              </div>
+              <span className="tracking-wide uppercase font-bold">TOP THÀNH VIÊN</span>
               <Trophy className="w-4 h-4 text-[#FFC928]" />
             </div>
 
@@ -815,10 +812,7 @@ export const StudentDashboard: React.FC<StudentDashboardProps> = ({
           {/* 2. TOP ĐÓNG GÓP (Chuẩn bảng VNOI trong ảnh tham khảo) */}
           <div className="bg-white dark:bg-[#1E1E1E] rounded-lg border border-gray-200 dark:border-[#333] shadow-xs overflow-hidden">
             <div className="bg-[#181818] dark:bg-[#181818] text-white px-3.5 py-2.5 flex items-center justify-between text-[13px] font-bold">
-              <div className="flex items-center gap-1.5">
-                <span className="tracking-wide uppercase font-bold">Top đóng góp</span>
-                <span className="text-[10px] text-gray-400 font-normal lowercase">(minh họa VNOI)</span>
-              </div>
+              <span className="tracking-wide uppercase font-bold">TOP ĐÓNG GÓP</span>
               <Trophy className="w-4 h-4 text-[#FFC928]" />
             </div>
 
