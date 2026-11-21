@@ -16,6 +16,7 @@ import {
 import { UserProfile } from '../../types';
 import { askRagTutor } from '../../services/ragService';
 import { askThinkingAiTutor, askSearchGroundedInfo } from '../../services/geminiClient';
+import { MarkdownRenderer } from './MarkdownRenderer';
 
 interface FloatingAiBotProps {
   user: UserProfile;
@@ -421,9 +422,10 @@ Dựa theo chương trình Tin học GDPT 2018 (SGK Kết nối tri thức & Cá
                     )}
 
                     {/* Content text */}
-                    <div className="whitespace-pre-wrap space-y-1">
-                      {msg.text}
-                    </div>
+                    <MarkdownRenderer
+                      text={msg.text}
+                      className={msg.sender === 'user' ? 'prose-invert [&_*]:text-white' : ''}
+                    />
 
                     {/* SGK RAG Sources Citation */}
                     {msg.ragSources && msg.ragSources.length > 0 && (

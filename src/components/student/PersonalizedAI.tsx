@@ -63,6 +63,7 @@ import {
 } from '../../services/geminiClient';
 import { askRagTutor } from '../../services/ragService';
 import { storageService } from '../../services/storageService';
+import { MarkdownRenderer } from '../common/MarkdownRenderer';
 
 interface PersonalizedAIProps {
   user: UserProfile;
@@ -1543,9 +1544,10 @@ Dựa theo chương trình Tin học GDPT 2018 (SGK Kết nối tri thức & Cá
                         : 'bg-gray-50 dark:bg-[#222] text-gray-900 dark:text-gray-100 border border-gray-200/80 dark:border-[#333]'
                     }`}
                   >
-                    <div className="whitespace-pre-wrap font-normal">
-                      {msg.text}
-                    </div>
+                    <MarkdownRenderer
+                      text={msg.text}
+                      className={msg.sender === 'user' ? 'prose-invert [&_*]:text-white' : ''}
+                    />
 
                     {msg.ragSources && msg.ragSources.length > 0 && (
                       <div className="mt-3 pt-2.5 border-t border-blue-200/50 dark:border-gray-700 text-xs text-[#2878C8] dark:text-blue-400 font-semibold space-y-1">
